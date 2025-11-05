@@ -1,10 +1,1 @@
-make middleware and test
-
-
-fetch class teacher name in get class api
-
-
-
-attendance
-
-student
+fees module in admin 

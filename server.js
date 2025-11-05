@@ -14,7 +14,12 @@ const Subjectsection = require('./routes/admin/subjectRoute');
 const dropdown = require('./routes/admin/dropdown');
 const hr = require('./routes/admin/hr');
 const studentsAttendance = require('./routes/admin/studentAttendance');
-const feesRoutes = require('./routes/admin/fees');
+const feesRoutes = require('./routes/admin/feeHeadRoutes');
+const feesStructureRoutes = require('./routes/admin/feeStructureRoutes');
+const studentFeeRoutes = require('./routes/admin/studentFeeRoutes');
+const studentFeeInstallmentRoutes = require('./routes/admin/studentFeeInstallmentRoutes');
+const incomeExpenseRoutes = require('./routes/admin/incomeExpenseRoutes');
+const examTermRoutes = require('./routes/admin/examTermRoutes');
 
 
 const Joi = require('joi');
@@ -39,6 +44,11 @@ app.use('/admin/dropdown', dropdown);
 app.use('/admin/hr', hr);
 app.use('/admin/studentsAttendance', studentsAttendance);
 app.use('/admin/fees', feesRoutes);
+app.use('/admin/feeStructure', feesStructureRoutes);
+app.use('/admin/studentFee', studentFeeRoutes);
+app.use('/admin/studentFeeInstallment', studentFeeInstallmentRoutes);
+app.use('/admin/incomeExpense', incomeExpenseRoutes);
+app.use('/admin/examTerm', examTermRoutes);
 
 
 

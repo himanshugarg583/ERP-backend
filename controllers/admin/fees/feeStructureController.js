@@ -1,69 +1,88 @@
-const { fee_structures, ClassSection } = require('../../../models');
+const { FeeStructure, FeeStructureDetail, FeeHead, ClassSection, StudentFee } = require('../../../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../../../models');
 
-
+// Create new fee structure
 const createFeeStructure = async (req, res) => {
   try {
     const {
+      name,
       class_section_id,
-      academic_year,
-      fee_name,
-      head1_name,
-      head1_amount,
-      head2_name,
-      head2_amount,
-      head3_name,
-      head3_amount
+      academic_start_year,
+      academic_end_year,
+      due_date,
+      late_fee_amount,
+      late_fee_type,
+      installment_allowed,
+      max_installments,
+      status = 'active',
+      fee_details
     } = req.body;
 
     // Validation
-    if (!fee_name) {
+    if (!name || name.trim() === '') {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "Fee name is required"
+        message: "Fee structure name is required"
       });
     }
 
-    // Validate amounts
-    const amount1 = parseFloat(head1_amount) || 0;
-    const amount2 = parseFloat(head2_amount) || 0;
-    const amount3 = parseFloat(head3_amount) || 0;
-
-    // Calculate total amount
-    const total_amount = amount1 + amount2 + amount3;
-
-    if (total_amount <= 0) {
+    if (academic_start_year >= academic_end_year) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "Total amount must be greater than 0"
+        message: "Academic start year must be less than end year"
       });
     }
 
-    // Check if class section exists (if provided)
-    if (class_section_id) {
-      const classSection = await ClassSection.findByPk(class_section_id);
-      if (!classSection) {
+    if (!fee_details || !Array.isArray(fee_details) || fee_details.length === 0) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Fee details are required with at least one fee head"
+      });
+    }
+
+
+    // Validate fee heads in fee_details
+    for (const detail of fee_details) {
+      if (!detail.fee_head_id || !detail.amount || detail.amount <= 0) {
+        return res.status(400).json({
+          success: false,
+          statusCode: 400,
+          message: "Each fee detail must have valid fee_head_id and amount greater than 0"
+        });
+      }
+
+      const feeHead = await FeeHead.findByPk(detail.fee_head_id);
+      if (!feeHead) {
         return res.status(404).json({
           success: false,
           statusCode: 404,
-          message: "Class section not found"
+          message: `Fee head with ID ${detail.fee_head_id} not found`
         });
       }
     }
 
-    // Check for duplicate fee structure
-    const existingFee = await fee_structures.findOne({
+    // Check for duplicate fee structure (MySQL case-insensitive)
+    // Only select the primary key here to avoid model/DB column mismatches (e.g. created_by)
+    const existingStructure = await FeeStructure.findOne({
+      attributes: ['id'],
       where: {
-        class_section_id: class_section_id || null,
-        academic_year: academic_year || null,
-        fee_name: fee_name
+        [Op.and]: [
+          sequelize.where(
+            sequelize.fn('LOWER', sequelize.col('name')),
+            sequelize.fn('LOWER', name.trim())
+          ),
+          { class_section_id: class_section_id || null },
+          { academic_start_year },
+          { academic_end_year }
+        ]
       }
     });
 
-    if (existingFee) {
+    if (existingStructure) {
       return res.status(409).json({
         success: false,
         statusCode: 409,
@@ -71,28 +90,86 @@ const createFeeStructure = async (req, res) => {
       });
     }
 
-    // Create fee structure
-    const feeStructure = await fee_structures.create({
-      class_section_id: class_section_id || null,
-      academic_year: academic_year || null,
-      fee_name,
-      head1_name: head1_name || null,
-      head1_amount: amount1,
-      head2_name: head2_name || null,
-      head2_amount: amount2,
-      head3_name: head3_name || null,
-      head3_amount: amount3,
-      total_amount,
-      created_at: new Date(),
-      updated_at: new Date()
-    });
+    // Calculate total amount
+    const total_amount = fee_details.reduce((sum, detail) => sum + parseFloat(detail.amount), 0);
 
-    res.status(201).json({
-      success: true,
-      statusCode: 201,
-      message: "Fee structure created successfully",
-      data: feeStructure
-    });
+    // Use transaction for creating fee structure and details
+    const transaction = await sequelize.transaction();
+
+    try {
+      // Create fee structure
+      const feeStructure = await FeeStructure.create({
+        name: name.trim(),
+        class_section_id: class_section_id || null,
+        academic_start_year,
+        academic_end_year,
+        due_date: due_date || null,
+        late_fee_amount: parseFloat(late_fee_amount) || 0,
+        late_fee_type: late_fee_type || 'flat',
+        installment_allowed: Boolean(installment_allowed),
+        max_installments: parseInt(max_installments) || 1,
+        status: status || 'active',
+        total_amount
+      }, { transaction });
+
+      console.log("Created Fee Structure:", feeStructure.id, feeStructure.name);
+
+      // Create fee structure details
+      const feeDetailsData = fee_details.map((detail, index) => {
+        const detailData = {
+          fee_structure_id: feeStructure.id,
+          fee_head_id: detail.fee_head_id,
+          amount: parseFloat(detail.amount),
+          is_mandatory: Boolean(detail.is_mandatory !== undefined ? detail.is_mandatory : true),
+          sequence_order: detail.sequence_order || (index + 1)
+        };
+        
+        return detailData;
+      });
+
+      console.log("All Fee Details Data:", feeDetailsData);
+
+      const createdDetails = await FeeStructureDetail.bulkCreate(feeDetailsData, { transaction });
+      console.log("Created Fee Details:", createdDetails.map(d => ({ id: d.id, fee_structure_id: d.fee_structure_id, fee_head_id: d.fee_head_id })));
+
+      await transaction.commit();
+
+      // Fetch created structure with details (explicit attributes to avoid selecting missing columns like `created_by`)
+      const createdStructure = await FeeStructure.findByPk(feeStructure.id, {
+        attributes: [
+          'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
+          'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
+          'status', 'total_amount', 'created_at', 'updated_at'
+        ],
+        include: [
+          {
+            model: ClassSection,
+            as: 'classSection',
+            attributes: ['id', 'class_name', 'section_name']
+          },
+          {
+            model: FeeStructureDetail,
+            as: 'feeDetails',
+            include: [{
+              model: FeeHead,
+              as: 'feeHead',
+              attributes: ['id', 'name', 'is_mandatory']
+            }]
+          }
+        ]
+      });
+
+      res.status(201).json({
+        success: true,
+        statusCode: 201,
+        message: "Fee structure created successfully",
+        data: createdStructure
+      });
+
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
 
   } catch (error) {
     console.error("Create Fee Structure Error:", error);
@@ -100,311 +177,34 @@ const createFeeStructure = async (req, res) => {
       success: false,
       statusCode: 500,
       message: "Internal Server Error",
-      error: error.message
     });
   }
 };
 
+// Get all fee structures
 const getAllFeeStructures = async (req, res) => {
   try {
-    const { class_section_id, academic_year, page = 1, limit = 10 } = req.query;
-
-    // Build where clause
-    const whereClause = {};
-    if (class_section_id) {
-      whereClause.class_section_id = class_section_id;
-    }
-    if (academic_year) {
-      whereClause.academic_year = academic_year;
-    }
-
-    // Pagination
-    const offset = (parseInt(page) - 1) * parseInt(limit);
-
-    const { count, rows: feeStructures } = await fee_structures.findAndCountAll({
-      where: whereClause,
-      include: [
-        {
-          model: ClassSection,
-          as: 'classSection',
-          attributes: ['id', 'class_name', 'section_name'],
-          required: false
-        }
+    const feeStructures = await FeeStructure.findAll({
+      attributes: [
+        'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
+        'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
+        'status', 'total_amount', 'created_at', 'updated_at'
       ],
-      order: [['created_at', 'DESC']],
-      limit: parseInt(limit),
-      offset: offset
-    });
-
-    // Calculate pagination info
-    const totalPages = Math.ceil(count / parseInt(limit));
-    const hasNextPage = parseInt(page) < totalPages;
-    const hasPrevPage = parseInt(page) > 1;
-
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Fee structures fetched successfully",
-      data: {
-        feeStructures,
-        pagination: {
-          currentPage: parseInt(page),
-          totalPages,
-          totalRecords: count,
-          hasNextPage,
-          hasPrevPage,
-          limit: parseInt(limit)
-        }
-      }
-    });
-
-  } catch (error) {
-    console.error("Get All Fee Structures Error:", error);
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "Internal Server Error",
-      error: error.message
-    });
-  }
-};
-
-
-const getSingleFeeStructure = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const feeStructure = await fee_structures.findOne({
-      where: { id },
       include: [
         {
           model: ClassSection,
           as: 'classSection',
           attributes: ['id', 'class_name', 'section_name'],
           required: false
-        }
-      ]
-    });
-
-    if (!feeStructure) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "Fee structure not found"
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Fee structure fetched successfully",
-      data: feeStructure
-    });
-
-  } catch (error) {
-    console.error("Get Single Fee Structure Error:", error);
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "Internal Server Error",
-      error: error.message
-    });
-  }
-};
-
-
-const updateFeeStructure = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const {
-      class_section_id,
-      academic_year,
-      fee_name,
-      head1_name,
-      head1_amount,
-      head2_name,
-      head2_amount,
-      head3_name,
-      head3_amount
-    } = req.body;
-
-    // Find existing fee structure
-    const feeStructure = await fee_structures.findByPk(id);
-    if (!feeStructure) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "Fee structure not found"
-      });
-    }
-
-    // Validation
-    if (fee_name && fee_name.trim() === '') {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: "Fee name cannot be empty"
-      });
-    }
-
-    // Validate amounts
-    const amount1 = head1_amount !== undefined ? parseFloat(head1_amount) || 0 : feeStructure.head1_amount;
-    const amount2 = head2_amount !== undefined ? parseFloat(head2_amount) || 0 : feeStructure.head2_amount;
-    const amount3 = head3_amount !== undefined ? parseFloat(head3_amount) || 0 : feeStructure.head3_amount;
-
-    // Calculate total amount
-    const total_amount = amount1 + amount2 + amount3;
-
-    if (total_amount <= 0) {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: "Total amount must be greater than 0"
-      });
-    }
-
-    // Check if class section exists (if provided)
-    if (class_section_id && class_section_id !== feeStructure.class_section_id) {
-      const classSection = await ClassSection.findByPk(class_section_id);
-      if (!classSection) {
-        return res.status(404).json({
-          success: false,
-          statusCode: 404,
-          message: "Class section not found"
-        });
-      }
-    }
-
-    // Check for duplicate fee structure (excluding current one)
-    if (fee_name && fee_name !== feeStructure.fee_name) {
-      const existingFee = await fee_structures.findOne({
-        where: {
-          id: { [Op.ne]: id },
-          class_section_id: class_section_id || feeStructure.class_section_id,
-          academic_year: academic_year || feeStructure.academic_year,
-          fee_name: fee_name
-        }
-      });
-
-      if (existingFee) {
-        return res.status(409).json({
-          success: false,
-          statusCode: 409,
-          message: "Fee structure with this name already exists for the selected class and academic year"
-        });
-      }
-    }
-
-    // Update fee structure
-    await feeStructure.update({
-      class_section_id: class_section_id !== undefined ? class_section_id : feeStructure.class_section_id,
-      academic_year: academic_year !== undefined ? academic_year : feeStructure.academic_year,
-      fee_name: fee_name || feeStructure.fee_name,
-      head1_name: head1_name !== undefined ? head1_name : feeStructure.head1_name,
-      head1_amount: amount1,
-      head2_name: head2_name !== undefined ? head2_name : feeStructure.head2_name,
-      head2_amount: amount2,
-      head3_name: head3_name !== undefined ? head3_name : feeStructure.head3_name,
-      head3_amount: amount3,
-      total_amount,
-      updated_at: new Date()
-    });
-
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Fee structure updated successfully",
-      data: feeStructure
-    });
-
-  } catch (error) {
-    console.error("Update Fee Structure Error:", error);
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "Internal Server Error",
-      error: error.message
-    });
-  }
-};
-
-
-const deleteFeeStructure = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const feeStructure = await fee_structures.findByPk(id);
-    if (!feeStructure) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "Fee structure not found"
-      });
-    }
-
-    // Check if fee structure is being used by any student fees
-    // You can uncomment this when StudentFee model is ready
-    /*
-    const studentFeeCount = await StudentFee.count({
-      where: { fee_structure_id: id }
-    });
-
-    if (studentFeeCount > 0) {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: "Cannot delete fee structure. It is being used by student fees."
-      });
-    }
-    */
-
-    await feeStructure.destroy();
-
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Fee structure deleted successfully"
-    });
-
-  } catch (error) {
-    console.error("Delete Fee Structure Error:", error);
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "Internal Server Error",
-      error: error.message
-    });
-  }
-};
-
-
-const getFeeStructuresByClass = async (req, res) => {
-  try {
-    const { class_section_id } = req.params;
-    const { academic_year } = req.query;
-
-    // Check if class section exists
-    const classSection = await ClassSection.findByPk(class_section_id);
-    if (!classSection) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "Class section not found"
-      });
-    }
-
-    const whereClause = { class_section_id };
-    if (academic_year) {
-      whereClause.academic_year = academic_year;
-    }
-
-    const feeStructures = await fee_structures.findAll({
-      where: whereClause,
-      include: [
+        },
         {
-          model: ClassSection,
-          as: 'classSection',
-          attributes: ['id', 'class_name', 'section_name']
+          model: FeeStructureDetail,
+          as: 'feeDetails',
+          include: [{
+            model: FeeHead,
+            as: 'feeHead',
+            attributes: ['id', 'name', 'is_mandatory']
+          }]
         }
       ],
       order: [['created_at', 'DESC']]
@@ -415,99 +215,425 @@ const getFeeStructuresByClass = async (req, res) => {
       statusCode: 200,
       message: "Fee structures fetched successfully",
       data: {
-        classSection: {
-          id: classSection.id,
-          class_name: classSection.class_name,
-          section_name: classSection.section_name
-        },
-        feeStructures
+        feeStructures,
+        total_records: feeStructures.length
       }
     });
 
   } catch (error) {
-    console.error("Get Fee Structures by Class Error:", error);
+    console.error("Get All Fee Structures Error:", error);
     res.status(500).json({
       success: false,
       statusCode: 500,
-      message: "Internal Server Error",
-      error: error.message
+      message: "Internal Server Error"
     });
   }
 };
 
-
-const getFeeStructureStats = async (req, res) => {
+// Get single fee structure by ID
+const getSingleFeeStructure = async (req, res) => {
   try {
-    const { academic_year } = req.query;
+    const { id } = req.params;
 
-    let whereClause = {};
-    if (academic_year) {
-      whereClause.academic_year = academic_year;
+    // Validate ID
+    if (!id || isNaN(parseInt(id))) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Valid fee structure ID is required"
+      });
     }
 
-    // Total fee structures
-    const totalStructures = await fee_structures.count({ where: whereClause });
-
-    // Fee structures by class
-    const structuresByClass = await fee_structures.count({
-      where: {
-        ...whereClause,
-        class_section_id: { [Op.ne]: null }
-      },
-      group: ['class_section_id'],
-      include: [
-        {
-          model: ClassSection,
-          as: 'classSection',
-          attributes: ['class_name', 'section_name']
-        }
-      ]
+    const feeStructure = await FeeStructure.findByPk(id, {
+        attributes: [
+          'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
+          'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
+          'status', 'total_amount', 'created_at', 'updated_at'
+        ],
+        include: [
+          {
+            model: ClassSection,
+            as: 'classSection',
+            attributes: ['id', 'class_name', 'section_name'],
+            required: false
+          },
+          {
+            model: FeeStructureDetail,
+            as: 'feeDetails',
+            include: [{
+              model: FeeHead,
+              as: 'feeHead',
+              attributes: ['id', 'name', 'is_mandatory']
+            }],
+            order: [['sequence_order', 'ASC']]
+          }
+        ]
     });
 
-    // General fee structures (not class specific)
-    const generalStructures = await fee_structures.count({
-      where: {
-        ...whereClause,
-        class_section_id: null
-      }
-    });
+    if (!feeStructure) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Fee structure not found"
+      });
+    }
 
-    // Average total amount
-    const avgAmount = await fee_structures.findOne({
-      where: whereClause,
-      attributes: [
-        [sequelize.fn('AVG', sequelize.col('total_amount')), 'average_amount'],
-        [sequelize.fn('SUM', sequelize.col('total_amount')), 'total_sum'],
-        [sequelize.fn('MIN', sequelize.col('total_amount')), 'min_amount'],
-        [sequelize.fn('MAX', sequelize.col('total_amount')), 'max_amount']
-      ],
-      raw: true
-    });
+    // Count assigned students
+      const assignedStudentsCount = await StudentFee.count({
+        where: { fee_structure_id: id }
+      });
 
     res.status(200).json({
       success: true,
       statusCode: 200,
-      message: "Fee structure statistics fetched successfully",
+      message: "Fee structure fetched successfully",
       data: {
-        totalStructures,
-        generalStructures,
-        classSpecificStructures: totalStructures - generalStructures,
-        statistics: {
-          averageAmount: parseFloat(avgAmount?.average_amount || 0).toFixed(2),
-          totalSum: parseFloat(avgAmount?.total_sum || 0).toFixed(2),
-          minAmount: parseFloat(avgAmount?.min_amount || 0).toFixed(2),
-          maxAmount: parseFloat(avgAmount?.max_amount || 0).toFixed(2)
+        feeStructure,
+        usage_statistics: {
+          assigned_students: assignedStudentsCount,
+          can_be_deleted: assignedStudentsCount === 0
         }
       }
     });
 
   } catch (error) {
-    console.error("Get Fee Structure Stats Error:", error);
+    console.error("Get Single Fee Structure Error:", error);
     res.status(500).json({
       success: false,
       statusCode: 500,
-      message: "Internal Server Error",
-      error: error.message
+      message: "Internal Server Error"
+    });
+  }
+};
+
+// Update fee structure
+const updateFeeStructure = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      class_section_id,
+      academic_start_year,
+      academic_end_year,
+      due_date,
+      late_fee_amount,
+      late_fee_type,
+      installment_allowed,
+      max_installments,
+      status,
+      fee_details
+    } = req.body;
+
+    // Validate ID
+    if (!id || isNaN(parseInt(id))) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Valid fee structure ID is required"
+      });
+    }
+
+    // Find existing fee structure (explicit attributes to avoid selecting non-existent columns)
+    const feeStructure = await FeeStructure.findByPk(id, {
+      attributes: [
+        'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
+        'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
+        'status', 'total_amount', 'created_at', 'updated_at'
+      ]
+    });
+    if (!feeStructure) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Fee structure not found"
+      });
+    }
+
+    // Build update object with only provided fields
+    const updateData = {};
+
+    // Update name if provided
+    if (name !== undefined) {
+      if (!name || name.trim() === '') {
+        return res.status(400).json({
+          success: false,
+          statusCode: 400,
+          message: "Fee structure name cannot be empty"
+        });
+      }
+
+      // Check for duplicate name (excluding current record) - MySQL case-insensitive
+      const existingStructure = await FeeStructure.findOne({
+        attributes: ['id'],
+        where: {
+          [Op.and]: [
+            sequelize.where(
+              sequelize.fn('LOWER', sequelize.col('name')),
+              sequelize.fn('LOWER', name.trim())
+            ),
+            { id: { [Op.ne]: id } }
+          ]
+        }
+      });
+
+      if (existingStructure) {
+        return res.status(409).json({
+          success: false,
+          statusCode: 409,
+          message: "Fee structure with this name already exists"
+        });
+      }
+
+      updateData.name = name.trim();
+    }
+
+    // Update class_section_id if provided
+    if (class_section_id !== undefined) {
+      if (class_section_id && class_section_id !== null) {
+        const classSection = await ClassSection.findByPk(class_section_id);
+        if (!classSection) {
+          return res.status(404).json({
+            success: false,
+            statusCode: 404,
+            message: "Class section not found"
+          });
+        }
+      }
+      updateData.class_section_id = class_section_id || null;
+    }
+
+    // Update academic years if provided
+    if (academic_start_year !== undefined) {
+      updateData.academic_start_year = academic_start_year;
+    }
+    if (academic_end_year !== undefined) {
+      updateData.academic_end_year = academic_end_year;
+    }
+
+    // Validate academic years
+    if (updateData.academic_start_year && updateData.academic_end_year) {
+      if (updateData.academic_start_year >= updateData.academic_end_year) {
+        return res.status(400).json({
+          success: false,
+          statusCode: 400,
+          message: "Academic start year must be less than end year"
+        });
+      }
+    }
+
+    // Update other fields if provided
+    if (due_date !== undefined) updateData.due_date = due_date || null;
+    if (late_fee_amount !== undefined) updateData.late_fee_amount = parseFloat(late_fee_amount) || 0;
+    if (late_fee_type !== undefined) updateData.late_fee_type = late_fee_type;
+    if (installment_allowed !== undefined) updateData.installment_allowed = Boolean(installment_allowed);
+    if (max_installments !== undefined) updateData.max_installments = parseInt(max_installments) || 1;
+    if (status !== undefined) {
+      if (!['active', 'inactive', 'draft'].includes(status)) {
+        return res.status(400).json({
+          success: false,
+          statusCode: 400,
+          message: "Status must be 'active', 'inactive', or 'draft'"
+        });
+      }
+      updateData.status = status;
+    }
+
+    // Start transaction for updating
+    const transaction = await sequelize.transaction();
+
+    try {
+      // Update fee details if provided
+      if (fee_details && Array.isArray(fee_details)) {
+        // Validate fee details
+        for (const detail of fee_details) {
+          if (!detail.fee_head_id || !detail.amount || detail.amount <= 0) {
+            return res.status(400).json({
+              success: false,
+              statusCode: 400,
+              message: "Each fee detail must have valid fee_head_id and amount greater than 0"
+            });
+          }
+
+          const feeHead = await FeeHead.findByPk(detail.fee_head_id);
+          if (!feeHead) {
+            return res.status(404).json({
+              success: false,
+              statusCode: 404,
+              message: `Fee head with ID ${detail.fee_head_id} not found`
+            });
+          }
+        }
+
+        // Delete existing fee details
+        await FeeStructureDetail.destroy({
+          where: { fee_structure_id: id },
+          transaction
+        });
+
+        // Create new fee details
+        const feeDetailsData = fee_details.map((detail, index) => ({
+          fee_structure_id: id,
+          fee_head_id: detail.fee_head_id,
+          amount: parseFloat(detail.amount),
+          is_mandatory: Boolean(detail.is_mandatory !== undefined ? detail.is_mandatory : true),
+          sequence_order: detail.sequence_order || (index + 1)
+        }));
+
+        await FeeStructureDetail.bulkCreate(feeDetailsData, { transaction });
+
+        // Calculate new total amount
+        updateData.total_amount = fee_details.reduce((sum, detail) => sum + parseFloat(detail.amount), 0);
+      }
+
+      // Only update if there are fields to update
+      if (Object.keys(updateData).length === 0) {
+        await transaction.rollback();
+        return res.status(400).json({
+          success: false,
+          statusCode: 400,
+          message: "No valid fields provided for update"
+        });
+      }
+
+      // Update fee structure
+      await feeStructure.update(updateData, { transaction });
+
+      await transaction.commit();
+
+      // Fetch updated structure with details (explicit attributes to avoid selecting missing columns)
+      const updatedStructure = await FeeStructure.findByPk(id, {
+        attributes: [
+          'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
+          'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
+          'status', 'total_amount', 'created_at', 'updated_at'
+        ],
+        include: [
+          {
+            model: ClassSection,
+            as: 'classSection',
+            attributes: ['id', 'class_name', 'section_name']
+          },
+          {
+            model: FeeStructureDetail,
+            as: 'feeDetails',
+            include: [{
+              model: FeeHead,
+              as: 'feeHead',
+              attributes: ['id', 'name', 'is_mandatory']
+            }]
+          }
+        ]
+      });
+
+      res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "Fee structure updated successfully",
+        data: {
+          feeStructure: updatedStructure,
+          updated_fields: Object.keys(updateData)
+        }
+      });
+
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+
+  } catch (error) {
+    console.error("Update Fee Structure Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
+// Delete fee structure
+const deleteFeeStructure = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ID
+    if (!id || isNaN(parseInt(id))) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Valid fee structure ID is required"
+      });
+    }
+
+    const feeStructure = await FeeStructure.findByPk(id, {
+      attributes: [
+        'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
+        'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
+        'status', 'total_amount', 'created_at', 'updated_at'
+      ]
+    });
+    if (!feeStructure) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Fee structure not found"
+      });
+    }
+
+    // Check if fee structure is assigned to any students
+    const assignedStudentsCount = await StudentFee.count({
+      where: { fee_structure_id: id }
+    });
+
+    if (assignedStudentsCount > 0) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: `Cannot delete fee structure. It is assigned to ${assignedStudentsCount} student(s). Please remove assignments first.`
+      });
+    }
+
+    // Store structure data before deletion
+    const deletedStructureData = {
+      id: feeStructure.id,
+      name: feeStructure.name,
+      total_amount: feeStructure.total_amount
+    };
+
+    // Use transaction for deletion
+    const transaction = await sequelize.transaction();
+
+    try {
+      // Delete fee structure details first (due to foreign key constraint)
+      await FeeStructureDetail.destroy({
+        where: { fee_structure_id: id },
+        transaction
+      });
+
+      // Delete fee structure
+      await feeStructure.destroy({ transaction });
+
+      await transaction.commit();
+
+      res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "Fee structure deleted successfully",
+        data: {
+          deleted_structure: deletedStructureData
+        }
+      });
+
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+
+  } catch (error) {
+    console.error("Delete Fee Structure Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
     });
   }
 };
@@ -517,7 +643,5 @@ module.exports = {
   getAllFeeStructures,
   getSingleFeeStructure,
   updateFeeStructure,
-  deleteFeeStructure,
-  getFeeStructuresByClass,
-  getFeeStructureStats
+  deleteFeeStructure
 };

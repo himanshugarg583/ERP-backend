@@ -1,63 +1,72 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../../config/db');  // adjust the path as per your project
+const sequelize = require('../../../config/db');
 
 const StudentFee = sequelize.define('StudentFee', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-
-  // 🔹 Student linked with this fee
-  student_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'students', // referenced table name
-      key: 'id',
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    onDelete: 'CASCADE',
-  },
-
-  // 🔹 Linked fee structure (class-based fee plan)
-  fee_structure_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'fee_structures', // referenced table name
-      key: 'id',
+    student_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'students',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
-    onDelete: 'CASCADE',
-  },
+    fee_structure_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'fee_structures',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    },
+    academic_year: {
+      type: DataTypes.STRING(9),
+      allowNull: false,
+    },
+    original_amount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    discount_amount: {
+      type: DataTypes.DECIMAL(10, 2),
+      defaultValue: 0.00,
+    },
+    discount_reason: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    final_amount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    paid_amount: {
+      type: DataTypes.DECIMAL(10, 2),
+      defaultValue: 0.00,
+    },
+    due_amount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    due_date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    status: {
+      type: DataTypes.ENUM('pending', 'partial', 'paid', 'overdue', 'waived'),
+      defaultValue: 'pending',
+    },
+  }, {
+    tableName: 'student_fees',
+    timestamps: true,
+    underscored: true,
+  });
 
-  // 🔹 Discount (if any)
-  discount_amount: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-    defaultValue: 0,
-  },
-
-  // 🔹 Payment status
-  status: {
-    type: DataTypes.ENUM('unpaid', 'partial', 'paid'),
-    allowNull: false,
-    defaultValue: 'unpaid',
-  },
-
-  // 🔹 Timestamps
-  created_at: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  updated_at: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-}, {
-  tableName: 'student_fees',
-  timestamps: false, // we're manually managing timestamps
-});
-
-module.exports = {StudentFee};
+  module.exports = { StudentFee };
