@@ -4,7 +4,7 @@ const { studentsAttendances,ClassSection } = require('../../../models');
 const markClassAttendance = async (req, res) => {
   try {
     const { class_section_id, date, attendances } = req.body;
-    const userId = req.user.id;
+    const userId = req.user?.id || null;
 
     // 🧪 Basic validation
     if (!class_section_id || !date || !Array.isArray(attendances)) {
@@ -26,14 +26,6 @@ const markClassAttendance = async (req, res) => {
       });
     }
 
-    // if (classSection.teacher_id !== userId ) {
-    //   return res.status(403).json({
-    //     success: false,
-    //     statusCode:403,
-    //     message: "Only assigned class teacher can mark attendance"
-    //   });
-    // }
-
     // ✅ Loop over each student attendance
     for (let record of attendances) {
       const { student_id, status } = record;
@@ -47,7 +39,7 @@ const markClassAttendance = async (req, res) => {
         // ✏️ Update if already exists
         existing.status = status;
         existing.class_section_id = class_section_id;
-        // existing.marked_by = userId;
+        existing.marked_by = userId;
         await existing.save();
       } else {
         // 🆕 Create new record
@@ -56,13 +48,14 @@ const markClassAttendance = async (req, res) => {
           class_section_id,
           date,
           status,
-          // marked_by: userId
+          marked_by: userId
         });
       }
     }
 
     return res.status(200).json({
       success: true,
+      statusCode:200,
       message: "Attendance marked successfully"
     });
 
@@ -70,6 +63,7 @@ const markClassAttendance = async (req, res) => {
     console.error("Attendance error:", error);
     return res.status(500).json({
       success: false,
+      statusCode:500,
       message: "Internal server error"
     });
   }

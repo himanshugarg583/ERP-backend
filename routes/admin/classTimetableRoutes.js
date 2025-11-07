@@ -1,4 +1,3 @@
-// routes/admin/classTimetableRoutes.js
 const express = require('express');
 const router = express.Router();
 // const { checkTeacherClash, saveWholeWeekTimetable } = require('../../controllers/admin/ClassTimetableController');

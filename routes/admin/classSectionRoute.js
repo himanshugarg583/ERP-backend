@@ -10,5 +10,4 @@ router.put('/updateClassSection/:id',updateClassSection);
 router.delete('/DeleteClassSection/:id',DeleteClassSection);
 
 
-
 module.exports = router;
