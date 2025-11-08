@@ -27,6 +27,9 @@ const { ExamSchedule } = require('./admin/exam/examSchedule');
 const { ExamTimetable } = require('./admin/exam/examTimetable');
 const { ExamMark } = require('./admin/exam/examMark');
 
+// student leave
+const { StudentLeave } = require('./admin/StudentLeave');
+
 
 // User ↔ Student
 User.hasOne(Student, { foreignKey: 'user_id', as: "studentDetails" });
@@ -58,12 +61,24 @@ Subject.belongsTo(Teacher, { foreignKey: 'teacher_id' , as: 'teacher'});
 
 
 // Attendance ↔ Student
+Student.hasMany(studentsAttendances, { foreignKey: 'student_id', as: 'studentsAttendances' });
+studentsAttendances.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+// Attendance ↔ User (for student user details)
 User.hasMany(studentsAttendances, { foreignKey: 'student_id', as: 'attendances' });
-studentsAttendances.belongsTo(User, { foreignKey: 'student_id', as: 'student' });
+studentsAttendances.belongsTo(User, { foreignKey: 'student_id', as: 'studentUser' });
 
 // Attendance ↔ ClassSection
 ClassSection.hasMany(studentsAttendances, { foreignKey: 'class_section_id', as: 'class_attendance' });
 studentsAttendances.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'class_section' });
+
+// =====================================================
+// STUDENT LEAVE ASSOCIATIONS
+// =====================================================
+
+// Student ↔ StudentLeave (One-to-Many)
+Student.hasMany(StudentLeave, { foreignKey: 'student_id', as: 'leaves', onDelete: 'CASCADE' });
+StudentLeave.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
 
 // Associations
 ClassSection.hasMany(ClassTimetable, { foreignKey: 'class_section_id', as: 'timetable' });
@@ -188,10 +203,13 @@ module.exports = {
   FeePayment,
   FeeInstallment,
 
-  // exam
-ExamTerm,
+  // Exam Management Models
+  ExamTerm,
   Exam,
   ExamSchedule,
   ExamTimetable,
-  ExamMark
+  ExamMark,
+
+  // Student Leave
+  StudentLeave
 };

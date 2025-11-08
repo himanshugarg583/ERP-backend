@@ -14,19 +14,27 @@ const Subjectsection = require('./routes/admin/subjectRoute');
 const dropdown = require('./routes/admin/dropdown');
 const hr = require('./routes/admin/hr');
 const studentsAttendance = require('./routes/admin/studentAttendance');
+const studentLeaveRoutes = require('./routes/admin/studentLeave');
 const feesRoutes = require('./routes/admin/feeHeadRoutes');
 const feesStructureRoutes = require('./routes/admin/feeStructureRoutes');
 const studentFeeRoutes = require('./routes/admin/studentFeeRoutes');
 const studentFeeInstallmentRoutes = require('./routes/admin/studentFeeInstallmentRoutes');
 const incomeExpenseRoutes = require('./routes/admin/incomeExpenseRoutes');
+const incomeRoutes = require('./routes/admin/incomeRoutes');
+const expenseRoutes = require('./routes/admin/expenseRoutes');
 const examTermRoutes = require('./routes/admin/examTermRoutes');
 
 
 const Joi = require('joi');
 const cors = require('cors');
+const path = require('path');
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from uploads folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
@@ -43,11 +51,14 @@ app.use('/admin/studentInfo', studentInfo);
 app.use('/admin/dropdown', dropdown);
 app.use('/admin/hr', hr);
 app.use('/admin/studentsAttendance', studentsAttendance);
+app.use('/admin/studentLeave', studentLeaveRoutes);
 app.use('/admin/fees', feesRoutes);
 app.use('/admin/feeStructure', feesStructureRoutes);
 app.use('/admin/studentFee', studentFeeRoutes);
 app.use('/admin/studentFeeInstallment', studentFeeInstallmentRoutes);
 app.use('/admin/incomeExpense', incomeExpenseRoutes);
+app.use('/admin/income', incomeRoutes);
+app.use('/admin/expense', expenseRoutes);
 app.use('/admin/examTerm', examTermRoutes);
 
 
