@@ -23,6 +23,8 @@ const incomeExpenseRoutes = require('./routes/admin/incomeExpenseRoutes');
 const incomeRoutes = require('./routes/admin/incomeRoutes');
 const expenseRoutes = require('./routes/admin/expenseRoutes');
 const examTermRoutes = require('./routes/admin/examTermRoutes');
+const settingRoutes = require('./routes/admin/setting');
+const classTimetableRoutes = require('./routes/admin/classTimetableRoutes');
 
 
 const Joi = require('joi');
@@ -60,6 +62,8 @@ app.use('/admin/incomeExpense', incomeExpenseRoutes);
 app.use('/admin/income', incomeRoutes);
 app.use('/admin/expense', expenseRoutes);
 app.use('/admin/examTerm', examTermRoutes);
+app.use('/admin/setting', settingRoutes);
+app.use('/admin/timetable', classTimetableRoutes);
 
 
 

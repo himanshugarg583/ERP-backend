@@ -1,4 +1,4 @@
-const {User,Teacher,ClassSection} = require('../../models');
+const {User,Teacher,ClassSection,Student} = require('../../models');
 
 const getTeacherDropdown = async (req, res) => {
   try {
@@ -57,4 +57,66 @@ const getClassDropdown = async (req, res) => {
   }
 };
 
-module.exports = { getTeacherDropdown,getClassDropdown };
+const getStudentsByClass = async (req, res) => {
+  try {
+    const { class_id } = req.params;
+
+    // Validate class_id
+    if (!class_id) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Class ID is required"
+      });
+    }
+
+    // Check if class exists
+    const classSection = await ClassSection.findByPk(class_id);
+
+    if (!classSection) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Class section not found"
+      });
+    }
+
+    // Get all students for this class
+    const students = await Student.findAll({
+      where: {
+        class_section_id: class_id
+      },
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'name']
+        }
+      ],
+      attributes: [],
+      order: [['roll_number', 'ASC']]
+    });
+
+    // Format response to show only user id and name
+    const formattedStudents = students.map(student => ({
+      id: student.User ? student.User.id : null,
+      name: student.User ? student.User.name : 'N/A'
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: `Students fetched successfully for ${classSection.class_name}-${classSection.section_name}`,
+      data: formattedStudents
+    });
+
+  } catch (error) {
+    console.error("Get Students By Class Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
+module.exports = { getTeacherDropdown,getClassDropdown,getStudentsByClass };

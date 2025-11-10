@@ -11,6 +11,6 @@ const validate = require('../middlewares/validationMiddleware');
 
 router.post('/register', validate(userValidationSchema),register);
 router.post('/login', login);
-router.post('/login', logout);
+router.post('/logout', logout);
 
 module.exports = router;

@@ -3,8 +3,8 @@ const router = express.Router();
 
 const { authMiddleware,isAdmin } = require('../../middlewares/authMiddleware');
 const { getStudentCredentials } = require('../../controllers/admin/student info/getStudentCredentials');
-const { getClassDropdown } = require('../../controllers/admin/academics/classController');
-
+const { getClassDropdown } = require('../../controllers/admin/dropdowns');
+const { getStudentReportByClass, getParentReportByClass } = require('../../controllers/admin/student info/studentReports');
 
 const {addStudent,getSingleStudent,updateStudent,
   getStudentStats,getClassWiseStudentStats}= require('../../controllers/admin/student info/Addstudent')
@@ -30,7 +30,12 @@ router.post('/addStudent', studentUpload.fields([
 
   router.get('/getClassDropdown',getClassDropdown);
   
+  
   // student crediential
   router.get('/getStudentCredentials',authMiddleware,isAdmin,getStudentCredentials);
   
-module.exports = router;
+  // Student reports
+  router.get('/getStudentReport/:class_id',getStudentReportByClass);
+  router.get('/getParentReport/:class_id',getParentReportByClass);
+  
+  module.exports = router;
