@@ -1,4 +1,4 @@
-const {User,Teacher,ClassSection,Student} = require('../../models');
+const {User,Teacher,ClassSection,Student,ExamTerm,Exam} = require('../../models');
 
 const getTeacherDropdown = async (req, res) => {
   try {
@@ -119,4 +119,76 @@ const getStudentsByClass = async (req, res) => {
   }
 };
 
-module.exports = { getTeacherDropdown,getClassDropdown,getStudentsByClass };
+const getExamTermDropdown = async (req, res) => {
+  try {
+    const examTerms = await ExamTerm.findAll({
+      where: {
+        status: 'active'
+      },
+      attributes: ['id', 'term_name', 'academic_year'],
+      order: [['academic_year', 'DESC'], ['term_name', 'ASC']]
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Exam terms fetched successfully",
+      data: examTerms
+    });
+
+  } catch (error) {
+    console.error("Get Exam Term Dropdown Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
+const getExamDropdown = async (req, res) => {
+  try {
+    const { term_id } = req.query;
+
+    const whereCondition = {};
+    if (term_id) {
+      whereCondition.term_id = term_id;
+    }
+
+    const exams = await Exam.findAll({
+      where: whereCondition,
+      include: [
+        {
+          model: ExamTerm,
+          as: 'term',
+          attributes: ['term_name', 'academic_year']
+        }
+      ],
+      attributes: ['id', 'exam_name', 'status'],
+      order: [['exam_name', 'ASC']]
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Exams fetched successfully",
+      data: exams
+    });
+
+  } catch (error) {
+    console.error("Get Exam Dropdown Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
+module.exports = { 
+  getTeacherDropdown,
+  getClassDropdown,
+  getStudentsByClass,
+  getExamTermDropdown,
+  getExamDropdown
+};

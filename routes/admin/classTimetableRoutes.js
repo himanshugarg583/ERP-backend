@@ -16,10 +16,8 @@ router.post('/create', authMiddleware, isAdmin, createTimetable);
 
 // Get timetable by class
 router.get('/getByClass/:class_id', getTimetableByClass);
-
 // Get timetable by teacher (using user_id)
 router.get('/getByTeacher/:user_id', getTimetableByTeacher);
-
 // Delete timetable entry
 router.delete('/delete/:id', authMiddleware, isAdmin, deleteTimetableEntry);
 

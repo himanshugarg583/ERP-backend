@@ -22,7 +22,11 @@ const studentFeeInstallmentRoutes = require('./routes/admin/studentFeeInstallmen
 const incomeExpenseRoutes = require('./routes/admin/incomeExpenseRoutes');
 const incomeRoutes = require('./routes/admin/incomeRoutes');
 const expenseRoutes = require('./routes/admin/expenseRoutes');
-const examTermRoutes = require('./routes/admin/examTermRoutes');
+const examTermRoutes = require('./routes/admin/exam/examTermRoutes');
+const examRoutes = require('./routes/admin/exam/examRoutes');
+const examTimetableRoutes = require('./routes/admin/exam/examTimetableRoutes');
+const examMarkRoutes = require('./routes/admin/exam/examMarkRoutes');
+const admitCardRoutes = require('./routes/admin/admitCardRoutes');
 const settingRoutes = require('./routes/admin/setting');
 const classTimetableRoutes = require('./routes/admin/classTimetableRoutes');
 
@@ -61,10 +65,13 @@ app.use('/admin/studentFeeInstallment', studentFeeInstallmentRoutes);
 app.use('/admin/incomeExpense', incomeExpenseRoutes);
 app.use('/admin/income', incomeRoutes);
 app.use('/admin/expense', expenseRoutes);
-app.use('/admin/examTerm', examTermRoutes);
 app.use('/admin/setting', settingRoutes);
 app.use('/admin/timetable', classTimetableRoutes);
-
+app.use('/admin/examTerm', examTermRoutes);
+app.use('/admin/exam', examRoutes);
+app.use('/admin/examTimetable', examTimetableRoutes);
+app.use('/admin/examMark', examMarkRoutes);
+app.use('/admin/admitCard', admitCardRoutes);
 
 
 // Start server only after database connection is established

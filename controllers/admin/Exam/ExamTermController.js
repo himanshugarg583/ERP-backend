@@ -84,8 +84,6 @@ const getAllExamTerms = async (req, res) => {
       academic_year,
       status,
       term_name,
-      page = 1,
-      limit = 50,
       sort_by = 'created_at',
       sort_order = 'DESC'
     } = req.query;
@@ -97,15 +95,12 @@ const getAllExamTerms = async (req, res) => {
     if (status) whereConditions.status = status;
     if (term_name) whereConditions.term_name = { [Op.like]: `%${term_name}%` };
 
-    // Calculate pagination
-    const offset = (parseInt(page) - 1) * parseInt(limit);
-
     // Validate sort fields
     const allowedSortFields = ['term_name', 'academic_year', 'start_date', 'end_date', 'status', 'created_at'];
     const sortField = allowedSortFields.includes(sort_by) ? sort_by : 'created_at';
     const sortDirection = ['ASC', 'DESC'].includes(sort_order.toUpperCase()) ? sort_order.toUpperCase() : 'DESC';
 
-    const examTerms = await ExamTerm.findAndCountAll({
+    const examTerms = await ExamTerm.findAll({
       where: whereConditions,
       include: [
         {
@@ -114,24 +109,14 @@ const getAllExamTerms = async (req, res) => {
           attributes: ['id', 'exam_name', 'start_date', 'end_date', 'status']
         }
       ],
-      order: [[sortField, sortDirection]],
-      limit: parseInt(limit),
-      offset: offset
+      order: [[sortField, sortDirection]]
     });
 
     res.status(200).json({
       success: true,
       statusCode: 200,
       message: "Exam terms fetched successfully",
-      data: {
-        exam_terms: examTerms.rows,
-        pagination: {
-          current_page: parseInt(page),
-          total_pages: Math.ceil(examTerms.count / parseInt(limit)),
-          total_records: examTerms.count,
-          per_page: parseInt(limit)
-        }
-      }
+      data: examTerms
     });
 
   } catch (error) {
@@ -391,96 +376,7 @@ const deleteExamTerm = async (req, res) => {
   }
 };
 
-// Get active exam terms
-const getActiveExamTerms = async (req, res) => {
-  try {
-    const { academic_year } = req.query;
 
-    const whereConditions = { status: 'active' };
-    
-    if (academic_year) {
-      whereConditions.academic_year = academic_year;
-    }
-
-    const activeTerms = await ExamTerm.findAll({
-      where: whereConditions,
-      attributes: ['id', 'term_name', 'academic_year', 'start_date', 'end_date', 'status'],
-      order: [['start_date', 'ASC'], ['term_name', 'ASC']]
-    });
-
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Active exam terms fetched successfully",
-      data: {
-        active_terms: activeTerms,
-        count: activeTerms.length
-      }
-    });
-
-  } catch (error) {
-    console.error("Get Active Exam Terms Error:", error);
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "Internal Server Error"
-    });
-  }
-};
-
-// Get exam terms by academic year
-const getExamTermsByAcademicYear = async (req, res) => {
-  try {
-    const { academic_year } = req.params;
-
-    if (!academic_year) {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: "Academic year is required"
-      });
-    }
-
-    const examTerms = await ExamTerm.findAll({
-      where: { academic_year },
-      include: [
-        {
-          model: Exam,
-          as: 'exams',
-          attributes: ['id', 'exam_name', 'start_date', 'end_date', 'status']
-        }
-      ],
-      order: [['start_date', 'ASC']]
-    });
-
-    if (examTerms.length === 0) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "No exam terms found for this academic year"
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Exam terms fetched successfully",
-      data: {
-        academic_year,
-        exam_terms: examTerms,
-        count: examTerms.length
-      }
-    });
-
-  } catch (error) {
-    console.error("Get Exam Terms By Academic Year Error:", error);
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "Internal Server Error"
-    });
-  }
-};
 
 module.exports = {
   createExamTerm,
@@ -488,6 +384,5 @@ module.exports = {
   getSingleExamTerm,
   updateExamTerm,
   deleteExamTerm,
-  getActiveExamTerms,
-  getExamTermsByAcademicYear
+ 
 };
