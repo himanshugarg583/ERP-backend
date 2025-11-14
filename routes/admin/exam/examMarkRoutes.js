@@ -10,13 +10,13 @@ const {
   getCompleteMarksheet
 } = require('../../../controllers/admin/exam/ExamMarkController');
 
-// 1. Register marks for ONE student (all subjects)
+//  Register marks for ONE student (all subjects)
 router.post('/registerStudent', authMiddleware, isAdmin, registerStudentMarks);
 
-// 2. Update marks for ONE subject (all students in class)
+//  Update marks for ONE subject (all students in class)
 router.post('/updateSubject', authMiddleware, isAdmin, updateSubjectMarks);
 
-// 3. Bulk update marks for ALL students (all subjects)
+//  Bulk update marks for ALL students (all subjects)
 router.post('/bulkUpdateAll', authMiddleware, isAdmin, bulkUpdateAllMarks);
 
 // Get marks by exam schedule and subject

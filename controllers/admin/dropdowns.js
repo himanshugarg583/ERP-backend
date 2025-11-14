@@ -157,14 +157,7 @@ const getExamDropdown = async (req, res) => {
 
     const exams = await Exam.findAll({
       where: whereCondition,
-      include: [
-        {
-          model: ExamTerm,
-          as: 'term',
-          attributes: ['term_name', 'academic_year']
-        }
-      ],
-      attributes: ['id', 'exam_name', 'status'],
+      attributes: ['id', 'exam_name'],
       order: [['exam_name', 'ASC']]
     });
 

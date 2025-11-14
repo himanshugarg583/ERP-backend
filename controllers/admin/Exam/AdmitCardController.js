@@ -1,21 +1,22 @@
-const { Student, User, ClassSection, ExamSchedule, Exam, ExamTerm, ExamTimetable, Subject, Teacher } = require('../../../models');
+const { Student, User, ClassSection, ExamSchedule, Exam, ExamTerm, ExamTimetable, Subject, Teacher, StudentParent } = require('../../../models');
 
-// Get student admit card by student ID and exam schedule ID
+// Get student admit card by user ID and exam schedule ID
 const getStudentAdmitCard = async (req, res) => {
   try {
-    const { student_id, exam_schedule_id } = req.query;
+    const { user_id, exam_schedule_id } = req.query;
 
     // Validation
-    if (!student_id || !exam_schedule_id) {
+    if (!user_id || !exam_schedule_id) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "Student ID and exam schedule ID are required"
+        message: "User ID and exam schedule ID are required"
       });
     }
 
-    // Get student details
-    const student = await Student.findByPk(student_id, {
+    // Get student details by user_id
+    const student = await Student.findOne({
+      where: { user_id: user_id },
       include: [
         {
           model: User,
@@ -284,7 +285,103 @@ const getClassAdmitCards = async (req, res) => {
   }
 };
 
+// Get student list for exam based on term_id, exam_id, and class_section_id
+const getExamStudentList = async (req, res) => {
+  try {
+    const { term_id, exam_id, class_section_id } = req.query;
+
+    // Validation
+    if (!term_id || !exam_id || !class_section_id) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Term ID, Exam ID, and Class Section ID are required"
+      });
+    }
+
+    // Verify exam belongs to the term
+    const exam = await Exam.findOne({
+      where: {
+        id: exam_id,
+        term_id: term_id
+      }
+    });
+
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Exam not found for the given term"
+      });
+    }
+
+    // Get exam schedule for the class
+    const examSchedule = await ExamSchedule.findOne({
+      where: {
+        exam_id: exam_id,
+        class_section_id: class_section_id
+      }
+    });
+
+    if (!examSchedule) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Exam schedule not found for this class"
+      });
+    }
+
+    // Get all students in the class with parent details
+    const students = await Student.findAll({
+      where: {
+        class_section_id: class_section_id
+      },
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'name']
+        },
+        {
+          model: StudentParent,
+          as: 'parentDetails',
+          attributes: ['father_name']
+        }
+      ],
+      attributes: ['id', 'roll_number'],
+      order: [['roll_number', 'ASC']]
+    });
+
+    const studentList = students.map(student => ({
+      exam_schedule_id: examSchedule.id,
+      user_id: student.User?.id,
+      student_name: student.User?.name,
+      roll_number: student.roll_number,
+      father_name: student.parentDetails?.father_name || 'N/A'
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Student list fetched successfully",
+      data: {
+        exam_schedule_id: examSchedule.id,
+        total_students: studentList.length,
+        students: studentList
+      }
+    });
+
+  } catch (error) {
+    console.error("Get Exam Student List Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
 module.exports = {
   getStudentAdmitCard,
-  getClassAdmitCards
+  getClassAdmitCards,
+  getExamStudentList
 };

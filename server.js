@@ -26,7 +26,7 @@ const examTermRoutes = require('./routes/admin/exam/examTermRoutes');
 const examRoutes = require('./routes/admin/exam/examRoutes');
 const examTimetableRoutes = require('./routes/admin/exam/examTimetableRoutes');
 const examMarkRoutes = require('./routes/admin/exam/examMarkRoutes');
-const admitCardRoutes = require('./routes/admin/admitCardRoutes');
+const admitCardRoutes = require('./routes/admin/exam/admitCardRoutes');
 const settingRoutes = require('./routes/admin/setting');
 const classTimetableRoutes = require('./routes/admin/classTimetableRoutes');
 

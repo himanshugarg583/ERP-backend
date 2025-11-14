@@ -1,4 +1,4 @@
-const { ExamTimetable, ExamSchedule, Exam, ClassSection, Subject, Teacher, User } = require('../../../models');
+const { ExamTimetable, ExamSchedule, Exam, ExamTerm, ClassSection, Subject, Teacher, User } = require('../../../models');
 const { Op } = require('sequelize');
 const sequelize = require('../../../config/db');
 
@@ -10,8 +10,6 @@ const createExamTimetable = async (req, res) => {
     const {
       exam_id,
       class_section_id,
-      total_marks,
-      passing_marks,
       remarks,
       timetable // Array of subjects with their exam details
     } = req.body;
@@ -130,12 +128,21 @@ const createExamTimetable = async (req, res) => {
       }
     }
 
-    // Create exam schedule
+    // Calculate total marks and passing marks from timetable
+    const calculatedTotalMarks = timetable.reduce((sum, entry) => {
+      return sum + (parseFloat(entry.max_marks) || 100);
+    }, 0);
+
+    const calculatedPassingMarks = timetable.reduce((sum, entry) => {
+      return sum + (parseFloat(entry.passing_marks) || 33);
+    }, 0);
+
+    // Create exam schedule with calculated marks
     const examSchedule = await ExamSchedule.create({
       exam_id,
       class_section_id,
-      total_marks: total_marks || 100,
-      passing_marks: passing_marks || 33,
+      total_marks: calculatedTotalMarks,
+      passing_marks: calculatedPassingMarks,
       remarks: remarks || null
     }, { transaction });
 
@@ -676,6 +683,86 @@ const deleteExamSchedule = async (req, res) => {
   }
 };
 
+// Get all scheduled exams for a class (only basic info)
+const getClassScheduledExams = async (req, res) => {
+  try {
+    const { class_section_id } = req.params;
+
+    if (!class_section_id || isNaN(parseInt(class_section_id))) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Valid class section ID is required"
+      });
+    }
+
+    // Check if class exists
+    const classSection = await ClassSection.findByPk(class_section_id);
+    if (!classSection) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Class section not found"
+      });
+    }
+
+    // Get all exam schedules for this class
+    const examSchedules = await ExamSchedule.findAll({
+      where: { class_section_id },
+      include: [
+        {
+          model: Exam,
+          as: 'exam',
+          attributes: ['id', 'exam_name'],
+          include: [
+            {
+              model: ExamTerm,
+              as: 'term',
+              attributes: ['id', 'term_name', 'academic_year']
+            }
+          ]
+        }
+      ],
+      attributes: ['id', 'total_marks', 'passing_marks', 'created_at'],
+      order: [[{ model: Exam, as: 'exam' }, 'exam_name', 'ASC']]
+    });
+
+    // Format response
+    const scheduledExams = examSchedules.map(schedule => ({
+      exam_schedule_id: schedule.id,
+      term_name: schedule.exam?.term?.term_name,
+      academic_year: schedule.exam?.term?.academic_year,
+      exam_name: schedule.exam?.exam_name,
+      total_marks: schedule.total_marks,
+      passing_marks: schedule.passing_marks,
+      created_at: schedule.created_at
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Scheduled exams fetched successfully",
+      data: {
+        class_info: {
+          class_id: classSection.id,
+          class_name: classSection.class_name,
+          section_name: classSection.section_name
+        },
+        total_scheduled_exams: scheduledExams.length,
+        scheduled_exams: scheduledExams
+      }
+    });
+
+  } catch (error) {
+    console.error("Get Class Scheduled Exams Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
 module.exports = {
   createExamTimetable,
   getExamTimetableBySchedule,
@@ -683,5 +770,6 @@ module.exports = {
   getAllExamSchedulesByExam,
   updateExamTimetableEntry,
   deleteExamTimetableEntry,
-  deleteExamSchedule
+  deleteExamSchedule,
+  getClassScheduledExams
 };
