@@ -388,6 +388,90 @@ const getTeacherStats = async (req, res) => {
 };
 
 
+const getTeacherCredentials = async (req, res) => {
+  try {
+    const teachers = await User.findAll({
+      where: {
+        role: "teacher",
+        status: "active"
+      },
+      include: {
+        model: Teacher,
+        as: "teacherDetails",
+        attributes: ['role']
+      },
+      attributes: ['id', 'name', 'email', 'password'],
+      order: [['name', 'ASC']]
+    });
+
+    const credentials = teachers.map(teacher => ({
+      teacher_id: teacher.id,
+      name: teacher.name,
+      email: teacher.email,
+      password: teacher.password,
+      role: teacher.teacherDetails?.role || 'N/A'
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Teacher credentials fetched successfully",
+      data: credentials
+    });
+
+  } catch (error) {
+    console.error("Get Teacher Credentials Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
 
 
-module.exports = { addTeacher ,updateTeacher,softDeleteTeacher,getdeleteTeachers,getAllTeachers,reactivateTeacher,getSingleTeacher,getTeacherStats};
+const getTeacherSalary = async (req, res) => {
+  try {
+    const teachers = await User.findAll({
+      where: {
+        role: "teacher",
+        status: "active"
+      },
+      include: {
+        model: Teacher,
+        as: "teacherDetails",
+        attributes: ['role', 'salary']
+      },
+      attributes: ['id', 'name', 'email'],
+      order: [['name', 'ASC']]
+    });
+
+    const salaryData = teachers.map(teacher => ({
+      teacher_id: teacher.id,
+      name: teacher.name,
+      email: teacher.email,
+      salary: teacher.teacherDetails?.salary || 0,
+      role: teacher.teacherDetails?.role || 'N/A'
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Teacher salary data fetched successfully",
+      data: salaryData
+    });
+
+  } catch (error) {
+    console.error("Get Teacher Salary Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
+
+
+
+module.exports = { addTeacher ,updateTeacher,softDeleteTeacher,getdeleteTeachers,getAllTeachers,reactivateTeacher,getSingleTeacher,getTeacherStats,getTeacherCredentials,getTeacherSalary};

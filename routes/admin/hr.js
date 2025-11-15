@@ -8,7 +8,9 @@ const { addTeacher ,updateTeacher,
     getAllTeachers,
     reactivateTeacher,
     getSingleTeacher,
-    getTeacherStats} = require('../../controllers/admin/HR/AddTeacher');
+    getTeacherStats,
+    getTeacherCredentials,
+    getTeacherSalary} = require('../../controllers/admin/HR/AddTeacher');
 
 // const {addStudent,getSingleStudent,updateStudent,
 //   getStudentStats,getClassWiseStudentStats}= require('../../controllers/admin/student info/Addstudent')
@@ -21,6 +23,8 @@ router.post('/register/addTeacher',teacherUpload.single('image'),addTeacher);
 // router.delete('/softDeleteTeacher/:userId',softDeleteTeacher);
 // router.get('/getdeleteTeachers',getdeleteTeachers);
 router.get('/getAllTeachers',getAllTeachers);
+router.get('/getTeacherCredentials',getTeacherCredentials);
+router.get('/getTeacherSalary',getTeacherSalary);
 // router.patch('/reactivateTeacher/:userId',reactivateTeacher);
 // router.get('/getSingleTeacher/:userId',getSingleTeacher);
 // router.get('/getTeacherStats',getTeacherStats);

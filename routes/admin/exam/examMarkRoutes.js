@@ -19,7 +19,7 @@ router.post('/updateSubject', authMiddleware, isAdmin, updateSubjectMarks);
 //  Bulk update marks for ALL students (all subjects)
 router.post('/bulkUpdateAll', authMiddleware, isAdmin, bulkUpdateAllMarks);
 
-// Get marks by exam schedule and subject
+// Get marks by exam schedule and subjectc
 router.get('/getByScheduleAndSubject', getMarksByScheduleAndSubject);
 
 // Get all marks for a student in an exam
