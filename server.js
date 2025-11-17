@@ -32,6 +32,8 @@ const classTimetableRoutes = require('./routes/admin/classTimetableRoutes');
 // teacher
 const classattendanceRoutes = require('./routes/teacher/classAttendanceRoutes');
 const teacherTimetableRoutes = require('./routes/teacher/teacherTimetableRoutes');
+// student
+const studentRoutes = require('./routes/student/studentRoutes');
 
 
 const Joi = require('joi');
@@ -77,8 +79,11 @@ app.use('/admin/examMark', examMarkRoutes);
 app.use('/admin/admitCard', admitCardRoutes);
 
 // TEACHER ROUTES
-app.use('/classattendance', classattendanceRoutes);
-app.use('/teacherTimetable', teacherTimetableRoutes);
+app.use('/teacher', classattendanceRoutes);
+app.use('/teacher', teacherTimetableRoutes);
+
+// STUDENT ROUTES
+app.use('/studentattendance', studentRoutes);
 
 
 // Start server only after database connection is established
