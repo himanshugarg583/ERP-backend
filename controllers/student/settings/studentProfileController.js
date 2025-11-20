@@ -1,4 +1,5 @@
 const { Student, User, ClassSection, Teacher, StudentParent } = require('../../../models');
+const bcrypt = require('bcrypt');
 
 // Get student profile
 const getStudentProfile = async (req, res) => {
@@ -21,7 +22,7 @@ const getStudentProfile = async (req, res) => {
             {
               model: Teacher,
               as: 'classTeacher',
-              attributes: ['id', 'mobile', 'qualification', 'role'],
+              attributes: ['id', 'mobile_no'],
               include: [
                 {
                   model: User,
@@ -41,31 +42,25 @@ const getStudentProfile = async (req, res) => {
             'mother_name',
             'mother_phone',
             'mother_occupation',
-            'email',
-            'address'
+            'email'
           ]
         }
       ],
       attributes: [
         'id',
         'roll_number',
-        'admission_number',
         'admission_date',
-        'DOB',
+        'dob',
         'gender',
-        'blood_group',
-        'religion',
-        'caste',
-        'category',
-        'mobile',
-        'email',
-        'current_address',
-        'permanent_address',
+        'address',
+        'phone_no',
+        'previous_school_name',
+        'aadhar_no',
+        'tc',
+        'marksheet',
         'image',
-        'previous_school',
-        'previous_class',
-        'tc_number',
-        'tc_issue_date'
+        'aadhar_card',
+        'sign'
       ]
     });
 
@@ -83,17 +78,13 @@ const getStudentProfile = async (req, res) => {
         student_id: student.id,
         user_id: student.User?.id,
         name: student.User?.name,
-        email: student.User?.email || student.email,
+        email: student.User?.email,
         roll_number: student.roll_number,
-        admission_number: student.admission_number,
         admission_date: student.admission_date,
-        date_of_birth: student.DOB,
+        date_of_birth: student.dob,
         gender: student.gender,
-        blood_group: student.blood_group,
-        religion: student.religion,
-        caste: student.caste,
-        category: student.category,
-        mobile: student.mobile,
+        phone_no: student.phone_no,
+        aadhar_no: student.aadhar_no,
         image: student.image,
         account_status: student.User?.status
       },
@@ -104,15 +95,14 @@ const getStudentProfile = async (req, res) => {
         class_display: student.ClassSection ? `${student.ClassSection.class_name} ${student.ClassSection.section_name}` : 'N/A',
         room_no: student.ClassSection?.room_No,
         class_capacity: student.ClassSection?.capacity,
-        previous_school: student.previous_school,
-        previous_class: student.previous_class,
-        tc_number: student.tc_number,
-        tc_issue_date: student.tc_issue_date
+        previous_school_name: student.previous_school_name,
+        tc: student.tc,
+        marksheet: student.marksheet
       },
       class_teacher_info: student.ClassSection?.classTeacher ? {
         name: student.ClassSection.classTeacher.User?.name,
         email: student.ClassSection.classTeacher.User?.email,
-        phone: student.ClassSection.classTeacher.mobile
+        phone: student.ClassSection.classTeacher.mobile_no
       } : null,
       parent_info: student.parentDetails ? {
         father_name: student.parentDetails.father_name,
@@ -121,12 +111,17 @@ const getStudentProfile = async (req, res) => {
         mother_name: student.parentDetails.mother_name,
         mother_phone: student.parentDetails.mother_phone,
         mother_occupation: student.parentDetails.mother_occupation,
-        parent_email: student.parentDetails.email,
-        address: student.parentDetails.address
+        parent_email: student.parentDetails.email
       } : null,
       address_info: {
-        current_address: student.current_address,
-        permanent_address: student.permanent_address
+        address: student.address
+      },
+      documents: {
+        image: student.image,
+        aadhar_card: student.aadhar_card,
+        tc: student.tc,
+        marksheet: student.marksheet,
+        sign: student.sign
       }
     };
 
@@ -147,6 +142,80 @@ const getStudentProfile = async (req, res) => {
   }
 };
 
+// Change student password
+const changeStudentPassword = async (req, res) => {
+  try {
+    // Get user_id from auth token
+    const user_id = req.user.id;
+    const { current_password, new_password, confirm_new_password } = req.body;
+
+    // Validate input
+    if (!current_password || !new_password || !confirm_new_password) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Current password, new password and confirm new password are required"
+      });
+    }
+
+    // Check if new passwords match
+    if (new_password !== confirm_new_password) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "New password and confirm new password do not match"
+      });
+    }
+
+    // Validate new password length
+    if (new_password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "New password must be at least 6 characters long"
+      });
+    }
+
+    // Find user
+    const user = await User.findOne({ where: { id: user_id } });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "User not found"
+      });
+    }
+
+    // Verify current password
+    if (current_password !== user.password) {
+      return res.status(401).json({
+        success: false,
+        statusCode: 401,
+        message: "Current password is incorrect"
+      });
+    }
+
+    // Update password (direct save without hashing)
+    await user.update({ password: new_password });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Password changed successfully"
+    });
+
+  } catch (error) {
+    console.error("Change Student Password Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
 module.exports = {
-  getStudentProfile
+  getStudentProfile,
+  changeStudentPassword
 };
