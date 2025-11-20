@@ -110,13 +110,9 @@ const getStudentProfile = async (req, res) => {
         tc_issue_date: student.tc_issue_date
       },
       class_teacher_info: student.ClassSection?.classTeacher ? {
-        teacher_id: student.ClassSection.classTeacher.id,
-        teacher_user_id: student.ClassSection.classTeacher.User?.id,
         name: student.ClassSection.classTeacher.User?.name,
         email: student.ClassSection.classTeacher.User?.email,
-        mobile: student.ClassSection.classTeacher.mobile,
-        qualification: student.ClassSection.classTeacher.qualification,
-        role: student.ClassSection.classTeacher.role
+        phone: student.ClassSection.classTeacher.mobile
       } : null,
       parent_info: student.parentDetails ? {
         father_name: student.parentDetails.father_name,
