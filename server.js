@@ -29,9 +29,12 @@ const examMarkRoutes = require('./routes/admin/exam/examMarkRoutes');
 const admitCardRoutes = require('./routes/admin/exam/admitCardRoutes');
 const settingRoutes = require('./routes/admin/setting');
 const classTimetableRoutes = require('./routes/admin/classTimetableRoutes');
+const certificateRoutes = require('./routes/admin/certificate');
 // teacher
 const classattendanceRoutes = require('./routes/teacher/classAttendanceRoutes');
 const teacherTimetableRoutes = require('./routes/teacher/teacherTimetableRoutes');
+const teacherSubjectRoutes = require('./routes/teacher/teacherSubjectRoutes');
+const teacherSettingRoutes = require('./routes/teacher/teacherSettingRoutes');
 // student
 const studentRoutes = require('./routes/student/studentRoutes');
 const studentSettingRoutes = require('./routes/student/settingRoutes');
@@ -78,10 +81,13 @@ app.use('/admin/exam', examRoutes);
 app.use('/admin/examTimetable', examTimetableRoutes);
 app.use('/admin/examMark', examMarkRoutes);
 app.use('/admin/admitCard', admitCardRoutes);
+app.use('/admin/certificate', certificateRoutes);
 
 // TEACHER ROUTES
 app.use('/classattendance', classattendanceRoutes);
 app.use('/teacherTimetable', teacherTimetableRoutes);
+app.use('/teacher/subject', teacherSubjectRoutes);
+app.use('/teacher/setting', teacherSettingRoutes);
 
 // STUDENT ROUTES
 app.use('/studentattendance', studentRoutes);
