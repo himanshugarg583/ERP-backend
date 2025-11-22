@@ -38,6 +38,7 @@ const teacherSettingRoutes = require('./routes/teacher/teacherSettingRoutes');
 // student
 const studentRoutes = require('./routes/student/studentRoutes');
 const studentSettingRoutes = require('./routes/student/settingRoutes');
+const studentFeesRoutes = require('./routes/student/studentFees');
 
 
 const Joi = require('joi');
@@ -92,6 +93,7 @@ app.use('/teacher/setting', teacherSettingRoutes);
 // STUDENT ROUTES
 app.use('/studentattendance', studentRoutes);
 app.use('/student/setting', studentSettingRoutes);
+app.use('/student/fees', studentFeesRoutes);
 
 
 // Start server only after database connection is established
