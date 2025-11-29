@@ -30,6 +30,14 @@ const { ExamMark } = require('./admin/exam/examMark');
 // student leave
 const { StudentLeave } = require('./admin/StudentLeave');
 
+// content uploads
+const { SubjectResource } = require('./admin/content uploads/subject_resources');
+const { ClassResource } = require('./admin/content uploads/class_resources');
+
+// notices
+const { Notice } = require('./admin/notices/notices');
+const { NoticeTarget } = require('./admin/notices/notice_targets');
+
 
 // User ↔ Student
 User.hasOne(Student, { foreignKey: 'user_id', as: "studentDetails" });
@@ -182,6 +190,54 @@ ExamMark.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
 Subject.hasMany(ExamMark, { foreignKey: 'subject_id', as: 'subjectMarks', onDelete: 'CASCADE' });
 ExamMark.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
 
+// =====================================================
+// CONTENT UPLOADS ASSOCIATIONS
+// =====================================================
+
+// 1. ClassSection ↔ SubjectResource (One-to-Many)
+ClassSection.hasMany(SubjectResource, { foreignKey: 'class_section_id', as: 'subjectResources', onDelete: 'CASCADE' });
+SubjectResource.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
+
+// 2. Subject ↔ SubjectResource (One-to-Many)
+Subject.hasMany(SubjectResource, { foreignKey: 'subject_id', as: 'resources', onDelete: 'CASCADE' });
+SubjectResource.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
+
+// 3. Teacher ↔ SubjectResource (One-to-Many)
+Teacher.hasMany(SubjectResource, { foreignKey: 'teacher_id', as: 'uploadedSubjectResources', onDelete: 'SET NULL' });
+SubjectResource.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
+
+// 4. ClassSection ↔ ClassResource (One-to-Many)
+ClassSection.hasMany(ClassResource, { foreignKey: 'class_section_id', as: 'classResources', onDelete: 'CASCADE' });
+ClassResource.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
+
+// 5. Teacher ↔ ClassResource (One-to-Many)
+Teacher.hasMany(ClassResource, { foreignKey: 'teacher_id', as: 'uploadedClassResources', onDelete: 'SET NULL' });
+ClassResource.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
+
+// =====================================================
+// NOTICES ASSOCIATIONS
+// =====================================================
+
+// 1. Notice ↔ NoticeTarget (One-to-Many)
+Notice.hasMany(NoticeTarget, { foreignKey: 'notice_id', as: 'targets', onDelete: 'CASCADE' });
+NoticeTarget.belongsTo(Notice, { foreignKey: 'notice_id', as: 'notice' });
+
+// 2. Teacher ↔ Notice (One-to-Many) - created_by
+Teacher.hasMany(Notice, { foreignKey: 'created_by', as: 'createdNotices', onDelete: 'SET NULL' });
+Notice.belongsTo(Teacher, { foreignKey: 'created_by', as: 'createdByTeacher' });
+
+// 3. ClassSection ↔ NoticeTarget (One-to-Many)
+ClassSection.hasMany(NoticeTarget, { foreignKey: 'class_section_id', as: 'noticeTargets', onDelete: 'CASCADE' });
+NoticeTarget.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
+
+// 4. Student ↔ NoticeTarget (One-to-Many)
+Student.hasMany(NoticeTarget, { foreignKey: 'student_id', as: 'noticeTargets', onDelete: 'CASCADE' });
+NoticeTarget.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+// 5. Teacher ↔ NoticeTarget (One-to-Many)
+Teacher.hasMany(NoticeTarget, { foreignKey: 'teacher_id', as: 'noticeTargets', onDelete: 'CASCADE' });
+NoticeTarget.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
+
 
 module.exports = {
   sequelize,
@@ -211,5 +267,13 @@ module.exports = {
   ExamMark,
 
   // Student Leave
-  StudentLeave
+  StudentLeave,
+
+  // Content Uploads
+  SubjectResource,
+  ClassResource,
+
+  // Notices
+  Notice,
+  NoticeTarget
 };

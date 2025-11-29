@@ -25,7 +25,7 @@ router.delete('/delete/:id', authMiddleware, isAdmin, deleteTimetableEntry);
 router.post('/saveWeek', authMiddleware, isAdmin, saveWeekTimetable);
 
 // Bulk create timetable for whole week (Old method - backward compatibility)
-router.post('/bulkCreate', authMiddleware, isAdmin, bulkCreateTimetable);
+router.post('/bulkCreate',  bulkCreateTimetable);
 
 // Check teacher clash
 router.post('/checkClash', checkTeacherClash);

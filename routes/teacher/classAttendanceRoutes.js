@@ -4,7 +4,7 @@ const { authMiddleware } = require('../../middlewares/authMiddleware');
 const { getTeacherClasses, getClassStudentList, markClassAttendance, getClassAttendanceByDate } = require('../../controllers/teacher/attendance/TeacherClassController');
 
 // Get all classes assigned to a teacher
-router.get('/getTeacherClasses/:user_id', getTeacherClasses);
+router.get('/getTeacherClasses', authMiddleware, getTeacherClasses);
 
 // Get student list by class_section_id
 router.get('/getClassStudentList/:class_section_id', getClassStudentList);

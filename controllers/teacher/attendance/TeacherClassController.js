@@ -3,16 +3,8 @@ const { Teacher, ClassSection, Student, User } = require('../../../models');
 // Get all classes assigned to a teacher by user_id
 const getTeacherClasses = async (req, res) => {
   try {
-    const { user_id } = req.params;
-
-    // Validation
-    if (!user_id || isNaN(parseInt(user_id))) {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: "Valid user ID is required"
-      });
-    }
+    // Get user_id from auth token
+    const user_id = req.user.id;
 
     // Find teacher by user_id
     const teacher = await Teacher.findOne({
