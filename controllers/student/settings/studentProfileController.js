@@ -85,7 +85,7 @@ const getStudentProfile = async (req, res) => {
         gender: student.gender,
         phone_no: student.phone_no,
         aadhar_no: student.aadhar_no,
-        image: student.image,
+        image: student.image ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.image}` : null,
         account_status: student.User?.status
       },
       academic_info: {
@@ -96,8 +96,8 @@ const getStudentProfile = async (req, res) => {
         room_no: student.ClassSection?.room_No,
         class_capacity: student.ClassSection?.capacity,
         previous_school_name: student.previous_school_name,
-        tc: student.tc,
-        marksheet: student.marksheet
+        tc: student.tc ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.tc}` : null,
+        marksheet: student.marksheet ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.marksheet}` : null
       },
       class_teacher_info: student.ClassSection?.classTeacher ? {
         name: student.ClassSection.classTeacher.User?.name,
@@ -117,11 +117,11 @@ const getStudentProfile = async (req, res) => {
         address: student.address
       },
       documents: {
-        image: student.image,
-        aadhar_card: student.aadhar_card,
-        tc: student.tc,
-        marksheet: student.marksheet,
-        sign: student.sign
+        image: student.image ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.image}` : null,
+        aadhar_card: student.aadhar_card ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.aadhar_card}` : null,
+        tc: student.tc ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.tc}` : null,
+        marksheet: student.marksheet ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.marksheet}` : null,
+        sign: student.sign ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.sign}` : null
       }
     };
 

@@ -48,7 +48,7 @@ const getTeacherProfile = async (req, res) => {
         mobile_no: teacher.mobile_no,
         gender: teacher.gender,
         dob: teacher.dob,
-        image: teacher.image,
+        image: teacher.image ? `${process.env.BACKEND_URL}/uploads/teachers/${teacher.image}` : null,
         account_status: teacher.User?.status
       },
       professional_info: {
