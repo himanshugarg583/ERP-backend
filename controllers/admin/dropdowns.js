@@ -1,4 +1,4 @@
-const {User,Teacher,ClassSection,Student,ExamTerm,Exam} = require('../../models');
+const {User,Teacher,ClassSection,Student,ExamTerm,Exam,StudentParent} = require('../../models');
 
 const getTeacherDropdown = async (req, res) => {
   try {
@@ -11,7 +11,7 @@ const getTeacherDropdown = async (req, res) => {
       include: {
         model: Teacher,
         as: "teacherDetails",
-        attributes: ["id"],
+        attributes: ["id", "qualification", "gender", "mobile_no"],
       },
     });
 
@@ -89,17 +89,26 @@ const getStudentsByClass = async (req, res) => {
       include: [
         {
           model: User,
-          attributes: ['id', 'name']
+          attributes: ['name']
+        },
+        {
+          model: StudentParent,
+          as: 'parentDetails',
+          attributes: ['father_name']
         }
       ],
-      attributes: [],
+      attributes: ['id', 'roll_number', 'gender', 'phone_no'],
       order: [['roll_number', 'ASC']]
     });
 
-    // Format response to show only user id and name
+    // Format response with all requested fields
     const formattedStudents = students.map(student => ({
-      id: student.User ? student.User.id : null,
-      name: student.User ? student.User.name : 'N/A'
+      id: student.id,
+      name: student.User ? student.User.name : 'N/A',
+      roll_number: student.roll_number,
+      gender: student.gender,
+      phone_no: student.phone_no,
+      father_name: student.parentDetails ? student.parentDetails.father_name : 'N/A'
     }));
 
     res.status(200).json({

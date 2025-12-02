@@ -47,7 +47,6 @@ const generateStaffIdCard = async (req, res) => {
     // Format ID card data
     const idCardData = {
       teacher_id: teacher.id,
-      user_id: teacher.User?.id,
       name: teacher.User?.name,
       email: teacher.User?.email,
       role: teacher.role,
@@ -58,7 +57,7 @@ const generateStaffIdCard = async (req, res) => {
       current_address: teacher.current_address,
       permanent_address: teacher.permanent_address,
       joining_date: teacher.joining_date,
-      image: teacher.image
+      image: teacher.image ? `${process.env.BACKEND_URL}/uploads/teachers/${teacher.image}` : null
     };
 
     res.status(200).json({
@@ -126,7 +125,6 @@ const generateMultipleStaffIdCards = async (req, res) => {
     // Format ID card data for all teachers
     const idCardsData = teachers.map(teacher => ({
       teacher_id: teacher.id,
-      user_id: teacher.user_id,
       name: teacher.User?.name,
       email: teacher.User?.email,
       role: teacher.role,
@@ -137,7 +135,7 @@ const generateMultipleStaffIdCards = async (req, res) => {
       current_address: teacher.current_address,
       permanent_address: teacher.permanent_address,
       joining_date: teacher.joining_date,
-      image: teacher.image
+      image: teacher.image ? `${process.env.BACKEND_URL}/uploads/teachers/${teacher.image}` : null
     }));
 
     // Check for missing teachers

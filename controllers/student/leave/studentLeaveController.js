@@ -19,25 +19,8 @@ const applyLeave = async (req, res) => {
       });
     }
 
-    // Convert dates from DD-MM-YYYY to YYYY-MM-DD format
-    const formatDate = (dateStr) => {
-      // Check if already in YYYY-MM-DD format
-      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-        return dateStr;
-      }
-      // Convert from DD-MM-YYYY to YYYY-MM-DD
-      if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
-        const [day, month, year] = dateStr.split('-');
-        return `${year}-${month}-${day}`;
-      }
-      return dateStr;
-    };
-
-    const formattedStartDate = formatDate(start_date);
-    const formattedEndDate = formatDate(end_date);
-
     // Validate date range
-    if (new Date(formattedStartDate) > new Date(formattedEndDate)) {
+    if (new Date(start_date) > new Date(end_date)) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
@@ -58,12 +41,12 @@ const applyLeave = async (req, res) => {
       });
     }
 
-    // Create leave application with formatted dates
+    // Create leave application
     const leaveApplication = await StudentLeave.create({
       student_id: student.id,
       leave_type,
-      start_date: formattedStartDate,
-      end_date: formattedEndDate,
+      start_date,
+      end_date,
       reason,
       status: 'pending'
     });

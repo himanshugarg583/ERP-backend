@@ -30,16 +30,19 @@ const admitCardRoutes = require('./routes/admin/exam/admitCardRoutes');
 const settingRoutes = require('./routes/admin/setting');
 const classTimetableRoutes = require('./routes/admin/classTimetableRoutes');
 const certificateRoutes = require('./routes/admin/certificate');
+const noticeRoutes = require('./routes/admin/notices');
 // teacher
 const classattendanceRoutes = require('./routes/teacher/classAttendanceRoutes');
 const teacherTimetableRoutes = require('./routes/teacher/teacherTimetableRoutes');
 const teacherSubjectRoutes = require('./routes/teacher/teacherSubjectRoutes');
 const teacherSettingRoutes = require('./routes/teacher/teacherSettingRoutes');
+const teacherNoticeRoutes = require('./routes/teacher/teacherNoticeRoutes');
 // student
 const studentRoutes = require('./routes/student/studentRoutes');
 const studentSettingRoutes = require('./routes/student/settingRoutes');
 const studentFeesRoutes = require('./routes/student/studentFees');
 const studentLeaveStudentRoutes = require('./routes/student/studentLeave');
+const studentNoticeRoutes = require('./routes/student/studentNoticeRoutes');
 
 
 const Joi = require('joi');
@@ -84,18 +87,21 @@ app.use('/admin/examTimetable', examTimetableRoutes);
 app.use('/admin/examMark', examMarkRoutes);
 app.use('/admin/admitCard', admitCardRoutes);
 app.use('/admin/certificate', certificateRoutes);
+app.use('/admin/notice', noticeRoutes);
 
 // TEACHER ROUTES
 app.use('/classattendance', classattendanceRoutes);
 app.use('/teacherTimetable', teacherTimetableRoutes);
 app.use('/teacher/subject', teacherSubjectRoutes);
 app.use('/teacher/setting', teacherSettingRoutes);
+app.use('/teacher/notice', teacherNoticeRoutes);
 
 // STUDENT ROUTES
 app.use('/studentattendance', studentRoutes);
 app.use('/student/setting', studentSettingRoutes);
 app.use('/student/fees', studentFeesRoutes);
 app.use('/student/leave', studentLeaveStudentRoutes);
+app.use('/student/notice', studentNoticeRoutes);
 
 
 // Start server only after database connection is established

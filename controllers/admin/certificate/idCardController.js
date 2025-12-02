@@ -50,7 +50,6 @@ const generateStudentIdCard = async (req, res) => {
     // Format ID card data
     const idCardData = {
       student_id: student.id,
-      user_id: student.User?.id,
       name: student.User?.name,
       email: student.User?.email,
       roll_number: student.roll_number,
@@ -64,7 +63,7 @@ const generateStudentIdCard = async (req, res) => {
       gender: student.gender,
       phone_no: student.phone_no,
       address: student.address,
-      image: student.image,
+      image: student.image ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.image}` : null,
       aadhar_no: student.aadhar_no
     };
 
@@ -136,7 +135,6 @@ const generateMultipleIdCards = async (req, res) => {
     // Format ID card data for all students
     const idCardsData = students.map(student => ({
       student_id: student.id,
-      user_id: student.user_id,
       name: student.User?.name,
       email: student.User?.email,
       roll_number: student.roll_number,
@@ -150,7 +148,7 @@ const generateMultipleIdCards = async (req, res) => {
       gender: student.gender,
       phone_no: student.phone_no,
       address: student.address,
-      image: student.image,
+      image: student.image ? `${process.env.BACKEND_URL}/uploads/studentsDocument/${student.image}` : null,
       aadhar_no: student.aadhar_no
     }));
 
