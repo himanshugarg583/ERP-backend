@@ -130,27 +130,30 @@ const addStudent = async (req, res) => {
 
 const getSingleStudent = async (req, res) => {
   try {
-    const user_id = req.params.user_id;
+    const student_id = req.params.student_id;
 
-    const student = await User.findOne({
+    const student = await Student.findOne({
       where: {
-        id: user_id,
-        role: "student"
+        id: student_id
       },
-      include: {
-        model: Student,
-        as: "studentDetails",
-        include: {
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'name', 'email', 'status', 'role']
+        },
+        {
           model: StudentParent,
           as: "parentDetails"
+        },
+        {
+          model: ClassSection,
+          attributes: ['id', 'class_name', 'section_name']
         }
-      }
+      ]
     });
 
     if (!student) {
       return res.status(404).json({ 
-
-        
         success: false,
         statusCode:404,
         message: "Student not found" });
@@ -177,7 +180,7 @@ const getSingleStudent = async (req, res) => {
 
 const updateStudent = async (req, res) => {
   try {
-    const user_id = req.params.user_id;
+    const student_id = req.params.student_id;
 
     const {
       // User table
@@ -208,17 +211,24 @@ const updateStudent = async (req, res) => {
       mother_occupation,
     } = req.body;
 
-    const user = await User.findOne({
-      where:{id:user_id}
-    });
-    const student = await Student.findOne({ where: { user_id } });
-    // 
-
-    if (!user || !student) {
+    const student = await Student.findOne({ where: { id: student_id } });
+    if (!student) {
       return res.status(404).json({
         success:false,
         statusCode:404,
         message: "Student not found"
+       });
+    }
+
+    const user = await User.findOne({
+      where:{id: student.user_id}
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success:false,
+        statusCode:404,
+        message: "User not found"
        });
     }
 
@@ -386,5 +396,77 @@ const getClassWiseStudentStats = async (req, res) => {
 
 
 
+const getAllStudents = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = '', class_section_id } = req.query;
+    const offset = (page - 1) * limit;
+
+    // Build where clause for Student
+    const studentWhere = {};
+    if (class_section_id) {
+      studentWhere.class_section_id = class_section_id;
+    }
+
+    // Build where clause for User (search by name or email)
+    const userWhere = {
+      role: 'student',
+      status: 'active'
+    };
+    if (search) {
+      userWhere[Op.or] = [
+        { name: { [Op.like]: `%${search}%` } },
+        { email: { [Op.like]: `%${search}%` } }
+      ];
+    }
+
+    // Get all students with pagination
+    const { count, rows: students } = await Student.findAndCountAll({
+      where: studentWhere,
+      attributes: [['id', 'student_id'], 'roll_number'],
+      include: [
+        {
+          model: User,
+          where: userWhere,
+          attributes: ['name']
+        },
+        {
+          model: ClassSection,
+          attributes: ['class_name']
+        },
+        {
+          model: StudentParent,
+          as: 'parentDetails',
+          attributes: ['father_name']
+        }
+      ],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [['roll_number', 'ASC']]
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Students fetched successfully",
+      data: students,
+      pagination: {
+        total: count,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(count / limit)
+      }
+    });
+
+  } catch (error) {
+    console.error("Get All Students Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
+
 module.exports = { addStudent ,getSingleStudent,updateStudent,
-  getStudentStats,getClassWiseStudentStats};
+  getStudentStats,getClassWiseStudentStats,getAllStudents};
