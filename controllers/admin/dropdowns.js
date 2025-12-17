@@ -1,4 +1,4 @@
-const {User,Teacher,ClassSection,Student,ExamTerm,Exam,StudentParent} = require('../../models');
+const {User,Teacher,ClassSection,Student,ExamTerm,Exam,ExamSchedule,Subject,StudentParent} = require('../../models');
 
 const getTeacherDropdown = async (req, res) => {
   try {
@@ -187,10 +187,193 @@ const getExamDropdown = async (req, res) => {
   }
 };
 
+const getExamScheduleByExam = async (req, res) => {
+  try {
+    const { exam_id } = req.query;
+
+    // Validation
+    if (!exam_id) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Exam ID is required"
+      });
+    }
+
+    // Get exam schedules for the given exam_id
+    const examSchedules = await ExamSchedule.findAll({
+      where: {
+        exam_id: exam_id
+      },
+      include: [
+        {
+          model: ClassSection,
+          as: 'classSection',
+          attributes: ['class_name', 'section_name']
+        }
+      ],
+      attributes: ['id', 'class_section_id', 'total_marks', 'passing_marks'],
+      order: [['class_section_id', 'ASC']]
+    });
+
+    // Format response
+    const formattedSchedules = examSchedules.map(schedule => ({
+      exam_schedule_id: schedule.id,
+      class_id: schedule.class_section_id,
+      name: schedule.classSection ? `${schedule.classSection.class_name}-${schedule.classSection.section_name}` : 'N/A'
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Exam schedules fetched successfully",
+      data: formattedSchedules
+    });
+
+  } catch (error) {
+    console.error("Get Exam Schedule By Exam Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
+const getStudentsForExamMark = async (req, res) => {
+  try {
+    const { exam_schedule_id, class_id } = req.query;
+
+    // Validation
+    if (!exam_schedule_id || !class_id) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Exam schedule ID and class ID are required"
+      });
+    }
+
+    // Verify exam schedule exists
+    const examSchedule = await ExamSchedule.findByPk(exam_schedule_id);
+    if (!examSchedule) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Exam schedule not found"
+      });
+    }
+
+    // Verify class_id matches exam_schedule
+    if (examSchedule.class_section_id != class_id) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Class ID does not match with exam schedule"
+      });
+    }
+
+    // Get all students from the class
+    const students = await Student.findAll({
+      where: {
+        class_section_id: class_id
+      },
+      include: [
+        {
+          model: User,
+          attributes: ['name']
+        }
+      ],
+      attributes: ['id', 'roll_number'],
+      order: [['roll_number', 'ASC']]
+    });
+
+    // Format response
+    const formattedStudents = students.map(student => ({
+      student_id: student.id,
+      name: student.User?.name || 'N/A',
+      roll_number: student.roll_number
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Students fetched successfully for exam marks entry",
+      data: formattedStudents
+    });
+
+  } catch (error) {
+    console.error("Get Students For Exam Mark Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
+const getSubjectsByClass = async (req, res) => {
+  try {
+    const { class_id } = req.query;
+
+    // Validation
+    if (!class_id) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Class ID is required"
+      });
+    }
+
+    // Verify class exists
+    const classSection = await ClassSection.findByPk(class_id);
+    if (!classSection) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Class section not found"
+      });
+    }
+
+    // Get all subjects for this class
+    const subjects = await Subject.findAll({
+      where: {
+        class_section_id: class_id
+      },
+      attributes: ['id', 'subject_name', 'subject_code'],
+      order: [['subject_name', 'ASC']]
+    });
+
+    // Format response
+    const formattedSubjects = subjects.map(subject => ({
+      subject_id: subject.id,
+      name: subject.subject_name,
+      subject_code: subject.subject_code
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Subjects fetched successfully",
+      data: formattedSubjects
+    });
+
+  } catch (error) {
+    console.error("Get Subjects By Class Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
 module.exports = { 
   getTeacherDropdown,
   getClassDropdown,
   getStudentsByClass,
   getExamTermDropdown,
-  getExamDropdown
+  getExamDropdown,
+  getExamScheduleByExam,
+  getStudentsForExamMark,
+  getSubjectsByClass
 };

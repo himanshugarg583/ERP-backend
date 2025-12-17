@@ -6,6 +6,8 @@ const uploadClassResource = async (req, res) => {
     const { class_section_id, title, description, resource_type } = req.body;
     const user_id = req.user.id;
 
+    console.log("user id is"  , user_id);
+
     // Validate required fields
     if (!class_section_id || !title || !resource_type) {
       return res.status(400).json({

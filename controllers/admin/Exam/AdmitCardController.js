@@ -1,22 +1,22 @@
 const { Student, User, ClassSection, ExamSchedule, Exam, ExamTerm, ExamTimetable, Subject, Teacher, StudentParent } = require('../../../models');
 
-// Get student admit card by user ID and exam schedule ID
+// Get student admit card by student ID and exam schedule ID
 const getStudentAdmitCard = async (req, res) => {
   try {
-    const { user_id, exam_schedule_id } = req.query;
+    const { student_id, exam_schedule_id } = req.query;
 
     // Validation
-    if (!user_id || !exam_schedule_id) {
+    if (!student_id || !exam_schedule_id) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "User ID and exam schedule ID are required"
+        message: "Student ID and exam schedule ID are required"
       });
     }
 
-    // Get student details by user_id
+    // Get student details by student_id
     const student = await Student.findOne({
-      where: { user_id: user_id },
+      where: { id: student_id },
       include: [
         {
           model: User,
