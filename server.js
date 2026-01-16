@@ -45,7 +45,7 @@ const teacherClassResourceRoutes = require('./routes/teacher/teacherClassResourc
 const teacherSubjectResourceRoutes = require('./routes/teacher/teacherSubjectResourceRoutes');
 const teacherDashboardRoutes = require('./routes/teacher/teacherDashboardRoutes');
 // accountant
-const accountantRoutes = require('./routes/accountant/accountantRoutes');
+const accountantRoutes = require('./routes/Accountant/accountantRoutes');
 const accountantFeesRoutes = require('./routes/Accountant/accountantfees');
 // student
 const studentRoutes = require('./routes/student/studentRoutes');
