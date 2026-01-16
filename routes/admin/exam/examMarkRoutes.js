@@ -10,7 +10,7 @@ const {
   getCompleteMarksheet,
   getStudentsWithMarksBySubject,
   getStudentCompleteExamHistory
-} = require('../../../controllers/admin/exam/ExamMarkController');
+} = require('../../../controllers/admin/Exam/ExamMarkController');
 
 //  Register marks for ONE student (all subjects)
 router.post('/registerStudent', authMiddleware, isAdmin, registerStudentMarks);
