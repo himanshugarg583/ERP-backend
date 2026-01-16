@@ -38,12 +38,8 @@ const ExamMark = sequelize.define('ExamMark', {
     type: DataTypes.DECIMAL(5,2),
     defaultValue: 0,
   },
-  grade: {
-    type: DataTypes.STRING(5),
-  },
-  remarks: {
-    type: DataTypes.STRING(255),
-  },
+
+ 
 }, {
   tableName: 'exam_marks',
   timestamps: true,

@@ -6,10 +6,7 @@ const createExamTerm = async (req, res) => {
   try {
     const {
       term_name,
-      academic_year,
-      start_date,
-      end_date,
-      status
+      academic_year
     } = req.body;
 
     // Validation
@@ -19,20 +16,6 @@ const createExamTerm = async (req, res) => {
         statusCode: 400,
         message: "Term name and academic year are required"
       });
-    }
-
-    // Validate date range
-    if (start_date && end_date) {
-      const startDateObj = new Date(start_date);
-      const endDateObj = new Date(end_date);
-      
-      if (endDateObj < startDateObj) {
-        return res.status(400).json({
-          success: false,
-          statusCode: 400,
-          message: "End date must be after start date"
-        });
-      }
     }
 
     // Check if term already exists for the academic year
@@ -54,10 +37,7 @@ const createExamTerm = async (req, res) => {
     // Create exam term
     const examTerm = await ExamTerm.create({
       term_name,
-      academic_year,
-      start_date: start_date || null,
-      end_date: end_date || null,
-      status: status || 'active'
+      academic_year
     });
 
     res.status(201).json({
@@ -82,7 +62,6 @@ const getAllExamTerms = async (req, res) => {
   try {
     const {
       academic_year,
-      status,
       term_name,
       sort_by = 'created_at',
       sort_order = 'DESC'
@@ -92,11 +71,10 @@ const getAllExamTerms = async (req, res) => {
     const whereConditions = {};
 
     if (academic_year) whereConditions.academic_year = academic_year;
-    if (status) whereConditions.status = status;
     if (term_name) whereConditions.term_name = { [Op.like]: `%${term_name}%` };
 
     // Validate sort fields
-    const allowedSortFields = ['term_name', 'academic_year', 'start_date', 'end_date', 'status', 'created_at'];
+    const allowedSortFields = ['term_name', 'academic_year', 'created_at'];
     const sortField = allowedSortFields.includes(sort_by) ? sort_by : 'created_at';
     const sortDirection = ['ASC', 'DESC'].includes(sort_order.toUpperCase()) ? sort_order.toUpperCase() : 'DESC';
 
@@ -183,10 +161,7 @@ const updateExamTerm = async (req, res) => {
     const { id } = req.params;
     const {
       term_name,
-      academic_year,
-      start_date,
-      end_date,
-      status
+      academic_year
     } = req.body;
 
     if (!id || isNaN(parseInt(id))) {
@@ -212,38 +187,6 @@ const updateExamTerm = async (req, res) => {
 
     if (term_name !== undefined) updateData.term_name = term_name;
     if (academic_year !== undefined) updateData.academic_year = academic_year;
-    if (start_date !== undefined) updateData.start_date = start_date;
-    if (end_date !== undefined) updateData.end_date = end_date;
-    
-    if (status !== undefined) {
-      if (!['active', 'inactive'].includes(status)) {
-        return res.status(400).json({
-          success: false,
-          statusCode: 400,
-          message: "Status must be 'active' or 'inactive'"
-        });
-      }
-      updateData.status = status;
-    }
-
-    // Validate date range if both dates are being updated
-    if (updateData.start_date || updateData.end_date) {
-      const newStartDate = updateData.start_date || examTerm.start_date;
-      const newEndDate = updateData.end_date || examTerm.end_date;
-      
-      if (newStartDate && newEndDate) {
-        const startDateObj = new Date(newStartDate);
-        const endDateObj = new Date(newEndDate);
-        
-        if (endDateObj < startDateObj) {
-          return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: "End date must be after start date"
-          });
-        }
-      }
-    }
 
     // Check for duplicate term name in same academic year (if updating these fields)
     if (updateData.term_name || updateData.academic_year) {

@@ -10,10 +10,10 @@ const {
   updateInstallment,
   deleteInstallment,
   getOverdueInstallments
-} = require('../../controllers/admin/fees/StudentFeeInstallmentController');
+} = require('../../../controllers/admin/fees/StudentFeeInstallmentController');
 
 // Import middleware
-const { authMiddleware, isAdmin } = require('../../middlewares/authMiddleware');
+const { authMiddleware, isAdmin } = require('../../../middlewares/authMiddleware');
 
 // Specific routes first (before parameterized routes)
 router.post('/createInstallments', authMiddleware, isAdmin, createInstallmentsForStudentFee);

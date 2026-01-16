@@ -15,10 +15,11 @@ const dropdown = require('./routes/admin/dropdown');
 const hr = require('./routes/admin/hr');
 const studentsAttendance = require('./routes/admin/studentAttendance');
 const studentLeaveRoutes = require('./routes/admin/studentLeave');
-const feesRoutes = require('./routes/admin/feeHeadRoutes');
-const feesStructureRoutes = require('./routes/admin/feeStructureRoutes');
-const studentFeeRoutes = require('./routes/admin/studentFeeRoutes');
-const studentFeeInstallmentRoutes = require('./routes/admin/studentFeeInstallmentRoutes');
+const feesRoutes = require('./routes/admin/fees/feeHeadRoutes');
+const feesStructureRoutes = require('./routes/admin/fees/feeStructureRoutes');
+const studentFeeRoutes = require('./routes/admin/fees/studentFeeRoutes');
+const studentFeeInstallmentRoutes = require('./routes/admin/fees/studentFeeInstallmentRoutes');
+const feePaymentRoutes = require('./routes/admin/fees/feePaymentRoutes');
 const incomeExpenseRoutes = require('./routes/admin/incomeExpenseRoutes');
 const incomeRoutes = require('./routes/admin/incomeRoutes');
 const expenseRoutes = require('./routes/admin/expenseRoutes');
@@ -33,6 +34,7 @@ const certificateRoutes = require('./routes/admin/certificate');
 const noticeRoutes = require('./routes/admin/notices');
 const classResourceRoutes = require('./routes/admin/classResourceRoutes');
 const subjectResourceRoutes = require('./routes/admin/subjectResourceRoutes');
+const dashboardRoutes = require('./routes/admin/dashboardRoutes');
 // teacher
 const classattendanceRoutes = require('./routes/teacher/classAttendanceRoutes');
 const teacherTimetableRoutes = require('./routes/teacher/teacherTimetableRoutes');
@@ -41,6 +43,10 @@ const teacherSettingRoutes = require('./routes/teacher/teacherSettingRoutes');
 const teacherNoticeRoutes = require('./routes/teacher/teacherNoticeRoutes');
 const teacherClassResourceRoutes = require('./routes/teacher/teacherClassResourceRoutes');
 const teacherSubjectResourceRoutes = require('./routes/teacher/teacherSubjectResourceRoutes');
+const teacherDashboardRoutes = require('./routes/teacher/teacherDashboardRoutes');
+// accountant
+const accountantRoutes = require('./routes/accountant/accountantRoutes');
+const accountantFeesRoutes = require('./routes/Accountant/accountantfees');
 // student
 const studentRoutes = require('./routes/student/studentRoutes');
 const studentSettingRoutes = require('./routes/student/settingRoutes');
@@ -48,6 +54,8 @@ const studentFeesRoutes = require('./routes/student/studentFees');
 const studentLeaveStudentRoutes = require('./routes/student/studentLeave');
 const studentNoticeRoutes = require('./routes/student/studentNoticeRoutes');
 const studentResourceRoutes = require('./routes/student/studentResourceRoutes');
+const studentExamRoutes = require('./routes/student/studentExamRoutes');
+const studentDashboardRoutes = require('./routes/student/studentDashboardRoutes');
 
 
 const Joi = require('joi');
@@ -59,6 +67,9 @@ app.use(express.json());
 
 // Serve static files from uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve static files from public folder (for test pages)
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
   res.send('API is running...');
@@ -77,12 +88,15 @@ app.use('/admin/dropdown', dropdown);
 app.use('/admin/hr', hr);
 app.use('/admin/studentsAttendance', studentsAttendance);
 app.use('/admin/studentLeave', studentLeaveRoutes);
+// fees
 app.use('/admin/fees', feesRoutes);
 app.use('/admin/feeStructure', feesStructureRoutes);
 app.use('/admin/studentFee', studentFeeRoutes);
 app.use('/admin/studentFeeInstallment', studentFeeInstallmentRoutes);
+app.use('/admin/feePayment', feePaymentRoutes);
 app.use('/admin/incomeExpense', incomeExpenseRoutes);
 app.use('/admin/income', incomeRoutes);
+// fees ends
 app.use('/admin/expense', expenseRoutes);
 app.use('/admin/setting', settingRoutes);
 app.use('/admin/timetable', classTimetableRoutes);
@@ -95,6 +109,7 @@ app.use('/admin/certificate', certificateRoutes);
 app.use('/admin/notice', noticeRoutes);
 app.use('/admin/classResource', classResourceRoutes);
 app.use('/admin/subjectResource', subjectResourceRoutes);
+app.use('/admin/dashboard', dashboardRoutes);
 
 // TEACHER ROUTES
 app.use('/classattendance', classattendanceRoutes);
@@ -104,6 +119,11 @@ app.use('/teacher/setting', teacherSettingRoutes);
 app.use('/teacher/notice', teacherNoticeRoutes);
 app.use('/teacher/classResource', teacherClassResourceRoutes);
 app.use('/teacher/subjectResource', teacherSubjectResourceRoutes);
+app.use('/teacher/dashboard', teacherDashboardRoutes);
+
+// ACCOUNTANT ROUTES
+app.use('/api/accountant', accountantRoutes);
+app.use('/api/accountant/fees', accountantFeesRoutes);
 
 // STUDENT ROUTES
 app.use('/studentattendance', studentRoutes);
@@ -112,6 +132,8 @@ app.use('/student/fees', studentFeesRoutes);
 app.use('/student/leave', studentLeaveStudentRoutes);
 app.use('/student/notice', studentNoticeRoutes);
 app.use('/student/resources', studentResourceRoutes);
+app.use('/student/exam', studentExamRoutes);
+app.use('/student/dashboard', studentDashboardRoutes);
 
 
 // Start server only after database connection is established

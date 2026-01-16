@@ -11,16 +11,15 @@ const {
   
 
   
-} = require('../../controllers/admin/fees/FeeHeadController');
+} = require('../../../controllers/admin/fees/FeeHeadController');
 
 // Import middleware (adjust path as needed)
-const { authMiddleware, isAdmin } = require('../../middlewares/authMiddleware');
+const { authMiddleware, isAdmin } = require('../../../middlewares/authMiddleware');
 
 
 router.post('/createFeeHead', authMiddleware, isAdmin, createFeeHead);
 router.get('/getAllFeeHeads', authMiddleware, isAdmin, getAllFeeHeads);
 router.put('/updateFeeHead/:id', authMiddleware, isAdmin, updateFeeHead);
-
 router.delete('/deleteFeeHead/:id', authMiddleware, isAdmin, deleteFeeHead);
 
 module.exports = router;

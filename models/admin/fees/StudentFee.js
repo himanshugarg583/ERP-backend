@@ -47,22 +47,7 @@ const StudentFee = sequelize.define('StudentFee', {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
-    paid_amount: {
-      type: DataTypes.DECIMAL(10, 2),
-      defaultValue: 0.00,
-    },
-    due_amount: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-    },
-    due_date: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    status: {
-      type: DataTypes.ENUM('pending', 'partial', 'paid', 'overdue', 'waived'),
-      defaultValue: 'pending',
-    },
+
   }, {
     tableName: 'student_fees',
     timestamps: true,

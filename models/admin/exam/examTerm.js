@@ -15,16 +15,7 @@ const ExamTerm = sequelize.define('ExamTerm', {
     type: DataTypes.STRING(9),
     allowNull: false,
   },
-  start_date: {
-    type: DataTypes.DATEONLY,
-  },
-  end_date: {
-    type: DataTypes.DATEONLY,
-  },
-  status: {
-    type: DataTypes.ENUM('active', 'inactive'),
-    defaultValue: 'active',
-  },
+ 
 }, {
   tableName: 'exam_terms',
   timestamps: true,

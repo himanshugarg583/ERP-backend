@@ -133,21 +133,23 @@ Student.hasMany(FeePayment, { foreignKey: 'student_id',  as: 'feePayments', onDe
 FeePayment.belongsTo(Student, { foreignKey: 'student_id',  as: 'student'});
 
 // 8. User ↔ FeePayment (One-to-Many) - for created_by tracking
-User.hasMany(FeePayment, { foreignKey: 'created_by',as: 'processedPayments',onDelete: 'SET NULL'});
-FeePayment.belongsTo(User, { foreignKey: 'created_by', as: 'createdByUser' });
+// Commented out: created_by column doesn't exist in fee_payments table
+// User.hasMany(FeePayment, { foreignKey: 'created_by',as: 'processedPayments',onDelete: 'SET NULL'});
+// FeePayment.belongsTo(User, { foreignKey: 'created_by', as: 'createdByUser' });
 
 // 9. FeePayment Self-Referencing (for refunds)
-FeePayment.belongsTo(FeePayment, {foreignKey: 'parent_payment_id',  as: 'originalPayment', onDelete: 'SET NULL'});
-FeePayment.hasMany(FeePayment, {  foreignKey: 'parent_payment_id',  as: 'refunds', onDelete: 'SET NULL'});
+// Commented out: parent_payment_id column doesn't exist in fee_payments table
+// FeePayment.belongsTo(FeePayment, {foreignKey: 'parent_payment_id',  as: 'originalPayment', onDelete: 'SET NULL'});
+// FeePayment.hasMany(FeePayment, {  foreignKey: 'parent_payment_id',  as: 'refunds', onDelete: 'SET NULL'});
 
 // 10. User ↔ StudentFee (One-to-Many) - for created_by tracking  
-User.hasMany(StudentFee, { foreignKey: 'created_by',  as: 'createdStudentFees', onDelete: 'SET NULL'});
-StudentFee.belongsTo(User, { foreignKey: 'created_by',  as: 'createdByUser'});
+// User.hasMany(StudentFee, { foreignKey: 'created_by',  as: 'createdStudentFees', onDelete: 'SET NULL'});
+// StudentFee.belongsTo(User, { foreignKey: 'created_by',  as: 'createdByUser'});
 
 // 11. User ↔ FeeStructure (One-to-Many) - for created_by tracking
-User.hasMany(FeeStructure, { foreignKey: 'created_by', as: 'createdFeeStructures', onDelete: 'SET NULL' });
-
-FeeStructure.belongsTo(User, {  foreignKey: 'created_by', as: 'createdByUser' });
+// Commented out: created_by column doesn't exist in fee_structures table
+// User.hasMany(FeeStructure, { foreignKey: 'created_by', as: 'createdFeeStructures', onDelete: 'SET NULL' });
+// FeeStructure.belongsTo(User, {  foreignKey: 'created_by', as: 'createdByUser' });
 
 // exam
 // =====================================================

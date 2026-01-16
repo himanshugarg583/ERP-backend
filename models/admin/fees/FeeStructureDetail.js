@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../../config/db');
 
-  const FeeStructureDetail = sequelize.define('FeeStructureDetail', {
+const FeeStructureDetail = sequelize.define('FeeStructureDetail', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -45,4 +45,4 @@ const sequelize = require('../../../config/db');
     underscored: true,
   });
 
-  module.exports = {FeeStructureDetail};  
+module.exports = {FeeStructureDetail};  

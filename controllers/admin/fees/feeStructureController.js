@@ -13,9 +13,6 @@ const createFeeStructure = async (req, res) => {
       due_date,
       late_fee_amount,
       late_fee_type,
-      installment_allowed,
-      max_installments,
-      status = 'active',
       fee_details
     } = req.body;
 
@@ -106,9 +103,6 @@ const createFeeStructure = async (req, res) => {
         due_date: due_date || null,
         late_fee_amount: parseFloat(late_fee_amount) || 0,
         late_fee_type: late_fee_type || 'flat',
-        installment_allowed: Boolean(installment_allowed),
-        max_installments: parseInt(max_installments) || 1,
-        status: status || 'active',
         total_amount
       }, { transaction });
 
@@ -138,8 +132,7 @@ const createFeeStructure = async (req, res) => {
       const createdStructure = await FeeStructure.findByPk(feeStructure.id, {
         attributes: [
           'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
-          'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
-          'status', 'total_amount', 'created_at', 'updated_at'
+          'due_date', 'late_fee_amount', 'late_fee_type', 'total_amount', 'created_at', 'updated_at'
         ],
         include: [
           {
@@ -187,8 +180,7 @@ const getAllFeeStructures = async (req, res) => {
     const feeStructures = await FeeStructure.findAll({
       attributes: [
         'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
-        'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
-        'status', 'total_amount', 'created_at', 'updated_at'
+        'due_date', 'late_fee_amount', 'late_fee_type', 'total_amount', 'created_at', 'updated_at'
       ],
       include: [
         {
@@ -247,8 +239,7 @@ const getSingleFeeStructure = async (req, res) => {
     const feeStructure = await FeeStructure.findByPk(id, {
         attributes: [
           'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
-          'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
-          'status', 'total_amount', 'created_at', 'updated_at'
+          'due_date', 'late_fee_amount', 'late_fee_type', 'total_amount', 'created_at', 'updated_at'
         ],
         include: [
           {
@@ -318,9 +309,6 @@ const updateFeeStructure = async (req, res) => {
       due_date,
       late_fee_amount,
       late_fee_type,
-      installment_allowed,
-      max_installments,
-      status,
       fee_details
     } = req.body;
 
@@ -337,8 +325,7 @@ const updateFeeStructure = async (req, res) => {
     const feeStructure = await FeeStructure.findByPk(id, {
       attributes: [
         'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
-        'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
-        'status', 'total_amount', 'created_at', 'updated_at'
+        'due_date', 'late_fee_amount', 'late_fee_type', 'total_amount', 'created_at', 'updated_at'
       ]
     });
     if (!feeStructure) {
@@ -425,18 +412,6 @@ const updateFeeStructure = async (req, res) => {
     if (due_date !== undefined) updateData.due_date = due_date || null;
     if (late_fee_amount !== undefined) updateData.late_fee_amount = parseFloat(late_fee_amount) || 0;
     if (late_fee_type !== undefined) updateData.late_fee_type = late_fee_type;
-    if (installment_allowed !== undefined) updateData.installment_allowed = Boolean(installment_allowed);
-    if (max_installments !== undefined) updateData.max_installments = parseInt(max_installments) || 1;
-    if (status !== undefined) {
-      if (!['active', 'inactive', 'draft'].includes(status)) {
-        return res.status(400).json({
-          success: false,
-          statusCode: 400,
-          message: "Status must be 'active', 'inactive', or 'draft'"
-        });
-      }
-      updateData.status = status;
-    }
 
     // Start transaction for updating
     const transaction = await sequelize.transaction();
@@ -504,8 +479,7 @@ const updateFeeStructure = async (req, res) => {
       const updatedStructure = await FeeStructure.findByPk(id, {
         attributes: [
           'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
-          'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
-          'status', 'total_amount', 'created_at', 'updated_at'
+          'due_date', 'late_fee_amount', 'late_fee_type', 'total_amount', 'created_at', 'updated_at'
         ],
         include: [
           {
@@ -567,8 +541,7 @@ const deleteFeeStructure = async (req, res) => {
     const feeStructure = await FeeStructure.findByPk(id, {
       attributes: [
         'id', 'name', 'class_section_id', 'academic_start_year', 'academic_end_year',
-        'due_date', 'late_fee_amount', 'late_fee_type', 'installment_allowed', 'max_installments',
-        'status', 'total_amount', 'created_at', 'updated_at'
+        'due_date', 'late_fee_amount', 'late_fee_type', 'total_amount', 'created_at', 'updated_at'
       ]
     });
     if (!feeStructure) {

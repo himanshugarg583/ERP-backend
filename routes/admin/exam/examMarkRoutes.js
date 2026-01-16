@@ -7,7 +7,9 @@ const {
   bulkUpdateAllMarks,
   getMarksByScheduleAndSubject,
   getStudentMarksByExam,
-  getCompleteMarksheet
+  getCompleteMarksheet,
+  getStudentsWithMarksBySubject,
+  getStudentCompleteExamHistory
 } = require('../../../controllers/admin/exam/ExamMarkController');
 
 //  Register marks for ONE student (all subjects)
@@ -26,6 +28,12 @@ router.get('/getByScheduleAndSubject', getMarksByScheduleAndSubject);
 router.get('/getStudentMarks', getStudentMarksByExam);
 
 // Get complete marksheet for exam schedule
-router.get('/getCompleteMarksheet/:exam_schedule_id', getCompleteMarksheet);
+router.get('/getCompleteMarksheet', getCompleteMarksheet);
+
+// Get all students with marks for a specific subject
+router.get('/getStudentsBySubject', getStudentsWithMarksBySubject);
+
+// Get complete exam history for a student
+router.get('/getStudentExamHistory', getStudentCompleteExamHistory);
 
 module.exports = router;

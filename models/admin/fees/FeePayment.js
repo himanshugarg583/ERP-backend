@@ -71,11 +71,7 @@ const FeePayment = sequelize.define('FeePayment', {
       defaultValue: 'fee',
       comment: 'Type of payment',
     },
-    payment_for: {
-      type: DataTypes.STRING(200),
-      allowNull: true,
-      comment: 'What this payment is for - Tuition Fee, Lab Fee, etc.',
-    },
+   
     remarks: {
       type: DataTypes.TEXT,
       allowNull: true,

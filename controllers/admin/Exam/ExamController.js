@@ -129,7 +129,7 @@ const getAllExams = async (req, res) => {
         {
           model: ExamTerm,
           as: 'term',
-          attributes: ['id', 'term_name', 'academic_year', 'status']
+          attributes: ['id', 'term_name', 'academic_year']
         }
       ],
       order: [[sortField, sortDirection]]
@@ -170,7 +170,7 @@ const getSingleExam = async (req, res) => {
         {
           model: ExamTerm,
           as: 'term',
-          attributes: ['id', 'term_name', 'academic_year', 'start_date', 'end_date', 'status']
+          attributes: ['id', 'term_name', 'academic_year']
         },
         {
           model: ExamSchedule,
@@ -325,7 +325,7 @@ const updateExam = async (req, res) => {
         {
           model: ExamTerm,
           as: 'term',
-          attributes: ['id', 'term_name', 'academic_year', 'status']
+          attributes: ['id', 'term_name', 'academic_year']
         }
       ]
     });

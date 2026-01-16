@@ -41,18 +41,7 @@ const sequelize = require('../../../config/db');
       type: DataTypes.ENUM('flat', 'percentage'),
       defaultValue: 'flat',
     },
-    installment_allowed: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    max_installments: {
-      type: DataTypes.INTEGER,
-      defaultValue: 1,
-    },
-    status: {
-      type: DataTypes.ENUM('active', 'inactive', 'draft'),
-      defaultValue: 'active',
-    },
+   
     total_amount: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
@@ -61,6 +50,8 @@ const sequelize = require('../../../config/db');
     tableName: 'fee_structures',
     timestamps: true,
     underscored: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   });
 
   module.exports = {FeeStructure};  

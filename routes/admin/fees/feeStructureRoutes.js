@@ -8,10 +8,10 @@ const {
   getSingleFeeStructure,
   updateFeeStructure,
   deleteFeeStructure
-} = require('../../controllers/admin/fees/feeStructureController');
+} = require('../../../controllers/admin/fees/feeStructureController');
 
 // Import middleware (adjust path as needed)
-const { authMiddleware, isAdmin } = require('../../middlewares/authMiddleware');
+const { authMiddleware, isAdmin } = require('../../../middlewares/authMiddleware');
 
 router.post('/createFeeStructure', authMiddleware, isAdmin, createFeeStructure);
 

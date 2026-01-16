@@ -1,16 +1,16 @@
 const { Student, User, ClassSection, ExamSchedule, Exam, ExamTerm, ExamTimetable, Subject, Teacher, StudentParent } = require('../../../models');
 
-// Get student admit card by student ID and exam schedule ID
+// Get student admit card by student ID and exam ID
 const getStudentAdmitCard = async (req, res) => {
   try {
-    const { student_id, exam_schedule_id } = req.query;
+    const { student_id, exam_id } = req.query;
 
     // Validation
-    if (!student_id || !exam_schedule_id) {
+    if (!student_id || !exam_id) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "Student ID and exam schedule ID are required"
+        message: "Student ID and exam ID are required"
       });
     }
 
@@ -38,8 +38,12 @@ const getStudentAdmitCard = async (req, res) => {
       });
     }
 
-    // Get exam schedule with exam and term details
-    const examSchedule = await ExamSchedule.findByPk(exam_schedule_id, {
+    // Get exam schedule with exam and term details based on exam_id and student's class
+    const examSchedule = await ExamSchedule.findOne({
+      where: {
+        exam_id: exam_id,
+        class_section_id: student.ClassSection.id
+      },
       include: [
         {
           model: Exam,
@@ -81,7 +85,7 @@ const getStudentAdmitCard = async (req, res) => {
     // Get exam timetable (all subjects for this exam)
     const examTimetable = await ExamTimetable.findAll({
       where: {
-        exam_schedule_id: exam_schedule_id
+        exam_schedule_id: examSchedule.id
       },
       include: [
         {
@@ -167,18 +171,22 @@ const getStudentAdmitCard = async (req, res) => {
 // Get admit cards for all students in a class
 const getClassAdmitCards = async (req, res) => {
   try {
-    const { exam_schedule_id } = req.params;
+    const { exam_id, class_section_id } = req.query;
 
-    if (!exam_schedule_id || isNaN(parseInt(exam_schedule_id))) {
+    if (!exam_id || !class_section_id) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "Valid exam schedule ID is required"
+        message: "Exam ID and Class Section ID are required"
       });
     }
 
-    // Get exam schedule details
-    const examSchedule = await ExamSchedule.findByPk(exam_schedule_id, {
+    // Get exam schedule details based on exam_id and class_section_id
+    const examSchedule = await ExamSchedule.findOne({
+      where: {
+        exam_id: exam_id,
+        class_section_id: class_section_id
+      },
       include: [
         {
           model: Exam,
@@ -226,7 +234,7 @@ const getClassAdmitCards = async (req, res) => {
     // Get exam timetable
     const examTimetable = await ExamTimetable.findAll({
       where: {
-        exam_schedule_id: exam_schedule_id
+        exam_schedule_id: examSchedule.id
       },
       include: [
         {

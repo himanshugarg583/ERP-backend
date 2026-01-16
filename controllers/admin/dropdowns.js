@@ -131,9 +131,6 @@ const getStudentsByClass = async (req, res) => {
 const getExamTermDropdown = async (req, res) => {
   try {
     const examTerms = await ExamTerm.findAll({
-      where: {
-        status: 'active'
-      },
       attributes: ['id', 'term_name', 'academic_year'],
       order: [['academic_year', 'DESC'], ['term_name', 'ASC']]
     });
