@@ -14,5 +14,6 @@ router.get('/getClassAdmitCards/:exam_schedule_id', getClassAdmitCards);
 
 // Get student list for exam
 router.get('/getExamStudentList', getExamStudentList);
-
+// cdc
 module.exports = router;
+
