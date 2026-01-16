@@ -10,7 +10,7 @@ const {
   getExpenseList,
   updateIncomeExpense,
   deleteIncomeExpense
-} = require('../../controllers/accountant/incomeExpenseController');
+} = require('../../controllers/Accountant/incomeExpenseController');
 
 const {
   assignFeeToClass,
