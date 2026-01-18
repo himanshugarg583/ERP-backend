@@ -36,7 +36,7 @@ const AdmissionEnquiry = sequelize.define('AdmissionEnquiry', {
     },
   status: {
     type: DataTypes.ENUM('active', 'admitted', 'inactive'),
-    defaultValue: 'pending'
+    defaultValue: 'active'
   }
 }, {
   timestamps: true,
