@@ -1,35 +1,41 @@
-const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const { Sequelize } = require("sequelize");
+require("dotenv").config();
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
-  host: process.env.DB_HOST,
-  dialect: 'mysql',  
-  logging: false,    
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,   // 🔴 DB_PASS ❌ → DB_PASSWORD ✅
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT, // 🔴 REQUIRED (52414)
+    dialect: "mysql",
+    logging: false,
 
-// Test the database connection
-const testConnection = async () => {
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false, // Railway ke liye required
+      },
+    },
+
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
+  }
+);
+
+// Test connection
+(async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ Database connection has been established successfully.');
+    console.log("✅ Database connection established successfully.");
   } catch (error) {
-    console.error('❌ Unable to connect to the database:', error.message);
-
-    
-    // Log specific connection issues
-    if (error.name === 'SequelizeConnectionRefusedError') {
-      console.error('🔴 Connection refused - Check if MySQL server is running');
-    } else if (error.name === 'SequelizeAccessDeniedError') {
-      console.error('🔴 Access denied - Check database credentials');
-    } else if (error.name === 'SequelizeHostNotFoundError') {
-      console.error('🔴 Host not found - Check database host configuration');
-    }
-    
-    process.exit(1); // Exit the application if database connection fails
+    console.error("❌ Unable to connect to the database:", error.message);
+    process.exit(1);
   }
-};
-
-// Call the connection test
-testConnection();
+})();
 
 module.exports = sequelize;
