@@ -16,6 +16,11 @@ const Student = sequelize.define('Student', {
     },
     onDelete: 'CASCADE'
   },
+  admission_no: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true
+  },
   roll_number: {
     type: DataTypes.STRING(20)
   },

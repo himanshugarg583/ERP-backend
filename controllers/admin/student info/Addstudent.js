@@ -431,7 +431,7 @@ const getAllStudents = async (req, res) => {
         },
         {
           model: ClassSection,
-          attributes: ['class_name']
+          attributes: ['class_name', 'section_name']
         },
         {
           model: StudentParent,

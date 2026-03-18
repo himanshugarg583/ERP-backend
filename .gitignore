@@ -26,3 +26,4 @@ build/
 *.ntvs*
 *.njsproj
 *.sln
+config.bat

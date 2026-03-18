@@ -25,6 +25,10 @@ const AdmissionEnquiry = sequelize.define('AdmissionEnquiry', {
   address: { 
     type: DataTypes.TEXT
  },
+ source: {
+    type: DataTypes.ENUM('social media', 'mobile', 'referral','visit','friend','parent','other'),
+    defaultValue: 'web'
+  },
   parentName: { 
     type: DataTypes.STRING
  },
@@ -35,8 +39,9 @@ const AdmissionEnquiry = sequelize.define('AdmissionEnquiry', {
      type: DataTypes.TEXT 
     },
   status: {
-    type: DataTypes.ENUM('active', 'admitted', 'inactive'),
-    defaultValue: 'pending'
+    type: DataTypes.ENUM('active', 'admitted', 'inactive','emailenquiry','counsling schedule'),
+    defaultValue: 'active'
+ 
   }
 }, {
   timestamps: true,
