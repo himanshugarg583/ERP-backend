@@ -510,22 +510,21 @@ const checkTeacherClash = async (req, res) => {
   }
 };
 
-// Get timetable by teacher user_id
+// Get timetable by teacher id (teachers table)
 const getTimetableByTeacher = async (req, res) => {
   try {
-    const { user_id } = req.params;
+    const { teacher_id } = req.params;
 
-    if (!user_id) {
+    if (!teacher_id) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "User ID is required"
+        message: "Teacher ID is required"
       });
     }
 
-    // Find teacher by user_id
-    const teacher = await Teacher.findOne({
-      where: { user_id },
+    // Find teacher by teachers.id
+    const teacher = await Teacher.findByPk(teacher_id, {
       include: [{
         model: User,
         attributes: ['name', 'email']
@@ -536,7 +535,7 @@ const getTimetableByTeacher = async (req, res) => {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        message: "Teacher not found with this user ID"
+        message: "Teacher not found with this teacher ID"
       });
     }
 

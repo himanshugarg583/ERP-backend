@@ -1,4 +1,5 @@
-const { studentsAttendances,ClassSection } = require('../../../models');
+const { studentsAttendances, ClassSection, StudentLeave } = require('../../../models');
+const { Op } = require('sequelize');
 // const { ClassSection } = require('../../models/admin/Classsection');
 
 const markClassAttendance = async (req, res) => {
@@ -29,6 +30,20 @@ const markClassAttendance = async (req, res) => {
     // ✅ Loop over each student attendance
     for (let record of attendances) {
       const { student_id, status } = record;
+      let effectiveStatus = status;
+
+      const approvedLeave = await StudentLeave.findOne({
+        where: {
+          student_id,
+          status: 'approved',
+          start_date: { [Op.lte]: date },
+          end_date: { [Op.gte]: date }
+        }
+      });
+
+      if (approvedLeave) {
+        effectiveStatus = 'leave';
+      }
 
       // 🔍 Check if attendance already exists
       const existing = await studentsAttendances.findOne({
@@ -37,7 +52,7 @@ const markClassAttendance = async (req, res) => {
 
       if (existing) {
         // ✏️ Update if already exists
-        existing.status = status;
+        existing.status = effectiveStatus;
         existing.class_section_id = class_section_id;
         existing.marked_by = userId;
         await existing.save();
@@ -47,7 +62,7 @@ const markClassAttendance = async (req, res) => {
           student_id,
           class_section_id,
           date,
-          status,
+          status: effectiveStatus,
           marked_by: userId
         });
       }

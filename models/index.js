@@ -9,6 +9,7 @@ const {Subject} = require('./admin/subject');
 const {studentsAttendances} = require('./admin/studentsAttendances');
 const {StudentParent} = require('./admin/student_parent');
 const {ClassTimetable} = require('./admin/ClassTimetable');
+const {AdmissionEnquiry} = require('./admin/AdmissionEnquiry');
 
 // NEW: fees & payments models (adjust paths/names to your files)
 
@@ -251,6 +252,7 @@ module.exports = {
   studentsAttendances,
   StudentParent,
   ClassTimetable,
+  AdmissionEnquiry,
   
   // Fee Management Models
   IncomeExpense,

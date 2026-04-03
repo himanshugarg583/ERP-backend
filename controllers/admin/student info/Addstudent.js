@@ -1,4 +1,4 @@
-const { User, Student,ClassSection ,StudentParent} = require("../../../models");
+const { User, Student, ClassSection, StudentParent, sequelize } = require("../../../models");
 const { Op } = require("sequelize");
 const createUploader = require('../../../utils/multerHelper');
 
@@ -74,7 +74,6 @@ const addStudent = async (req, res) => {
       roll_number,
       dob,
       gender,
-      address,
       admission_date,
       class_section_id,
       phone_no,
@@ -96,6 +95,7 @@ const addStudent = async (req, res) => {
       father_phone,
       mother_phone,
       email:parent_email_id,
+      address,
       father_occupation,
       mother_occupation,
      
@@ -431,7 +431,7 @@ const getAllStudents = async (req, res) => {
         },
         {
           model: ClassSection,
-          attributes: ['class_name']
+          attributes: ['class_name', 'section_name']
         },
         {
           model: StudentParent,
@@ -467,6 +467,59 @@ const getAllStudents = async (req, res) => {
   }
 };
 
+const deleteStudent = async (req, res) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    const { student_id } = req.params;
+
+    const student = await Student.findOne({
+      where: { id: student_id },
+      transaction
+    });
+
+    if (!student) {
+      await transaction.rollback();
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Student not found"
+      });
+    }
+
+    await StudentParent.destroy({
+      where: { student_id: student.id },
+      transaction
+    });
+
+    await Student.destroy({
+      where: { id: student.id },
+      transaction
+    });
+
+    await User.destroy({
+      where: { id: student.user_id },
+      transaction
+    });
+
+    await transaction.commit();
+
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Student deleted successfully"
+    });
+  } catch (error) {
+    await transaction.rollback();
+    console.error("Delete Student Error:", error);
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
 
 module.exports = { addStudent ,getSingleStudent,updateStudent,
-  getStudentStats,getClassWiseStudentStats,getAllStudents};
+  getStudentStats,getClassWiseStudentStats,getAllStudents,deleteStudent};

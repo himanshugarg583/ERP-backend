@@ -14,7 +14,7 @@ const Student = require('./Student');
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Student',
+        model: 'students',
         key: 'id'
       },
       onDelete: 'CASCADE'

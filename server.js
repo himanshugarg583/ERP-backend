@@ -141,8 +141,8 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
-    // Sync database models (optional - creates tables if they don't exist)
-    await sequelize.sync();
+    // Ensure DB connectivity; schema should be managed by migrations.
+    await sequelize.authenticate();
     
     
     app.listen(PORT, () => {

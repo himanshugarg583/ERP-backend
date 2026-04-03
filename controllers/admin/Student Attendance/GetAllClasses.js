@@ -76,7 +76,7 @@ const getStudentsByClass = async (req, res) => {
       include: [
         {
           model: User,
-          attributes: ['id', 'name']
+          attributes: ['id', 'name', 'email']
         }
       ],
       order: [['roll_number', 'ASC']]

@@ -8,19 +8,36 @@ const applyLeave = async (req, res) => {
     const user_id = req.user.id;
 
     // Get leave details from request body
-    const { leave_type, start_date, end_date, reason } = req.body;
+    const { leave_type, start_date, end_date, date, current_date, reason } = req.body;
+
+    // Normalize date input to YYYY-MM-DD to avoid timezone/date mismatch issues
+    const normalizeDate = (value) => {
+      if (!value || typeof value !== 'string') return null;
+
+      const trimmedValue = value.trim();
+      const dateOnlyMatch = /^\d{4}-\d{2}-\d{2}$/.test(trimmedValue);
+      if (dateOnlyMatch) return trimmedValue;
+
+      const parsedDate = new Date(trimmedValue);
+      if (isNaN(parsedDate.getTime())) return null;
+
+      return `${parsedDate.getUTCFullYear()}-${String(parsedDate.getUTCMonth() + 1).padStart(2, '0')}-${String(parsedDate.getUTCDate()).padStart(2, '0')}`;
+    };
+
+    const normalizedStartDate = normalizeDate(start_date || date || current_date);
+    const normalizedEndDate = normalizeDate(end_date || start_date || date || current_date);
 
     // Validate required fields
-    if (!leave_type || !start_date || !end_date || !reason) {
+    if (!leave_type || !reason || !normalizedStartDate || !normalizedEndDate) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "Leave type, start date, end date, and reason are required"
+        message: "leave_type, reason, and valid date values are required (use YYYY-MM-DD)"
       });
     }
 
     // Validate date range
-    if (new Date(start_date) > new Date(end_date)) {
+    if (new Date(normalizedStartDate) > new Date(normalizedEndDate)) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
@@ -45,8 +62,8 @@ const applyLeave = async (req, res) => {
     const leaveApplication = await StudentLeave.create({
       student_id: student.id,
       leave_type,
-      start_date,
-      end_date,
+      start_date: normalizedStartDate,
+      end_date: normalizedEndDate,
       reason,
       status: 'pending'
     });

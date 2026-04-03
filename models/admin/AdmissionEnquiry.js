@@ -31,11 +31,16 @@ const AdmissionEnquiry = sequelize.define('AdmissionEnquiry', {
   oldSchool: { 
     type: DataTypes.STRING 
 },
+  source: {
+    type: DataTypes.ENUM('visit', 'social_media', 'mobile','referral','friend','parent','other'),
+    defaultValue: 'visit',
+    allowNull: true
+  },
   description: {
      type: DataTypes.TEXT 
     },
   status: {
-    type: DataTypes.ENUM('active', 'admitted', 'inactive'),
+    type: DataTypes.ENUM('active', 'admitted', 'inactive','emailenquiry','counsling_schedule'),
     defaultValue: 'active'
   }
 }, {
