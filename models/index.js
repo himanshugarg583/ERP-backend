@@ -5,11 +5,13 @@ const {User} = require('../models/admin/user');
 const {ClassSection} = require('../models/admin/Classsection');
 const {Student} = require('../models/admin/Student');
 const {Teacher} = require('../models/admin/Teacher');
+const {Staff} = require('../models/admin/Staff');
 const {Subject} = require('./admin/subject');
 const {studentsAttendances} = require('./admin/studentsAttendances');
 const {StudentParent} = require('./admin/student_parent');
 const {ClassTimetable} = require('./admin/ClassTimetable');
 const {AdmissionEnquiry} = require('./admin/AdmissionEnquiry');
+const {Holiday} = require('./admin/Holiday');
 
 // NEW: fees & payments models (adjust paths/names to your files)
 
@@ -51,6 +53,10 @@ StudentParent.belongsTo(Student, { foreignKey: "student_id", as: "studentDetails
 // User ↔ Teacher
 User.hasOne(Teacher, { foreignKey: 'user_id',as: "teacherDetails" });
 Teacher.belongsTo(User, { foreignKey: 'user_id' });
+
+// User ↔ Staff
+User.hasOne(Staff, { foreignKey: 'user_id', as: 'staffDetails' });
+Staff.belongsTo(User, { foreignKey: 'user_id' });
 
 // ClassSection ↔ Student
 ClassSection.hasMany(Student, { foreignKey: 'class_section_id' });
@@ -248,11 +254,13 @@ module.exports = {
   ClassSection,
   Student,
   Teacher,
+  Staff,
   Subject,
   studentsAttendances,
   StudentParent,
   ClassTimetable,
   AdmissionEnquiry,
+  Holiday,
   
   // Fee Management Models
   IncomeExpense,

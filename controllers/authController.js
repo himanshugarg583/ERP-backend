@@ -69,8 +69,11 @@ exports.login = async (req, res) => {
     } else if (user.role === 'student') {
       loginMessage = 'Student login';
     }
-     else if (user.role === 'isAccountant') {
-      loginMessage = 'isAccountant login';
+     else if (user.role === 'accountant') {
+      loginMessage = 'Accountant login';
+    }
+     else if (user.role === 'staff') {
+      loginMessage = 'Staff login';
     }
 
     res.status(200).json({ 

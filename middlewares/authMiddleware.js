@@ -92,5 +92,16 @@ const isStudent = (req, res, next) => {
     }
     next();
   };
+
+const isStaff = (req, res, next) => {
+    if (req.user?.role !== 'staff') {
+      return res.status(403).json({
+        success:false,
+        statusCode:403,
+        message: 'Only staff is authorized'
+      });
+    }
+    next();
+  };
   
-module.exports = {authMiddleware,isAdmin,isTeacher,isStudent,isAccountant};
+module.exports = {authMiddleware,isAdmin,isTeacher,isStudent,isAccountant,isStaff};

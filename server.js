@@ -15,6 +15,7 @@ const dropdown = require('./routes/admin/dropdown');
 const hr = require('./routes/admin/hr');
 const studentsAttendance = require('./routes/admin/studentAttendance');
 const studentLeaveRoutes = require('./routes/admin/studentLeave');
+const holidayRoutes = require('./routes/admin/holidayRoutes');
 const feesRoutes = require('./routes/admin/fees/feeHeadRoutes');
 const feesStructureRoutes = require('./routes/admin/fees/feeStructureRoutes');
 const studentFeeRoutes = require('./routes/admin/fees/studentFeeRoutes');
@@ -88,6 +89,7 @@ app.use('/admin/dropdown', dropdown);
 app.use('/admin/hr', hr);
 app.use('/admin/studentsAttendance', studentsAttendance);
 app.use('/admin/studentLeave', studentLeaveRoutes);
+app.use('/admin/holiday', holidayRoutes);
 // fees
 app.use('/admin/fees', feesRoutes);
 app.use('/admin/feeStructure', feesStructureRoutes);

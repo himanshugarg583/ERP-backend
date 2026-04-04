@@ -1,4 +1,4 @@
-const { Teacher, ClassSection, Student, User, StudentLeave } = require('../../../models');
+const { Teacher, ClassSection, Student, User, StudentLeave, Holiday } = require('../../../models');
 const { Op } = require('sequelize');
 
 // Get all classes assigned to a teacher by user_id
@@ -199,6 +199,15 @@ const markClassAttendance = async (req, res) => {
       });
     }
 
+    const holiday = await Holiday.findOne({ where: { holiday_date: date } });
+    if (holiday) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: `Cannot mark attendance on holiday: ${holiday.reason}`
+      });
+    }
+
     // Validate date format
     const attendanceDate = new Date(date);
     if (isNaN(attendanceDate.getTime())) {
@@ -263,7 +272,7 @@ const markClassAttendance = async (req, res) => {
         }
       });
 
-      if (approvedLeave) {
+      if (approvedLeave && status !== 'present') {
         effectiveStatus = 'leave';
       }
 
@@ -361,6 +370,15 @@ const getClassAttendanceByDate = async (req, res) => {
         success: false,
         statusCode: 400,
         message: "Invalid date format"
+      });
+    }
+
+    const holiday = await Holiday.findOne({ where: { holiday_date: date } });
+    if (holiday) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: `Cannot update attendance on holiday: ${holiday.reason}`
       });
     }
 
@@ -544,7 +562,7 @@ const updateClassAttendance = async (req, res) => {
         }
       });
 
-      if (approvedLeave) {
+      if (approvedLeave && status !== 'present') {
         effectiveStatus = 'leave';
       }
 

@@ -1,4 +1,4 @@
-const { studentsAttendances, ClassSection, StudentLeave } = require('../../../models');
+const { studentsAttendances, ClassSection, StudentLeave, Holiday } = require('../../../models');
 const { Op } = require('sequelize');
 // const { ClassSection } = require('../../models/admin/Classsection');
 
@@ -27,6 +27,16 @@ const markClassAttendance = async (req, res) => {
       });
     }
 
+    // Prevent attendance marking on holiday dates
+    const holiday = await Holiday.findOne({ where: { holiday_date: date } });
+    if (holiday) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: `Cannot mark attendance on holiday: ${holiday.reason}`
+      });
+    }
+
     // ✅ Loop over each student attendance
     for (let record of attendances) {
       const { student_id, status } = record;
@@ -41,7 +51,9 @@ const markClassAttendance = async (req, res) => {
         }
       });
 
-      if (approvedLeave) {
+      // If student is on approved leave, keep explicit present unchanged.
+      // This allows present marking when student came to school.
+      if (approvedLeave && status !== 'present') {
         effectiveStatus = 'leave';
       }
 

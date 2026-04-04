@@ -4,7 +4,7 @@ const { ClassSection, Teacher, User, Student } = require('../../../models');
 const getAllAvailableClasses = async (req, res) => {
   try {
     const classes = await ClassSection.findAll({
-      attributes: ['id', 'class_name', 'section_name', 'room_No', 'capacity'],
+      attributes: ['id', 'class_name', 'section_name', 'room_No'],
       include: [
         {
           model: Teacher,
@@ -20,12 +20,26 @@ const getAllAvailableClasses = async (req, res) => {
       order: [['class_name', 'ASC'], ['section_name', 'ASC']]
     });
 
+    const classesWithStudentCount = await Promise.all(
+      classes.map(async (classItem) => {
+        const classJson = classItem.toJSON();
+        const totalStudents = await Student.count({
+          where: { class_section_id: classItem.id }
+        });
+
+        return {
+          ...classJson,
+          total_students: totalStudents
+        };
+      })
+    );
+
     res.status(200).json({
       success: true,
       statusCode: 200,
       message: "Classes fetched successfully",
       data: {
-        classes: classes,
+        classes: classesWithStudentCount,
         total_classes: classes.length
       }
     });
