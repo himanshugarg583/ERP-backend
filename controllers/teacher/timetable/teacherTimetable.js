@@ -1,98 +1,74 @@
-const { Teacher, ClassTimetable, ClassSection, Subject, User } = require('../../../models');
+const { Teacher, ClassTimetable, ClassSection, Subject, User, ClassTimeSlot } = require('../../../models');
 
-// Get teacher timetable by user_id
+const baseDayMap = () => ({
+  Monday: [],
+  Tuesday: [],
+  Wednesday: [],
+  Thursday: [],
+  Friday: [],
+  Saturday: []
+});
+
+const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+const sortRows = (rows) => rows.sort((a, b) => {
+  const dayCompare = dayOrder.indexOf(a.day_of_week) - dayOrder.indexOf(b.day_of_week);
+  if (dayCompare !== 0) return dayCompare;
+  return Number(a.timeSlot?.slot_number || 0) - Number(b.timeSlot?.slot_number || 0);
+});
+
 const getTeacherTimetable = async (req, res) => {
   try {
-    // Get user_id from auth token
-    const user_id = req.user.id;
+    const userId = req.user.id;
 
-    // Find teacher by user_id
     const teacher = await Teacher.findOne({
-      where: { user_id: user_id },
-      include: [
-        {
-          model: User,
-          attributes: ['name', 'email']
-        }
-      ]
+      where: { user_id: userId },
+      include: [{ model: User, attributes: ['name', 'email'] }]
     });
 
     if (!teacher) {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        message: "Teacher not found with this user ID"
+        message: 'Teacher not found with this user ID'
       });
     }
 
-    // Get all timetable entries for this teacher
-    const timetable = await ClassTimetable.findAll({
+    const rows = await ClassTimetable.findAll({
       where: { teacher_id: teacher.id },
       include: [
-        {
-          model: ClassSection,
-          as: 'classSection',
-          attributes: ['id', 'class_name', 'section_name']
-        },
-        {
-          model: Subject,
-          as: 'subject',
-          attributes: ['id', 'subject_name', 'subject_code']
-        }
-      ],
-      order: [
-        ['day_of_week', 'ASC'],
-        ['start_time', 'ASC']
+        { model: ClassTimeSlot, as: 'timeSlot', attributes: ['id', 'slot_number', 'slot_label', 'start_time', 'end_time', 'is_break'] },
+        { model: ClassSection, as: 'classSection', attributes: ['id', 'class_name', 'section_name'] },
+        { model: Subject, as: 'subject', attributes: ['id', 'subject_name', 'subject_code'] }
       ]
     });
 
-    if (timetable.length === 0) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "No timetable found for this teacher"
+    sortRows(rows);
+
+    const grouped = baseDayMap();
+    for (const row of rows) {
+      grouped[row.day_of_week].push({
+        id: row.id,
+        slot: row.timeSlot,
+        class_info: row.classSection ? {
+          id: row.classSection.id,
+          class_name: row.classSection.class_name,
+          section_name: row.classSection.section_name,
+          display: `${row.classSection.class_name} ${row.classSection.section_name}`
+        } : null,
+        subject_info: row.subject ? {
+          id: row.subject.id,
+          subject_name: row.subject.subject_name,
+          subject_code: row.subject.subject_code
+        } : null,
+        notes: row.notes || null
       });
     }
 
-    // Group by day of week
-    const groupedTimetable = {
-      Monday: [],
-      Tuesday: [],
-      Wednesday: [],
-      Thursday: [],
-      Friday: [],
-      Saturday: []
-    };
-
-    timetable.forEach(entry => {
-      const dayData = {
-        id: entry.id,
-        period_name: entry.period_name,
-        start_time: entry.start_time,
-        end_time: entry.end_time,
-        is_break: entry.is_break,
-        class_info: entry.classSection ? {
-          id: entry.classSection.id,
-          class_name: entry.classSection.class_name,
-          section_name: entry.classSection.section_name,
-          display: `${entry.classSection.class_name} ${entry.classSection.section_name}`
-        } : null,
-        subject_info: entry.subject ? {
-          id: entry.subject.id,
-          subject_name: entry.subject.subject_name,
-          subject_code: entry.subject.subject_code
-        } : null
-      };
-
-      if (groupedTimetable[entry.day_of_week]) {
-        groupedTimetable[entry.day_of_week].push(dayData);
-      }
-    });
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       statusCode: 200,
-      message: "Teacher timetable fetched successfully",
+      message: 'Teacher timetable fetched successfully',
       data: {
         teacher_info: {
           teacher_id: teacher.id,
@@ -101,116 +77,77 @@ const getTeacherTimetable = async (req, res) => {
           qualification: teacher.qualification,
           role: teacher.role
         },
-        timetable: groupedTimetable
+        timetable: grouped
       }
     });
-
   } catch (error) {
-    console.error("Get Teacher Timetable Error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       statusCode: 500,
-      message: "Internal Server Error"
+      message: error.message || 'Internal Server Error'
     });
   }
 };
 
-// Get class timetable by class_section_id
 const getClassTimetable = async (req, res) => {
   try {
-    const { class_section_id } = req.params;
+    const classSectionId = Number(req.params.class_section_id);
 
-    // Validation
-    if (!class_section_id || isNaN(parseInt(class_section_id))) {
+    if (!classSectionId) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "Valid class section ID is required"
+        message: 'Valid class section ID is required'
       });
     }
 
-    // Check if class exists
-    const classSection = await ClassSection.findByPk(class_section_id);
+    const classSection = await ClassSection.findByPk(classSectionId);
     if (!classSection) {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        message: "Class section not found"
+        message: 'Class section not found'
       });
     }
 
-    // Get all timetable entries for this class
-    const timetable = await ClassTimetable.findAll({
-      where: { class_section_id: class_section_id },
+    const rows = await ClassTimetable.findAll({
+      where: { class_section_id: classSectionId },
       include: [
-        {
-          model: Subject,
-          as: 'subject',
-          attributes: ['id', 'subject_name', 'subject_code']
-        },
+        { model: ClassTimeSlot, as: 'timeSlot', attributes: ['id', 'slot_number', 'slot_label', 'start_time', 'end_time', 'is_break'] },
+        { model: Subject, as: 'subject', attributes: ['id', 'subject_name', 'subject_code'] },
         {
           model: Teacher,
           as: 'teacher',
           attributes: ['id'],
-          include: [
-            {
-              model: User,
-              attributes: ['id', 'name']
-            }
-          ]
+          include: [{ model: User, attributes: ['id', 'name'] }]
         }
-      ],
-      order: [
-        ['day_of_week', 'ASC'],
-        ['start_time', 'ASC']
       ]
     });
 
-    if (timetable.length === 0) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "No timetable found for this class"
+    sortRows(rows);
+
+    const grouped = baseDayMap();
+    for (const row of rows) {
+      grouped[row.day_of_week].push({
+        id: row.id,
+        slot: row.timeSlot,
+        subject: row.subject ? {
+          id: row.subject.id,
+          subject_name: row.subject.subject_name,
+          subject_code: row.subject.subject_code
+        } : null,
+        teacher: row.teacher ? {
+          id: row.teacher.id,
+          name: row.teacher.User?.name || 'N/A'
+        } : null,
+        notes: row.notes || null
       });
     }
 
-    // Group by day of week
-    const groupedTimetable = {
-      Monday: [],
-      Tuesday: [],
-      Wednesday: [],
-      Thursday: [],
-      Friday: [],
-      Saturday: []
-    };
-
-    timetable.forEach(entry => {
-      const dayData = {
-        id: entry.id,
-        period_name: entry.period_name,
-        start_time: entry.start_time,
-        end_time: entry.end_time,
-        is_break: entry.is_break,
-        subject: entry.subject ? {
-          id: entry.subject.id,
-          subject_name: entry.subject.subject_name,
-          subject_code: entry.subject.subject_code
-        } : null,
-        teacher: entry.teacher ? {
-          id: entry.teacher.id,
-          name: entry.teacher.User?.name || 'N/A'
-        } : null
-      };
-
-      if (groupedTimetable[entry.day_of_week]) {
-        groupedTimetable[entry.day_of_week].push(dayData);
-      }
-    });
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       statusCode: 200,
-      message: "Class timetable fetched successfully",
+      message: 'Class timetable fetched successfully',
       data: {
         class_info: {
           class_section_id: classSection.id,
@@ -218,16 +155,14 @@ const getClassTimetable = async (req, res) => {
           section_name: classSection.section_name,
           display_name: `${classSection.class_name} ${classSection.section_name}`
         },
-        timetable: groupedTimetable
+        timetable: grouped
       }
     });
-
   } catch (error) {
-    console.error("Get Class Timetable Error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       statusCode: 500,
-      message: "Internal Server Error"
+      message: error.message || 'Internal Server Error'
     });
   }
 };

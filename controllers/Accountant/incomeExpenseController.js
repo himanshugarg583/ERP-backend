@@ -1,4 +1,4 @@
-const { IncomeExpense } = require('../../models/admin/fees/IncomeExpense');
+const { IncomeExpense } = require('../../models/admin/accounting/IncomeExpense');
 const { Op } = require('sequelize');
 
 /**

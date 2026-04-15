@@ -3,7 +3,6 @@ const express = require("express");
 require('dotenv').config();
 const sequelize = require('./config/db'); // Import database connection
 const app = express();
-app.use(express.json()); // to parse JSON
 const authRoutes = require('./routes/authRoutes');
 
 const adminRoutes = require('./routes/admin/adminRoute');
@@ -16,19 +15,11 @@ const hr = require('./routes/admin/hr');
 const studentsAttendance = require('./routes/admin/studentAttendance');
 const studentLeaveRoutes = require('./routes/admin/studentLeave');
 const holidayRoutes = require('./routes/admin/holidayRoutes');
-const feesRoutes = require('./routes/admin/fees/feeHeadRoutes');
-const feesStructureRoutes = require('./routes/admin/fees/feeStructureRoutes');
-const studentFeeRoutes = require('./routes/admin/fees/studentFeeRoutes');
-const studentFeeInstallmentRoutes = require('./routes/admin/fees/studentFeeInstallmentRoutes');
-const feePaymentRoutes = require('./routes/admin/fees/feePaymentRoutes');
+const feesV1Routes = require('./routes/fees/v1');
 const incomeExpenseRoutes = require('./routes/admin/incomeExpenseRoutes');
 const incomeRoutes = require('./routes/admin/incomeRoutes');
 const expenseRoutes = require('./routes/admin/expenseRoutes');
-const examTermRoutes = require('./routes/admin/exam/examTermRoutes');
-const examRoutes = require('./routes/admin/exam/examRoutes');
-const examTimetableRoutes = require('./routes/admin/exam/examTimetableRoutes');
-const examMarkRoutes = require('./routes/admin/exam/examMarkRoutes');
-const admitCardRoutes = require('./routes/admin/exam/admitCardRoutes');
+const examV2AdminRoutes = require('./routes/admin/exam/examV2Routes');
 const settingRoutes = require('./routes/admin/setting');
 const classTimetableRoutes = require('./routes/admin/classTimetableRoutes');
 const certificateRoutes = require('./routes/admin/certificate');
@@ -45,26 +36,32 @@ const teacherNoticeRoutes = require('./routes/teacher/teacherNoticeRoutes');
 const teacherClassResourceRoutes = require('./routes/teacher/teacherClassResourceRoutes');
 const teacherSubjectResourceRoutes = require('./routes/teacher/teacherSubjectResourceRoutes');
 const teacherDashboardRoutes = require('./routes/teacher/teacherDashboardRoutes');
+const teacherExamV2Routes = require('./routes/teacher/teacherExamV2Routes');
 // accountant
 const accountantRoutes = require('./routes/Accountant/accountantRoutes');
-const accountantFeesRoutes = require('./routes/Accountant/accountantfees');
 // student
 const studentRoutes = require('./routes/student/studentRoutes');
 const studentSettingRoutes = require('./routes/student/settingRoutes');
-const studentFeesRoutes = require('./routes/student/studentFees');
 const studentLeaveStudentRoutes = require('./routes/student/studentLeave');
 const studentNoticeRoutes = require('./routes/student/studentNoticeRoutes');
 const studentResourceRoutes = require('./routes/student/studentResourceRoutes');
-const studentExamRoutes = require('./routes/student/studentExamRoutes');
+const studentExamV2Routes = require('./routes/student/studentExamV2Routes');
 const studentDashboardRoutes = require('./routes/student/studentDashboardRoutes');
+const { startFeeSchedulers } = require('./services/fees/v1/scheduler');
+const swaggerUi = require('swagger-ui-express');
+const feesV1SwaggerSpec = require('./docs/feesV1Swagger');
 
-
-const Joi = require('joi');
 const cors = require('cors');
 const path = require('path');
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    if (buf && buf.length) {
+      req.rawBody = buf.toString('utf8');
+    }
+  }
+}));
 
 // Serve static files from uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -75,6 +72,21 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
+
+app.get('/api/docs/fees-v1.json', (req, res) => {
+  res.json(feesV1SwaggerSpec);
+});
+
+app.use(
+  '/api/docs/fees-v1',
+  swaggerUi.serve,
+  swaggerUi.setup(feesV1SwaggerSpec, {
+    explorer: true,
+    swaggerOptions: {
+      persistAuthorization: true
+    }
+  })
+);
 
 
 app.use('/api/auth', authRoutes);
@@ -90,23 +102,14 @@ app.use('/admin/hr', hr);
 app.use('/admin/studentsAttendance', studentsAttendance);
 app.use('/admin/studentLeave', studentLeaveRoutes);
 app.use('/admin/holiday', holidayRoutes);
-// fees
-app.use('/admin/fees', feesRoutes);
-app.use('/admin/feeStructure', feesStructureRoutes);
-app.use('/admin/studentFee', studentFeeRoutes);
-app.use('/admin/studentFeeInstallment', studentFeeInstallmentRoutes);
-app.use('/admin/feePayment', feePaymentRoutes);
+// fees (BRD-compliant v1)
+app.use('/api/v1/fees', feesV1Routes);
 app.use('/admin/incomeExpense', incomeExpenseRoutes);
 app.use('/admin/income', incomeRoutes);
-// fees ends
 app.use('/admin/expense', expenseRoutes);
 app.use('/admin/setting', settingRoutes);
 app.use('/admin/timetable', classTimetableRoutes);
-app.use('/admin/examTerm', examTermRoutes);
-app.use('/admin/exam', examRoutes);
-app.use('/admin/examTimetable', examTimetableRoutes);
-app.use('/admin/examMark', examMarkRoutes);
-app.use('/admin/admitCard', admitCardRoutes);
+app.use('/api/v2/admin/exam', examV2AdminRoutes);
 app.use('/admin/certificate', certificateRoutes);
 app.use('/admin/notice', noticeRoutes);
 app.use('/admin/classResource', classResourceRoutes);
@@ -122,24 +125,23 @@ app.use('/teacher/notice', teacherNoticeRoutes);
 app.use('/teacher/classResource', teacherClassResourceRoutes);
 app.use('/teacher/subjectResource', teacherSubjectResourceRoutes);
 app.use('/teacher/dashboard', teacherDashboardRoutes);
+app.use('/api/v2/teacher/exam', teacherExamV2Routes);
 
 // ACCOUNTANT ROUTES
 app.use('/api/accountant', accountantRoutes);
-app.use('/api/accountant/fees', accountantFeesRoutes);
 
 // STUDENT ROUTES
 app.use('/studentattendance', studentRoutes);
 app.use('/student/setting', studentSettingRoutes);
-app.use('/student/fees', studentFeesRoutes);
 app.use('/student/leave', studentLeaveStudentRoutes);
 app.use('/student/notice', studentNoticeRoutes);
 app.use('/student/resources', studentResourceRoutes);
-app.use('/student/exam', studentExamRoutes);
+app.use('/api/v2/student/exam', studentExamV2Routes);
 app.use('/student/dashboard', studentDashboardRoutes);
 
 
 // Start server only after database connection is established
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const startServer = async () => {
   try {
@@ -149,6 +151,7 @@ const startServer = async () => {
     
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
+      startFeeSchedulers();
 
     });
   } catch (error) {

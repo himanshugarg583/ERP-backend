@@ -1,15 +1,23 @@
 const { Student } = require('../../../models/admin/Student');
 const { Teacher } = require('../../../models/admin/Teacher');
 const { studentsAttendances } = require('../../../models/admin/studentsAttendances');
-const { IncomeExpense } = require('../../../models/admin/fees/IncomeExpense');
-const { FeePayment } = require('../../../models/admin/fees/FeePayment');
-const { StudentFee } = require('../../../models/admin/fees/StudentFee');
-const { FeeInstallment } = require('../../../models/admin/fees/FeeInstallment');
+const { IncomeExpense } = require('../../../models/admin/accounting/IncomeExpense');
+const { FeePaymentV1, FeeInvoiceV1 } = require('../../../models/admin/fees_v1');
 const { ClassSection } = require('../../../models/admin/Classsection');
 const { Notice } = require('../../../models/admin/notices/notices');
 const { NoticeTarget } = require('../../../models/admin/notices/notice_targets');
 const { Op } = require('sequelize');
 const sequelize = require('../../../config/db');
+
+const getInvoiceIdsForAcademicYear = async (academicYearId) => {
+  if (!academicYearId) return null;
+  const rows = await FeeInvoiceV1.findAll({
+    where: { academic_year_id: academicYearId },
+    attributes: ['id'],
+    raw: true
+  });
+  return rows.map((row) => row.id);
+};
 
 /**
  * Get Dashboard Statistics
@@ -364,27 +372,47 @@ const getMonthlyFeeCollection = async (req, res) => {
 
     // Build where condition
     const whereCondition = {
-      payment_date: {
+      paid_at: {
         [Op.between]: [startDate, endDate]
       },
-      payment_status: 'success', // Only successful payments
-      is_refund: false // Exclude refunds
+      is_cancelled: false
     };
 
-    // If academic year is specified, add it to filter
     if (academic_year) {
-      whereCondition.academic_year = academic_year;
+      const invoiceIds = await getInvoiceIdsForAcademicYear(academic_year);
+      if (!invoiceIds.length) {
+        return res.status(200).json({
+          success: true,
+          statusCode: 200,
+          message: 'Monthly fee collection data fetched successfully',
+          data: [
+            { month: 'January', amount: 0 },
+            { month: 'February', amount: 0 },
+            { month: 'March', amount: 0 },
+            { month: 'April', amount: 0 },
+            { month: 'May', amount: 0 },
+            { month: 'June', amount: 0 },
+            { month: 'July', amount: 0 },
+            { month: 'August', amount: 0 },
+            { month: 'September', amount: 0 },
+            { month: 'October', amount: 0 },
+            { month: 'November', amount: 0 },
+            { month: 'December', amount: 0 }
+          ]
+        });
+      }
+      whereCondition.invoice_id = { [Op.in]: invoiceIds };
     }
 
     // Fetch monthly fee collection data
-    const feeData = await FeePayment.findAll({
+    const feeData = await FeePaymentV1.findAll({
       attributes: [
-        [sequelize.fn('MONTH', sequelize.col('payment_date')), 'month'],
-        [sequelize.fn('SUM', sequelize.col('total_paid')), 'total_collected']
+        [sequelize.fn('MONTH', sequelize.col('paid_at')), 'month'],
+        [sequelize.literal('SUM(amount_paid + fine_paid)'), 'total_collected']
       ],
       where: whereCondition,
-      group: [sequelize.fn('MONTH', sequelize.col('payment_date'))],
-      order: [[sequelize.fn('MONTH', sequelize.col('payment_date')), 'ASC']],
+      group: [sequelize.fn('MONTH', sequelize.col('paid_at'))],
+      order: [[sequelize.fn('MONTH', sequelize.col('paid_at')), 'ASC']],
       raw: true
     });
 
@@ -431,45 +459,55 @@ const getFeeAssignmentVsCollection = async (req, res) => {
   try {
     const { academic_year } = req.query;
 
-    // Build where condition
-    const whereCondition = {};
+    const invoiceWhere = {};
     if (academic_year) {
-      whereCondition.academic_year = academic_year;
+      invoiceWhere.academic_year_id = academic_year;
     }
 
-    // Get total assigned fee from StudentFee table
-    const feeAssignment = await StudentFee.findAll({
+    const assignment = await FeeInvoiceV1.findOne({
       attributes: [
-        [sequelize.fn('SUM', sequelize.col('final_amount')), 'total_assigned'],
-        [sequelize.fn('SUM', sequelize.col('discount_amount')), 'total_discount']
+        [sequelize.fn('SUM', sequelize.col('net_amount')), 'total_assigned'],
+        [sequelize.fn('SUM', sequelize.col('concession_amount')), 'total_discount'],
+        [sequelize.fn('SUM', sequelize.col('balance_amount')), 'total_due']
       ],
-      where: whereCondition,
+      where: invoiceWhere,
       raw: true
     });
 
-    // Get total collected from FeePayment table
-    const paymentWhereCondition = { payment_status: 'success', is_refund: false };
+    const paymentWhere = { is_cancelled: false };
     if (academic_year) {
-      paymentWhereCondition.academic_year = academic_year;
+      const invoiceIds = await getInvoiceIdsForAcademicYear(academic_year);
+      if (!invoiceIds.length) {
+        return res.status(200).json({
+          success: true,
+          statusCode: 200,
+          message: 'Fee assignment vs collection data fetched successfully',
+          data: {
+            total_fee_assigned: 0,
+            total_collected: 0,
+            total_fine_collected: 0,
+            total_discount: 0,
+            total_due: 0
+          }
+        });
+      }
+      paymentWhere.invoice_id = { [Op.in]: invoiceIds };
     }
 
-    const feeCollection = await FeePayment.findAll({
+    const collection = await FeePaymentV1.findOne({
       attributes: [
         [sequelize.fn('SUM', sequelize.col('amount_paid')), 'total_collected'],
-        [sequelize.fn('SUM', sequelize.col('late_fee_paid')), 'total_fine']
+        [sequelize.fn('SUM', sequelize.col('fine_paid')), 'total_fine']
       ],
-      where: paymentWhereCondition,
+      where: paymentWhere,
       raw: true
     });
 
-    const assignment = feeAssignment[0] || {};
-    const collection = feeCollection[0] || {};
-
-    const totalAssigned = parseFloat(assignment.total_assigned) || 0;
-    const totalCollected = parseFloat(collection.total_collected) || 0;
-    const totalFine = parseFloat(collection.total_fine) || 0;
-    const totalDiscount = parseFloat(assignment.total_discount) || 0;
-    const totalDue = totalAssigned - totalCollected;
+    const totalAssigned = parseFloat(assignment?.total_assigned) || 0;
+    const totalCollected = parseFloat(collection?.total_collected) || 0;
+    const totalFine = parseFloat(collection?.total_fine) || 0;
+    const totalDiscount = parseFloat(assignment?.total_discount) || 0;
+    const totalDue = parseFloat(assignment?.total_due) || Math.max(0, totalAssigned - totalCollected);
 
     return res.status(200).json({
       success: true,
@@ -497,7 +535,7 @@ const getFeeAssignmentVsCollection = async (req, res) => {
 
 /**
  * Get Payment Mode Wise Collection
- * Returns payment method wise breakdown from FeePayment table
+ * Returns payment method wise breakdown from fee_v1 payments
  */
 const getPaymentModeCollection = async (req, res) => {
   try {
@@ -505,37 +543,51 @@ const getPaymentModeCollection = async (req, res) => {
 
     // Build where condition
     const whereCondition = {
-      payment_status: 'success', // Only successful payments
-      is_refund: false // Exclude refunds
+      is_cancelled: false
     };
-
-    if (academic_year) {
-      whereCondition.academic_year = academic_year;
-    }
 
     if (year) {
       const startDate = `${year}-01-01`;
       const endDate = `${year}-12-31`;
-      whereCondition.payment_date = {
+      whereCondition.paid_at = {
         [Op.between]: [startDate, endDate]
       };
     }
 
+    if (academic_year) {
+      const invoiceIds = await getInvoiceIdsForAcademicYear(academic_year);
+      if (!invoiceIds.length) {
+        return res.status(200).json({
+          success: true,
+          statusCode: 200,
+          message: 'Payment mode wise collection data fetched successfully',
+          data: {
+            payment_modes: [],
+            summary: {
+              total_transactions: 0,
+              grand_total: 0
+            }
+          }
+        });
+      }
+      whereCondition.invoice_id = { [Op.in]: invoiceIds };
+    }
+
     // Get payment method wise data
-    const paymentData = await FeePayment.findAll({
+    const paymentData = await FeePaymentV1.findAll({
       attributes: [
-        'payment_method',
+        'payment_mode',
         [sequelize.fn('COUNT', sequelize.col('id')), 'total_transactions'],
-        [sequelize.fn('SUM', sequelize.col('total_paid')), 'total_amount']
+        [sequelize.literal('SUM(amount_paid + fine_paid)'), 'total_amount']
       ],
       where: whereCondition,
-      group: ['payment_method'],
+      group: ['payment_mode'],
       raw: true
     });
 
     // Format the response
     const paymentModes = paymentData.map(mode => ({
-      payment_mode: mode.payment_method,
+      payment_mode: mode.payment_mode,
       total_transactions: parseInt(mode.total_transactions) || 0,
       total_amount: parseFloat(mode.total_amount) || 0
     }));

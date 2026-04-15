@@ -202,7 +202,7 @@ const getStudentTimetable = async (req, res) => {
     // Get user_id from auth token
     const user_id = req.user.id;
 
-    const { ClassSection, Subject, ClassTimetable, Teacher, User } = require('../../models');
+    const { ClassSection, Subject, ClassTimetable, Teacher, User, ClassTimeSlot } = require('../../models');
 
     // Find student by user_id
     const student = await Student.findOne({
@@ -234,6 +234,11 @@ const getStudentTimetable = async (req, res) => {
       where: { class_section_id: student.class_section_id },
       include: [
         {
+          model: ClassTimeSlot,
+          as: 'timeSlot',
+          attributes: ['id', 'slot_number', 'slot_label', 'start_time', 'end_time', 'is_break']
+        },
+        {
           model: Subject,
           as: 'subject',
           attributes: ['id', 'subject_name', 'subject_code']
@@ -249,10 +254,6 @@ const getStudentTimetable = async (req, res) => {
             }
           ]
         }
-      ],
-      order: [
-        ['day_of_week', 'ASC'],
-        ['start_time', 'ASC']
       ]
     });
 
@@ -274,13 +275,24 @@ const getStudentTimetable = async (req, res) => {
       Saturday: []
     };
 
-    timetable.forEach(entry => {
+    timetable
+      .sort((a, b) => {
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayDiff = days.indexOf(a.day_of_week) - days.indexOf(b.day_of_week);
+        if (dayDiff !== 0) return dayDiff;
+        return Number(a.timeSlot?.slot_number || 0) - Number(b.timeSlot?.slot_number || 0);
+      })
+      .forEach(entry => {
       const dayData = {
         id: entry.id,
-        period_name: entry.period_name,
-        start_time: entry.start_time,
-        end_time: entry.end_time,
-        is_break: entry.is_break,
+        slot: entry.timeSlot ? {
+          id: entry.timeSlot.id,
+          slot_number: entry.timeSlot.slot_number,
+          slot_label: entry.timeSlot.slot_label,
+          start_time: entry.timeSlot.start_time,
+          end_time: entry.timeSlot.end_time,
+          is_break: entry.timeSlot.is_break
+        } : null,
         subject: entry.subject ? {
           id: entry.subject.id,
           subject_name: entry.subject.subject_name,

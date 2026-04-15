@@ -7,19 +7,55 @@ const getTeacherDropdown = async (req, res) => {
         role: "teacher",
         status: "active",
       },
-      attributes: ["name"],
+      attributes: ["id", "name"],
       include: {
         model: Teacher,
         as: "teacherDetails",
         attributes: ["id", "qualification", "gender", "mobile_no"],
+        include: [{
+          model: Subject,
+          as: 'subjects',
+          attributes: ['id', 'subject_name', 'subject_code', 'class_section_id'],
+          include: [{
+            model: ClassSection,
+            as: 'class_section',
+            attributes: ['id', 'class_name', 'section_name']
+          }],
+          required: false
+        }],
       },
+    });
+
+    const formattedTeachers = allTeachers.map((user) => {
+      const subjects = user.teacherDetails?.subjects || [];
+
+      return {
+        user_id: user.id,
+        name: user.name,
+        teacherDetails: user.teacherDetails ? {
+          id: user.teacherDetails.id,
+          qualification: user.teacherDetails.qualification,
+          gender: user.teacherDetails.gender,
+          mobile_no: user.teacherDetails.mobile_no
+        } : null,
+        assigned_subjects: subjects.length > 0
+          ? subjects.map((subject) => ({
+            subject_id: subject.id,
+            subject_name: subject.subject_name,
+            subject_code: subject.subject_code,
+            class_section_id: subject.class_section_id,
+            class_name: subject.class_section?.class_name || null,
+            section_name: subject.class_section?.section_name || null
+          }))
+          : null
+      };
     });
 
     res.status(200).json({
       success: true,
       statusCode:200,
       message: "Active teachers fetched successfully",
-      data: allTeachers,
+      data: formattedTeachers,
     });
 
   } catch (error) {

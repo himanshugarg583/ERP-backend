@@ -1,1 +1,5 @@
 fees module in admin 
+
+furture scope-:
+we can remove slot table in timetable module and add direct 
+class period 

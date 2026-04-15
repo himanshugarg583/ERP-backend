@@ -1,0 +1,169 @@
+﻿{
+    "fee_invoices":  {
+                         "table_name":  "fee_invoices",
+                         "engine":  "InnoDB",
+                         "columns":  [
+                                         "id",
+                                         "invoice_number",
+                                         "student_id",
+                                         "assignment_id",
+                                         "installment_plan_id",
+                                         "due_date",
+                                         "paid_amount",
+                                         "balance_amount",
+                                         "concession_amount",
+                                         "status",
+                                         "created_at",
+                                         "updated_at"
+                                     ],
+                         "indexes":  [
+                                         "PRIMARY KEY",
+                                         "INDEX"
+                                     ]
+                     },
+    "fee_payments":  {
+                         "table_name":  "fee_payments",
+                         "engine":  "InnoDB",
+                         "columns":  [
+                                         "id",
+                                         "invoice_id",
+                                         "student_id",
+                                         "amount_paid",
+                                         "payment_mode",
+                                         "payment_gateway",
+                                         "gateway_payment_id",
+                                         "paid_at",
+                                         "is_cancelled",
+                                         "cancelled_at",
+                                         "cancelled_by",
+                                         "created_at",
+                                         "updated_at"
+                                     ],
+                         "indexes":  [
+                                         "PRIMARY KEY",
+                                         "INDEX"
+                                     ]
+                     },
+    "exam_marks":  {
+                       "table_name":  "exam_marks",
+                       "engine":  "InnoDB",
+                       "columns":  [
+                                       "id",
+                                       "exam_id",
+                                       "student_id",
+                                       "subject_id",
+                                       "marks_obtained",
+                                       "total_marks",
+                                       "grade",
+                                       "remarks"
+                                   ],
+                       "indexes":  [
+                                       "PRIMARY KEY",
+                                       "INDEX"
+                                   ]
+                   },
+    "students":  {
+                     "table_name":  "students",
+                     "engine":  "InnoDB",
+                     "columns":  [
+                                     "id",
+                                     "class_section_id",
+                                     "address",
+                                     "phone",
+                                     "marksheet"
+                                 ],
+                     "indexes":  [
+                                     "PRIMARY KEY"
+                                 ]
+                 },
+    "users":  {
+                  "table_name":  "users",
+                  "engine":  "InnoDB",
+                  "columns":  [
+                                  "id",
+                                  "name",
+                                  "email",
+                                  "password",
+                                  "role",
+                                  "status",
+                                  "created_at",
+                                  "updated_at"
+                              ],
+                  "indexes":  [
+                                  "PRIMARY KEY"
+                              ]
+              },
+    "fee_invoice_items":  {
+                              "table_name":  "fee_invoice_items",
+                              "engine":  "InnoDB",
+                              "columns":  [
+                                              "id",
+                                              "invoice_id",
+                                              "fee_head_id",
+                                              "fee_amount",
+                                              "created_at",
+                                              "updated_at"
+                                          ],
+                              "indexes":  [
+                                              "PRIMARY KEY",
+                                              "INDEX"
+                                          ]
+                          },
+    "teachers":  {
+                     "table_name":  "teachers",
+                     "engine":  "InnoDB",
+                     "columns":  [
+                                     "id",
+                                     "mobile_no",
+                                     "role"
+                                 ],
+                     "indexes":  [
+                                     "PRIMARY KEY"
+                                 ]
+                 },
+    "fee_structures":  {
+                           "table_name":  "fee_structures",
+                           "engine":  "InnoDB",
+                           "columns":  [
+                                           "id",
+                                           "class_section_id",
+                                           "fee_head_id",
+                                           "amount",
+                                           "created_at",
+                                           "updated_at"
+                                       ],
+                           "indexes":  [
+                                           "PRIMARY KEY",
+                                           "INDEX"
+                                       ]
+                       },
+    "class_sections":  {
+                           "table_name":  "class_sections",
+                           "engine":  "InnoDB",
+                           "columns":  [
+                                           "id",
+                                           "class_name",
+                                           "section_name",
+                                           "teacher_id"
+                                       ],
+                           "indexes":  [
+                                           "PRIMARY KEY"
+                                       ]
+                       },
+    "subjects":  {
+                     "table_name":  "subjects",
+                     "engine":  "InnoDB",
+                     "columns":  [
+                                     "id",
+                                     "subject_name",
+                                     "subject_code",
+                                     "class_section_id",
+                                     "teacher_id",
+                                     "created_at",
+                                     "updated_at"
+                                 ],
+                     "indexes":  [
+                                     "PRIMARY KEY"
+                                 ]
+                 }
+}

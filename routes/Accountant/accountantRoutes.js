@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authMiddleware, isAccountant } = require('../../middlewares/authMiddleware');
+const { authMiddleware } = require('../../middlewares/authMiddleware');
 const { 
   addIncome, 
   addExpense, 
@@ -11,15 +11,6 @@ const {
   updateIncomeExpense,
   deleteIncomeExpense
 } = require('../../controllers/Accountant/incomeExpenseController');
-
-const {
-  assignFeeToClass,
-  getClassesForFeeAssignment,
-  getAssignedFeesByClass,
-  getStudentFeeDetails,
-  getAllFeePayments,
-  getFeePaymentByReceipt
-} = require('../../controllers/Accountant/feeAssignmentController');
 
 const {
   createOrder,
@@ -76,36 +67,6 @@ router.get('/income-expense-graph', authMiddleware, getIncomeExpenseGraph);
 // @desc    Get monthly expense data
 // @access  Private (Accountant only)
 router.get('/monthly-expense', authMiddleware, getMonthlyExpense);
-
-// @route   POST /api/accountant/assign-fee
-// @desc    Assign fee structure to all students in a class with installments
-// @access  Private (Accountant only)
-router.post('/assign-fee', authMiddleware, assignFeeToClass);
-
-// @route   GET /api/accountant/classes-for-fee-assignment
-// @desc    Get all classes with student count for fee assignment
-// @access  Private (Accountant only)
-router.get('/classes-for-fee-assignment', authMiddleware, getClassesForFeeAssignment);
-
-// @route   GET /api/accountant/assigned-fees/:class_section_id
-// @desc    Get assigned fees for a specific class
-// @access  Private (Accountant only)
-router.get('/assigned-fees/:class_section_id', authMiddleware, getAssignedFeesByClass);
-
-// @route   GET /api/accountant/student-fee-details/:student_id
-// @desc    Get complete fee details for a specific student
-// @access  Private (Accountant only)
-router.get('/student-fee-details/:student_id', authMiddleware, getStudentFeeDetails);
-
-// @route   GET /api/accountant/fee-payments
-// @desc    Get all fee payments with filters
-// @access  Private (Accountant only)
-router.get('/fee-payments', authMiddleware, getAllFeePayments);
-
-// @route   GET /api/accountant/fee-payment/:receipt_number
-// @desc    Get payment details by receipt number
-// @access  Private (Accountant only)
-router.get('/fee-payment/:receipt_number', authMiddleware, getFeePaymentByReceipt);
 
 // ========== Razorpay Payment Routes ==========
 

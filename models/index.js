@@ -1,34 +1,32 @@
 const sequelize = require('../config/db');
 
 // Import models
-const {User} = require('../models/admin/user');
-const {ClassSection} = require('../models/admin/Classsection');
-const {Student} = require('../models/admin/Student');
-const {Teacher} = require('../models/admin/Teacher');
-const {Staff} = require('../models/admin/Staff');
+const { User } = require('./admin/user');
+const { ClassSection } = require('./admin/Classsection');
+const { Student } = require('./admin/Student');
+const { Teacher } = require('./admin/Teacher');
+const { Staff } = require('./admin/Staff');
 const {Subject} = require('./admin/subject');
 const {studentsAttendances} = require('./admin/studentsAttendances');
 const {StudentParent} = require('./admin/student_parent');
 const {ClassTimetable} = require('./admin/ClassTimetable');
+const {ClassTimetableSetting} = require('./admin/ClassTimetableSetting');
+const {ClassTimeSlot} = require('./admin/ClassTimeSlot');
 const {AdmissionEnquiry} = require('./admin/AdmissionEnquiry');
 const {Holiday} = require('./admin/Holiday');
 
-// NEW: fees & payments models (adjust paths/names to your files)
+const { IncomeExpense } = require('./admin/accounting/IncomeExpense');
 
-const { IncomeExpense } = require('./admin/fees/IncomeExpense');
-const { FeeHead } = require('./admin/fees/FeeHead');
-const { FeeStructure } = require('./admin/fees/FeeStructure');
-const { FeeStructureDetail } = require('./admin/fees/FeeStructureDetail');
-const { StudentFee } = require('./admin/fees/StudentFee');
-const { FeePayment } = require('./admin/fees/FeePayment');
-const { FeeInstallment } = require('./admin/fees/FeeInstallment');
-
-// exam
-const { ExamTerm } = require('./admin/exam/examTerm');
-const { Exam } = require('./admin/exam/exam');
-const { ExamSchedule } = require('./admin/exam/examSchedule');
-const { ExamTimetable } = require('./admin/exam/examTimetable');
-const { ExamMark } = require('./admin/exam/examMark');
+// exam v2
+const { ExamTypeV2 } = require('./admin/exam/ExamTypeV2');
+const { ExamEventV2 } = require('./admin/exam/ExamEventV2');
+const { ExamPaperV2 } = require('./admin/exam/ExamPaperV2');
+const { ExamTimetableV2 } = require('./admin/exam/ExamTimetableV2');
+const { MarksEntryV2 } = require('./admin/exam/MarksEntryV2');
+const { ExamAttendanceV2 } = require('./admin/exam/ExamAttendanceV2');
+const { ResultV2 } = require('./admin/exam/ResultV2');
+const { DocumentTemplateV2 } = require('./admin/exam/DocumentTemplateV2');
+const { DocumentV2 } = require('./admin/exam/DocumentV2');
 
 // student leave
 const { StudentLeave } = require('./admin/StudentLeave');
@@ -95,9 +93,18 @@ studentsAttendances.belongsTo(ClassSection, { foreignKey: 'class_section_id', as
 Student.hasMany(StudentLeave, { foreignKey: 'student_id', as: 'leaves', onDelete: 'CASCADE' });
 StudentLeave.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
 
-// Associations
-ClassSection.hasMany(ClassTimetable, { foreignKey: 'class_section_id', as: 'timetable' });
+// Timetable Associations
+ClassSection.hasOne(ClassTimetableSetting, { foreignKey: 'class_section_id', as: 'timetableSetting', onDelete: 'CASCADE' });
+ClassTimetableSetting.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
+
+ClassSection.hasMany(ClassTimeSlot, { foreignKey: 'class_section_id', as: 'timeSlots', onDelete: 'CASCADE' });
+ClassTimeSlot.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
+
+ClassSection.hasMany(ClassTimetable, { foreignKey: 'class_section_id', as: 'timetableEntries', onDelete: 'CASCADE' });
 ClassTimetable.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
+
+ClassTimeSlot.hasMany(ClassTimetable, { foreignKey: 'time_slot_id', as: 'timetableEntries', onDelete: 'CASCADE' });
+ClassTimetable.belongsTo(ClassTimeSlot, { foreignKey: 'time_slot_id', as: 'timeSlot' });
 
 Subject.hasMany(ClassTimetable, { foreignKey: 'subject_id', as: 'timetableEntries' });
 ClassTimetable.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
@@ -105,99 +112,76 @@ ClassTimetable.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
 Teacher.hasMany(ClassTimetable, { foreignKey: 'teacher_id', as: 'timetableEntries' });
 ClassTimetable.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
 
-// =====================================================
-// FEE MANAGEMENT ASSOCIATIONS
-// =====================================================
-
-// 1. ClassSection ↔ FeeStructure (One-to-Many)
-ClassSection.hasMany(FeeStructure, {foreignKey: 'class_section_id', as: 'feeStructures', onDelete: 'CASCADE'});
-FeeStructure.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection'});
-
-// 2. FeeHead ↔ FeeStructureDetail (One-to-Many)
-FeeHead.hasMany(FeeStructureDetail, { foreignKey: 'fee_head_id', as: 'structureDetails', onDelete: 'RESTRICT' });
-
-FeeStructureDetail.belongsTo(FeeHead, { foreignKey: 'fee_head_id',  as: 'feeHead' });
-
-// 3. FeeStructure ↔ FeeStructureDetail (One-to-Many)
-FeeStructure.hasMany(FeeStructureDetail, { foreignKey: 'fee_structure_id',  as: 'feeDetails', onDelete: 'CASCADE' });
-FeeStructureDetail.belongsTo(FeeStructure, { foreignKey: 'fee_structure_id',  as: 'feeStructure' });
-
-// 4. Student ↔ StudentFee (One-to-Many)
-Student.hasMany(StudentFee, { foreignKey: 'student_id', as: 'studentFees', onDelete: 'CASCADE' });
-StudentFee.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
-
-// 5. FeeStructure ↔ StudentFee (One-to-Many)
-FeeStructure.hasMany(StudentFee, { foreignKey: 'fee_structure_id', as: 'studentFees', onDelete: 'RESTRICT' });
-StudentFee.belongsTo(FeeStructure, { foreignKey: 'fee_structure_id', as: 'feeStructure' });
-
-// 6. StudentFee ↔ FeeInstallment (One-to-Many)
-StudentFee.hasMany(FeeInstallment, { foreignKey: 'student_fee_id', as: 'installments', onDelete: 'CASCADE' });
-FeeInstallment.belongsTo(StudentFee, { foreignKey: 'student_fee_id', as: 'studentFee' });
-  
-
-// 7. Student ↔ FeePayment (One-to-Many)
-Student.hasMany(FeePayment, { foreignKey: 'student_id',  as: 'feePayments', onDelete: 'CASCADE'});
-FeePayment.belongsTo(Student, { foreignKey: 'student_id',  as: 'student'});
-
-// 8. User ↔ FeePayment (One-to-Many) - for created_by tracking
-// Commented out: created_by column doesn't exist in fee_payments table
-// User.hasMany(FeePayment, { foreignKey: 'created_by',as: 'processedPayments',onDelete: 'SET NULL'});
-// FeePayment.belongsTo(User, { foreignKey: 'created_by', as: 'createdByUser' });
-
-// 9. FeePayment Self-Referencing (for refunds)
-// Commented out: parent_payment_id column doesn't exist in fee_payments table
-// FeePayment.belongsTo(FeePayment, {foreignKey: 'parent_payment_id',  as: 'originalPayment', onDelete: 'SET NULL'});
-// FeePayment.hasMany(FeePayment, {  foreignKey: 'parent_payment_id',  as: 'refunds', onDelete: 'SET NULL'});
-
-// 10. User ↔ StudentFee (One-to-Many) - for created_by tracking  
-// User.hasMany(StudentFee, { foreignKey: 'created_by',  as: 'createdStudentFees', onDelete: 'SET NULL'});
-// StudentFee.belongsTo(User, { foreignKey: 'created_by',  as: 'createdByUser'});
-
-// 11. User ↔ FeeStructure (One-to-Many) - for created_by tracking
-// Commented out: created_by column doesn't exist in fee_structures table
-// User.hasMany(FeeStructure, { foreignKey: 'created_by', as: 'createdFeeStructures', onDelete: 'SET NULL' });
-// FeeStructure.belongsTo(User, {  foreignKey: 'created_by', as: 'createdByUser' });
-
-// exam
+// exam v2
 // =====================================================
 // EXAM MANAGEMENT ASSOCIATIONS
 // =====================================================
 
-// 1️⃣ ExamTerm ↔ Exam (One-to-Many)
-ExamTerm.hasMany(Exam, { foreignKey: 'term_id', as: 'exams', onDelete: 'CASCADE' });
-Exam.belongsTo(ExamTerm, { foreignKey: 'term_id', as: 'term' });
+ExamTypeV2.hasMany(ExamEventV2, { foreignKey: 'exam_type_id', as: 'events' });
+ExamEventV2.belongsTo(ExamTypeV2, { foreignKey: 'exam_type_id', as: 'examType' });
 
-// 2️⃣ Exam ↔ ExamSchedule (One-to-Many)
-Exam.hasMany(ExamSchedule, { foreignKey: 'exam_id', as: 'examSchedules', onDelete: 'CASCADE' });
-ExamSchedule.belongsTo(Exam, { foreignKey: 'exam_id', as: 'exam' });
+User.hasMany(ExamEventV2, { foreignKey: 'created_by', as: 'createdExamEventsV2' });
+ExamEventV2.belongsTo(User, { foreignKey: 'created_by', as: 'createdBy' });
 
-// 3️⃣ ClassSection ↔ ExamSchedule (One-to-Many)
-ClassSection.hasMany(ExamSchedule, { foreignKey: 'class_section_id', as: 'examSchedules', onDelete: 'CASCADE' });
-ExamSchedule.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
+ExamEventV2.hasMany(ExamPaperV2, { foreignKey: 'exam_event_id', as: 'papers' });
+ExamPaperV2.belongsTo(ExamEventV2, { foreignKey: 'exam_event_id', as: 'event' });
 
-// 4️⃣ ExamSchedule ↔ ExamTimetable (One-to-Many)
-ExamSchedule.hasMany(ExamTimetable, { foreignKey: 'exam_schedule_id', as: 'examTimetables', onDelete: 'CASCADE' });
-ExamTimetable.belongsTo(ExamSchedule, { foreignKey: 'exam_schedule_id', as: 'examSchedule' });
+Subject.hasMany(ExamPaperV2, { foreignKey: 'subject_id', as: 'examPapersV2' });
+ExamPaperV2.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
 
-// 5️⃣ Subject ↔ ExamTimetable (One-to-Many)
-Subject.hasMany(ExamTimetable, { foreignKey: 'subject_id', as: 'examTimetables', onDelete: 'CASCADE' });
-ExamTimetable.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
+ClassSection.hasMany(ExamPaperV2, { foreignKey: 'class_id', as: 'examPapersV2' });
+ExamPaperV2.belongsTo(ClassSection, { foreignKey: 'class_id', as: 'classSection' });
 
-// 6️⃣ Teacher ↔ ExamTimetable (Invigilator)
-Teacher.hasMany(ExamTimetable, { foreignKey: 'invigilator_teacher_id', as: 'invigilatedExams', onDelete: 'SET NULL' });
-ExamTimetable.belongsTo(Teacher, { foreignKey: 'invigilator_teacher_id', as: 'invigilator' });
+Teacher.hasMany(ExamPaperV2, { foreignKey: 'assigned_teacher_id', as: 'assignedExamPapersV2' });
+ExamPaperV2.belongsTo(Teacher, { foreignKey: 'assigned_teacher_id', as: 'assignedTeacher' });
 
-// 7️⃣ ExamSchedule ↔ ExamMark (One-to-Many)
-ExamSchedule.hasMany(ExamMark, { foreignKey: 'exam_schedule_id', as: 'examMarks', onDelete: 'CASCADE' });
-ExamMark.belongsTo(ExamSchedule, { foreignKey: 'exam_schedule_id', as: 'examSchedule' });
+ExamEventV2.hasMany(ExamTimetableV2, { foreignKey: 'exam_event_id', as: 'timetableEntries' });
+ExamTimetableV2.belongsTo(ExamEventV2, { foreignKey: 'exam_event_id', as: 'event' });
 
-// 8️⃣ Student ↔ ExamMark (One-to-Many)
-Student.hasMany(ExamMark, { foreignKey: 'student_id', as: 'examMarks', onDelete: 'CASCADE' });
-ExamMark.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+ExamPaperV2.hasOne(ExamTimetableV2, { foreignKey: 'exam_paper_id', as: 'timetable' });
+ExamTimetableV2.belongsTo(ExamPaperV2, { foreignKey: 'exam_paper_id', as: 'paper' });
 
-// 9️⃣ Subject ↔ ExamMark (One-to-Many)
-Subject.hasMany(ExamMark, { foreignKey: 'subject_id', as: 'subjectMarks', onDelete: 'CASCADE' });
-ExamMark.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
+ClassSection.hasMany(ExamTimetableV2, { foreignKey: 'class_id', as: 'examTimetableEntriesV2' });
+ExamTimetableV2.belongsTo(ClassSection, { foreignKey: 'class_id', as: 'classSection' });
+
+Subject.hasMany(ExamTimetableV2, { foreignKey: 'subject_id', as: 'examTimetableEntriesV2' });
+ExamTimetableV2.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
+
+Teacher.hasMany(ExamTimetableV2, { foreignKey: 'invigilator_teacher_id', as: 'invigilatorEntriesV2' });
+ExamTimetableV2.belongsTo(Teacher, { foreignKey: 'invigilator_teacher_id', as: 'invigilator' });
+
+ExamPaperV2.hasMany(MarksEntryV2, { foreignKey: 'exam_paper_id', as: 'marks' });
+MarksEntryV2.belongsTo(ExamPaperV2, { foreignKey: 'exam_paper_id', as: 'paper' });
+
+Student.hasMany(MarksEntryV2, { foreignKey: 'student_id', as: 'examMarksV2' });
+MarksEntryV2.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+User.hasMany(MarksEntryV2, { foreignKey: 'entered_by', as: 'enteredMarksV2' });
+MarksEntryV2.belongsTo(User, { foreignKey: 'entered_by', as: 'enteredBy' });
+
+ExamPaperV2.hasMany(ExamAttendanceV2, { foreignKey: 'exam_paper_id', as: 'attendanceRows' });
+ExamAttendanceV2.belongsTo(ExamPaperV2, { foreignKey: 'exam_paper_id', as: 'paper' });
+
+Student.hasMany(ExamAttendanceV2, { foreignKey: 'student_id', as: 'examAttendanceV2' });
+ExamAttendanceV2.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+User.hasMany(ExamAttendanceV2, { foreignKey: 'marked_by', as: 'markedAttendanceV2' });
+ExamAttendanceV2.belongsTo(User, { foreignKey: 'marked_by', as: 'markedBy' });
+
+Student.hasMany(ResultV2, { foreignKey: 'student_id', as: 'resultsV2' });
+ResultV2.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+ExamEventV2.hasMany(ResultV2, { foreignKey: 'exam_event_id', as: 'results' });
+ResultV2.belongsTo(ExamEventV2, { foreignKey: 'exam_event_id', as: 'event' });
+
+ResultV2.hasMany(MarksEntryV2, { foreignKey: 'result_id', as: 'details' });
+MarksEntryV2.belongsTo(ResultV2, { foreignKey: 'result_id', as: 'result' });
+
+Student.hasMany(DocumentV2, { foreignKey: 'student_id', as: 'documentsV2' });
+DocumentV2.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+User.hasMany(DocumentV2, { foreignKey: 'generated_by', as: 'generatedDocumentsV2' });
+DocumentV2.belongsTo(User, { foreignKey: 'generated_by', as: 'generatedBy' });
 
 // =====================================================
 // CONTENT UPLOADS ASSOCIATIONS
@@ -259,24 +243,24 @@ module.exports = {
   studentsAttendances,
   StudentParent,
   ClassTimetable,
+  ClassTimetableSetting,
+  ClassTimeSlot,
   AdmissionEnquiry,
   Holiday,
   
-  // Fee Management Models
+  // Accounting Models
   IncomeExpense,
-  FeeHead,
-  FeeStructure,
-  FeeStructureDetail,
-  StudentFee,
-  FeePayment,
-  FeeInstallment,
 
-  // Exam Management Models
-  ExamTerm,
-  Exam,
-  ExamSchedule,
-  ExamTimetable,
-  ExamMark,
+  // Exam Management Models (V2)
+  ExamTypeV2,
+  ExamEventV2,
+  ExamPaperV2,
+  ExamTimetableV2,
+  MarksEntryV2,
+  ExamAttendanceV2,
+  ResultV2,
+  DocumentTemplateV2,
+  DocumentV2,
 
   // Student Leave
   StudentLeave,

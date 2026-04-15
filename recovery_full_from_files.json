@@ -1,0 +1,1705 @@
+﻿{
+    "generated_at":  "2026-04-09 16:27:34",
+    "source":  "file_binary_scan",
+    "tables":  {
+                   "fee_invoice_items":  {
+                                             "table_name":  "fee_invoice_items",
+                                             "frm_exists":  true,
+                                             "ibd_exists":  true,
+                                             "columns":  [
+                                                             "x1",
+                                                             "tx",
+                                                             "invoice_id",
+                                                             "fee_head_id",
+                                                             "id",
+                                                             "gross_amount",
+                                                             "concession_amount",
+                                                             "net_amount",
+                                                             "created_at",
+                                                             "updated_at",
+                                                             "iduuid"
+                                                         ],
+                                             "row_candidates":  [
+                                                                    "infimum",
+                                                                    "supremum",
+                                                                    "!\u00261"
+                                                                ],
+                                             "stats":  {
+                                                           "printable_strings_count":  3,
+                                                           "emails_count":  0,
+                                                           "dates_count":  0,
+                                                           "ibd_size":  98304
+                                                       }
+                                         },
+                   "fee_invoices":  {
+                                        "table_name":  "fee_invoices",
+                                        "frm_exists":  true,
+                                        "ibd_exists":  true,
+                                        "columns":  [
+                                                        "tx",
+                                                        "invoice_number",
+                                                        "uq_invoice_student_installment",
+                                                        "assignment_id",
+                                                        "installment_plan_id",
+                                                        "academic_year_id",
+                                                        "waived_by",
+                                                        "id",
+                                                        "student_id",
+                                                        "gross_amount",
+                                                        "concession_amount",
+                                                        "net_amount",
+                                                        "fine_amount",
+                                                        "paid_amount",
+                                                        "balance_amount",
+                                                        "status",
+                                                        "due_date",
+                                                        "generated_at",
+                                                        "waiver_reason",
+                                                        "created_at",
+                                                        "updated_at",
+                                                        "draft",
+                                                        "active",
+                                                        "partial",
+                                                        "paid",
+                                                        "overdue",
+                                                        "waived",
+                                                        "cancelled",
+                                                        "iduuid"
+                                                    ],
+                                        "row_candidates":  [
+                                                               "infimum",
+                                                               "supremum",
+                                                               "\u003e0E",
+                                                               "NuS",
+                                                               "cd!"
+                                                           ],
+                                        "stats":  {
+                                                      "printable_strings_count":  5,
+                                                      "emails_count":  0,
+                                                      "dates_count":  0,
+                                                      "ibd_size":  180224
+                                                  }
+                                    },
+                   "fee_number_sequences":  {
+                                                "table_name":  "fee_number_sequences",
+                                                "frm_exists":  true,
+                                                "ibd_exists":  true,
+                                                "columns":  [
+                                                                "tx",
+                                                                "key_name",
+                                                                "id",
+                                                                "last_value",
+                                                                "created_at",
+                                                                "updated_at",
+                                                                "iduuid"
+                                                            ],
+                                                "row_candidates":  [
+                                                                       "infimum",
+                                                                       "supremum",
+                                                                       "Q7c9261ae-31a7-11f1-8027-74782726b16b",
+                                                                       "invoice",
+                                                                       "7c9273e3-31a7-11f1-8027-74782726b16b",
+                                                                       "receipt",
+                                                                       "4dE",
+                                                                       "supremum$",
+                                                                       "2invoice7c9261ae-31a7-11f1-8027-74782726b16b$",
+                                                                       "receipt7c9273e3-31a7-11f1-8027-74782726b16b"
+                                                                   ],
+                                                "stats":  {
+                                                              "printable_strings_count":  10,
+                                                              "emails_count":  0,
+                                                              "dates_count":  0,
+                                                              "ibd_size":  81920
+                                                          }
+                                            },
+                   "fee_payments":  {
+                                        "table_name":  "fee_payments",
+                                        "frm_exists":  true,
+                                        "ibd_exists":  true,
+                                        "columns":  [
+                                                        "k1",
+                                                        "tx",
+                                                        "receipt_number",
+                                                        "gateway_payment_id",
+                                                        "invoice_id",
+                                                        "collected_by",
+                                                        "cancelled_by",
+                                                        "idx_fee_payments_student_paid_at",
+                                                        "id",
+                                                        "student_id",
+                                                        "amount_paid",
+                                                        "fine_paid",
+                                                        "payment_mode",
+                                                        "transaction_ref",
+                                                        "payment_gateway",
+                                                        "paid_at",
+                                                        "cheque_date",
+                                                        "cheque_bank",
+                                                        "cheque_status",
+                                                        "notes",
+                                                        "is_cancelled",
+                                                        "cancelled_at",
+                                                        "cancellation_reason",
+                                                        "created_at",
+                                                        "updated_at",
+                                                        "cash",
+                                                        "upi",
+                                                        "card",
+                                                        "netbanking",
+                                                        "cheque",
+                                                        "dd",
+                                                        "neft",
+                                                        "online",
+                                                        "pending",
+                                                        "cleared",
+                                                        "bounced",
+                                                        "iduuid"
+                                                    ],
+                                        "row_candidates":  [
+                                                               "infimum",
+                                                               "supremum",
+                                                               "|]9",
+                                                               "c]9",
+                                                               "d\\\"",
+                                                               "c\\\""
+                                                           ],
+                                        "stats":  {
+                                                      "printable_strings_count":  6,
+                                                      "emails_count":  0,
+                                                      "dates_count":  0,
+                                                      "ibd_size":  180224
+                                                  }
+                                    },
+                   "fee_reminders":  {
+                                         "table_name":  "fee_reminders",
+                                         "frm_exists":  true,
+                                         "ibd_exists":  true,
+                                         "columns":  [
+                                                         "tx",
+                                                         "invoice_id",
+                                                         "student_id",
+                                                         "id",
+                                                         "recipient_number",
+                                                         "channel",
+                                                         "reminder_type",
+                                                         "message_template",
+                                                         "sent_at",
+                                                         "status",
+                                                         "error_message",
+                                                         "created_at",
+                                                         "updated_at",
+                                                         "sms",
+                                                         "whatsapp",
+                                                         "email",
+                                                         "app_push",
+                                                         "due_soon",
+                                                         "overdue",
+                                                         "receipt",
+                                                         "bounce_alert",
+                                                         "concession_status",
+                                                         "sent",
+                                                         "delivered",
+                                                         "failed",
+                                                         "bounced",
+                                                         "iduuid"
+                                                     ],
+                                         "row_candidates":  [
+                                                                "\u0026,E",
+                                                                "infimum",
+                                                                "supremum",
+                                                                "\u0026,V",
+                                                                "(HE",
+                                                                "(H6",
+                                                                "*,E"
+                                                            ],
+                                         "stats":  {
+                                                       "printable_strings_count":  7,
+                                                       "emails_count":  0,
+                                                       "dates_count":  0,
+                                                       "ibd_size":  98304
+                                                   }
+                                     },
+                   "fee_structure_items":  {
+                                               "table_name":  "fee_structure_items",
+                                               "frm_exists":  true,
+                                               "ibd_exists":  true,
+                                               "columns":  [
+                                                               "tx",
+                                                               "uq_fee_structure_items_structure_head",
+                                                               "fee_head_id",
+                                                               "id",
+                                                               "fee_structure_id",
+                                                               "amount",
+                                                               "is_mandatory",
+                                                               "sort_order",
+                                                               "created_at",
+                                                               "updated_at",
+                                                               "iduuid"
+                                                           ],
+                                               "row_candidates":  [
+                                                                      "infimum",
+                                                                      "supremum"
+                                                                  ],
+                                               "stats":  {
+                                                             "printable_strings_count":  2,
+                                                             "emails_count":  0,
+                                                             "dates_count":  0,
+                                                             "ibd_size":  114688
+                                                         }
+                                           },
+                   "fee_structures":  {
+                                          "table_name":  "fee_structures",
+                                          "frm_exists":  true,
+                                          "ibd_exists":  true,
+                                          "columns":  [
+                                                          "tx",
+                                                          "km",
+                                                          "created_by",
+                                                          "idx_fee_structures_academic_year",
+                                                          "idx_fee_structures_type",
+                                                          "id",
+                                                          "name",
+                                                          "academic_year_id",
+                                                          "applicable_to",
+                                                          "class_ids",
+                                                          "description",
+                                                          "structure_type",
+                                                          "is_active",
+                                                          "created_at",
+                                                          "updated_at",
+                                                          "recurring",
+                                                          "one_time",
+                                                          "iduuid",
+                                                          "class_idsjson_valid"
+                                                      ],
+                                          "row_candidates":  [
+                                                                 "infimum",
+                                                                 "supremum"
+                                                             ],
+                                          "stats":  {
+                                                        "printable_strings_count":  2,
+                                                        "emails_count":  0,
+                                                        "dates_count":  0,
+                                                        "ibd_size":  114688
+                                                    }
+                                      },
+                   "fee_webhook_events":  {
+                                              "table_name":  "fee_webhook_events",
+                                              "frm_exists":  true,
+                                              "ibd_exists":  true,
+                                              "columns":  [
+                                                              "tx",
+                                                              "idx_fee_webhooks_gateway_event",
+                                                              "id",
+                                                              "gateway",
+                                                              "event_id",
+                                                              "event_type",
+                                                              "payload",
+                                                              "signature",
+                                                              "status",
+                                                              "error_message",
+                                                              "received_at",
+                                                              "created_at",
+                                                              "updated_at",
+                                                              "processed",
+                                                              "ignored",
+                                                              "rejected",
+                                                              "failed",
+                                                              "iduuid",
+                                                              "payloadjson_valid"
+                                                          ],
+                                              "row_candidates":  [
+                                                                     "infimum",
+                                                                     "supremum"
+                                                                 ],
+                                              "stats":  {
+                                                            "printable_strings_count":  2,
+                                                            "emails_count":  0,
+                                                            "dates_count":  0,
+                                                            "ibd_size":  81920
+                                                        }
+                                          },
+                   "holidays":  {
+                                    "table_name":  "holidays",
+                                    "frm_exists":  true,
+                                    "ibd_exists":  true,
+                                    "columns":  [
+                                                    "tx",
+                                                    "kb",
+                                                    "holiday_date",
+                                                    "id",
+                                                    "reason",
+                                                    "description",
+                                                    "created_at",
+                                                    "updated_at"
+                                                ],
+                                    "row_candidates":  [
+                                                           "infimum",
+                                                           "supremum",
+                                                           "sundaysdsdsd",
+                                                           "dsdfda",
+                                                           "wTE",
+                                                           "\u0026infimum"
+                                                       ],
+                                    "stats":  {
+                                                  "printable_strings_count":  6,
+                                                  "emails_count":  0,
+                                                  "dates_count":  0,
+                                                  "ibd_size":  81920
+                                              }
+                                },
+                   "income_expense":  {
+                                          "table_name":  "income_expense",
+                                          "frm_exists":  true,
+                                          "ibd_exists":  true,
+                                          "columns":  [
+                                                          "tx",
+                                                          "id",
+                                                          "entry_type",
+                                                          "category",
+                                                          "sub_category",
+                                                          "amount",
+                                                          "payment_mode",
+                                                          "transaction_ref",
+                                                          "description",
+                                                          "entry_date",
+                                                          "recorded_by",
+                                                          "created_at",
+                                                          "income",
+                                                          "expense",
+                                                          "cash",
+                                                          "online",
+                                                          "cheque",
+                                                          "bank_transfer"
+                                                      ],
+                                          "row_candidates":  [
+                                                                 "}E-H",
+                                                                 "infimum",
+                                                                 "supremum"
+                                                             ],
+                                          "stats":  {
+                                                        "printable_strings_count":  3,
+                                                        "emails_count":  0,
+                                                        "dates_count":  0,
+                                                        "ibd_size":  65536
+                                                    }
+                                      },
+                   "installment_plans":  {
+                                             "table_name":  "installment_plans",
+                                             "frm_exists":  true,
+                                             "ibd_exists":  true,
+                                             "columns":  [
+                                                             "cu",
+                                                             "tx",
+                                                             "uq_installment_plan_structure_number",
+                                                             "id",
+                                                             "fee_structure_id",
+                                                             "name",
+                                                             "installment_number",
+                                                             "due_date",
+                                                             "percentage",
+                                                             "late_fine_type",
+                                                             "late_fine_value",
+                                                             "max_late_fine",
+                                                             "grace_period_days",
+                                                             "created_at",
+                                                             "updated_at",
+                                                             "per_day",
+                                                             "flat",
+                                                             "none",
+                                                             "iduuid"
+                                                         ],
+                                             "row_candidates":  [
+                                                                    "infimum",
+                                                                    "supremum"
+                                                                ],
+                                             "stats":  {
+                                                           "printable_strings_count":  2,
+                                                           "emails_count":  0,
+                                                           "dates_count":  0,
+                                                           "ibd_size":  98304
+                                                       }
+                                         },
+                   "notice_targets":  {
+                                          "table_name":  "notice_targets",
+                                          "frm_exists":  true,
+                                          "ibd_exists":  true,
+                                          "columns":  [
+                                                          "tx",
+                                                          "notice_id",
+                                                          "class_section_id",
+                                                          "student_id",
+                                                          "teacher_id",
+                                                          "id",
+                                                          "target_type",
+                                                          "all",
+                                                          "all_classes",
+                                                          "all_teachers",
+                                                          "all_staff",
+                                                          "class",
+                                                          "student",
+                                                          "teacher"
+                                                      ],
+                                          "row_candidates":  [
+                                                                 "8eYz",
+                                                                 "infimum",
+                                                                 "supremum",
+                                                                 "c8eYz",
+                                                                 "}cL",
+                                                                 "c}cL"
+                                                             ],
+                                          "stats":  {
+                                                        "printable_strings_count":  6,
+                                                        "emails_count":  0,
+                                                        "dates_count":  0,
+                                                        "ibd_size":  131072
+                                                    }
+                                      },
+                   "notices":  {
+                                   "table_name":  "notices",
+                                   "frm_exists":  true,
+                                   "ibd_exists":  true,
+                                   "columns":  [
+                                                   "tx",
+                                                   "ka",
+                                                   "created_by",
+                                                   "id",
+                                                   "title",
+                                                   "message",
+                                                   "attachment",
+                                                   "created_at",
+                                                   "updated_at"
+                                               ],
+                                   "row_candidates":  [
+                                                          "H?6",
+                                                          "infimum",
+                                                          "supremum",
+                                                          "m\u00272,",
+                                                          "cm\u00272,"
+                                                      ],
+                                   "stats":  {
+                                                 "printable_strings_count":  5,
+                                                 "emails_count":  0,
+                                                 "dates_count":  0,
+                                                 "ibd_size":  81920
+                                             }
+                               },
+                   "payment_refunds":  {
+                                           "table_name":  "payment_refunds",
+                                           "frm_exists":  true,
+                                           "ibd_exists":  true,
+                                           "columns":  [
+                                                           "tx",
+                                                           "payment_id",
+                                                           "student_id",
+                                                           "requested_by",
+                                                           "approved_by",
+                                                           "id",
+                                                           "refund_amount",
+                                                           "reason",
+                                                           "refund_mode",
+                                                           "status",
+                                                           "approved_at",
+                                                           "processed_at",
+                                                           "gateway_refund_id",
+                                                           "created_at",
+                                                           "updated_at",
+                                                           "cash",
+                                                           "bank_transfer",
+                                                           "gateway_reversal",
+                                                           "pending",
+                                                           "approved",
+                                                           "processed",
+                                                           "rejected",
+                                                           "iduuid"
+                                                       ],
+                                           "row_candidates":  [
+                                                                  "infimum",
+                                                                  "supremum"
+                                                              ],
+                                           "stats":  {
+                                                         "printable_strings_count":  2,
+                                                         "emails_count":  0,
+                                                         "dates_count":  0,
+                                                         "ibd_size":  131072
+                                                     }
+                                       },
+                   "school_fee_settings":  {
+                                               "table_name":  "school_fee_settings",
+                                               "frm_exists":  true,
+                                               "ibd_exists":  true,
+                                               "columns":  [
+                                                               "tx",
+                                                               "id",
+                                                               "block_report_card_on_dues",
+                                                               "fine_first",
+                                                               "due_date_shift",
+                                                               "dnd_start_time",
+                                                               "dnd_end_time",
+                                                               "created_at",
+                                                               "updated_at",
+                                                               "next_working_day",
+                                                               "no_shift",
+                                                               "prev_working_day",
+                                                               "iduuid"
+                                                           ],
+                                               "row_candidates":  [
+                                                                      "infimum",
+                                                                      "supremum"
+                                                                  ],
+                                               "stats":  {
+                                                             "printable_strings_count":  2,
+                                                             "emails_count":  0,
+                                                             "dates_count":  0,
+                                                             "ibd_size":  65536
+                                                         }
+                                           },
+                   "sequelizemeta":  {
+                                         "table_name":  "sequelizemeta",
+                                         "frm_exists":  true,
+                                         "ibd_exists":  true,
+                                         "columns":  [
+                                                         "tx",
+                                                         "kg",
+                                                         "name"
+                                                     ],
+                                         "row_candidates":  [
+                                                                "S2b",
+                                                                "infimum",
+                                                                "supremum$",
+                                                                "720260401000100-create-users-table.js",
+                                                                "?20260401000200-sync-models-and-seed-admin.js",
+                                                                ":20260401000300-sync-remaining-models.js",
+                                                                "F20260401000400-add-source-to-admission-enquiries.js",
+                                                                "720260404000100-create-staff-table.js",
+                                                                "\u003c20260404000200-add-staff-role-to-users.js",
+                                                                ":20260404000300-create-holidays-table.js",
+                                                                "E20260406000100-replace-legacy-fees-with-fees-v1.js",
+                                                                "20260406000200-dynamic-class-timetable-v2.js",
+                                                                "*20260401000100-create-users-table.js,",
+                                                                "220260401000200-sync-models-and-seed-admin.js\u0027",
+                                                                "-20260401000300-sync-remaining-models.js3",
+                                                                "920260401000400-add-source-to-admission-enquiries.js$",
+                                                                "*20260404000100-create-staff-table.js)",
+                                                                "/20260404000200-add-staff-role-to-users.js\u0027",
+                                                                "-20260404000300-create-holidays-table.js2",
+                                                                "820260406000100-replace-legacy-fees-with-fees-v1.js,",
+                                                                "r20260406000200-dynamic-class-timetable-v2.js"
+                                                            ],
+                                         "stats":  {
+                                                       "printable_strings_count":  21,
+                                                       "emails_count":  0,
+                                                       "dates_count":  0,
+                                                       "ibd_size":  81920
+                                                   }
+                                     },
+                   "staff":  {
+                                 "table_name":  "staff",
+                                 "frm_exists":  true,
+                                 "ibd_exists":  true,
+                                 "columns":  [
+                                                 "wc90",
+                                                 "tx",
+                                                 "kf",
+                                                 "user_id",
+                                                 "employee_code",
+                                                 "id",
+                                                 "department",
+                                                 "designation",
+                                                 "dob",
+                                                 "gender",
+                                                 "mobile_no",
+                                                 "qualification",
+                                                 "joining_date",
+                                                 "salary",
+                                                 "current_address",
+                                                 "permanent_address",
+                                                 "image",
+                                                 "createdat",
+                                                 "updatedat",
+                                                 "hr",
+                                                 "librarian",
+                                                 "admission_officer",
+                                                 "transport_manager",
+                                                 "hostel_warden",
+                                                 "non_teaching_staff",
+                                                 "other",
+                                                 "male",
+                                                 "female"
+                                             ],
+                                 "row_candidates":  [
+                                                        "H\u003cE",
+                                                        "infimum",
+                                                        "supremum",
+                                                        "STF-HR-001",
+                                                        "HR Executive",
+                                                        "STF-LIB-001",
+                                                        "Librarian",
+                                                        "STF-ADM-001",
+                                                        "Admission Officer",
+                                                        "STF-TRN-001",
+                                                        "Transport Manager",
+                                                        "STF-HST-001",
+                                                        "Hostel Warden",
+                                                        "STF-NTS-001",
+                                                        "Office Staff",
+                                                        "Ginfimum",
+                                                        "WSTF-HR-001",
+                                                        "XSTF-LIB-001"
+                                                    ],
+                                 "stats":  {
+                                               "printable_strings_count":  18,
+                                               "emails_count":  0,
+                                               "dates_count":  0,
+                                               "ibd_size":  98304
+                                           }
+                             },
+                   "student_concessions":  {
+                                               "table_name":  "student_concessions",
+                                               "frm_exists":  true,
+                                               "ibd_exists":  true,
+                                               "columns":  [
+                                                               "tx",
+                                                               "ky",
+                                                               "concession_id",
+                                                               "fee_head_id",
+                                                               "academic_year_id",
+                                                               "approved_by",
+                                                               "idx_student_concessions_student_year",
+                                                               "id",
+                                                               "student_id",
+                                                               "approval_status",
+                                                               "approved_at",
+                                                               "rejection_reason",
+                                                               "note",
+                                                               "created_at",
+                                                               "updated_at",
+                                                               "pending",
+                                                               "approved",
+                                                               "rejected",
+                                                               "iduuid"
+                                                           ],
+                                               "row_candidates":  [
+                                                                      "Q=Lw",
+                                                                      "=Lw",
+                                                                      "{E{",
+                                                                      "jpE",
+                                                                      "infimum",
+                                                                      "supremum"
+                                                                  ],
+                                               "stats":  {
+                                                             "printable_strings_count":  6,
+                                                             "emails_count":  0,
+                                                             "dates_count":  0,
+                                                             "ibd_size":  163840
+                                                         }
+                                           },
+                   "student_fee_assignments":  {
+                                                   "table_name":  "student_fee_assignments",
+                                                   "frm_exists":  true,
+                                                   "ibd_exists":  true,
+                                                   "columns":  [
+                                                                   "nf",
+                                                                   "tx",
+                                                                   "uq_student_assignment_year_structure_status",
+                                                                   "academic_year_id",
+                                                                   "assigned_by",
+                                                                   "idx_sfa_structure",
+                                                                   "idx_sfa_student_year_type",
+                                                                   "id",
+                                                                   "student_id",
+                                                                   "fee_structure_id",
+                                                                   "assignment_type",
+                                                                   "assigned_at",
+                                                                   "custom_items",
+                                                                   "excluded_heads",
+                                                                   "status",
+                                                                   "cancellation_reason",
+                                                                   "created_at",
+                                                                   "updated_at",
+                                                                   "recurring",
+                                                                   "one_time",
+                                                                   "active",
+                                                                   "cancelled",
+                                                                   "transferred",
+                                                                   "archived",
+                                                                   "iduuid",
+                                                                   "custom_itemsjson_valid",
+                                                                   "excluded_headsjson_valid"
+                                                               ],
+                                                   "row_candidates":  [
+                                                                          "l\\?",
+                                                                          "D0:",
+                                                                          "infimum",
+                                                                          "supremum",
+                                                                          "cD.",
+                                                                          "0{P7",
+                                                                          "c0{P7"
+                                                                      ],
+                                                   "stats":  {
+                                                                 "printable_strings_count":  7,
+                                                                 "emails_count":  0,
+                                                                 "dates_count":  0,
+                                                                 "ibd_size":  147456
+                                                             }
+                                               },
+                   "student_leaves":  {
+                                          "table_name":  "student_leaves",
+                                          "frm_exists":  true,
+                                          "ibd_exists":  true,
+                                          "columns":  [
+                                                          "tx",
+                                                          "student_leaves_student_id",
+                                                          "student_leaves_start_date",
+                                                          "student_leaves_end_date",
+                                                          "student_leaves_status",
+                                                          "student_leaves_student_id_start_date_end_date",
+                                                          "id",
+                                                          "student_id",
+                                                          "leave_type",
+                                                          "start_date",
+                                                          "end_date",
+                                                          "reason",
+                                                          "status",
+                                                          "approved_by",
+                                                          "rejection_reason",
+                                                          "attachment",
+                                                          "created_at",
+                                                          "updated_at",
+                                                          "sick",
+                                                          "casual",
+                                                          "emergency",
+                                                          "other",
+                                                          "pending",
+                                                          "approved",
+                                                          "rejected",
+                                                          "path",
+                                                          "to",
+                                                          "medical",
+                                                          "certificate",
+                                                          "or",
+                                                          "supporting",
+                                                          "document"
+                                                      ],
+                                          "row_candidates":  [
+                                                                 ".\u0026f",
+                                                                 "x1e\u003e",
+                                                                 "infimum",
+                                                                 "supremum",
+                                                                 "jnj",
+                                                                 "dnjnj",
+                                                                 "vffvfdv",
+                                                                 "-Admission Enquiry_1.pdf",
+                                                                 "vsvd",
+                                                                 "asaS1775304170612-Admission Enquiry_1.pdf",
+                                                                 "aAA",
+                                                                 "1775304225210-Admission Enquiry_1.pdf",
+                                                                 "cx1e\u003e",
+                                                                 "$infimum",
+                                                                 ")PE"
+                                                             ],
+                                          "stats":  {
+                                                        "printable_strings_count":  15,
+                                                        "emails_count":  0,
+                                                        "dates_count":  0,
+                                                        "ibd_size":  147456
+                                                    }
+                                      },
+                   "student_parents":  {
+                                           "table_name":  "student_parents",
+                                           "frm_exists":  true,
+                                           "ibd_exists":  true,
+                                           "columns":  [
+                                                           "tx",
+                                                           "km",
+                                                           "student_id",
+                                                           "id",
+                                                           "father_name",
+                                                           "father_phone",
+                                                           "father_occupation",
+                                                           "mother_name",
+                                                           "mother_phone",
+                                                           "mother_occupation",
+                                                           "email",
+                                                           "address"
+                                                       ],
+                                           "row_candidates":  [
+                                                                  "\"infimum",
+                                                                  "supremum",
+                                                                  "Kalia Gonzales+1 (914) 675-2587Ut et illum aut lorCruz Wilcox+1 (209) 996-4453Quis est porro errordewukyxu@mailinator.com",
+                                                                  "Gregory Sheppard+1 (154) 126-8971Necessitatibus ut cuQuyn Hunter+1 (581) 684-1258Deserunt culpa aute zofax@mailinator.com",
+                                                                  "Quincy Kirby+1 (755) 206-1288Sit fugiat qui animChanning Gill+1 (883) 153-3196Iure aut reiciendis mefef@mailinator.com",
+                                                                  "Hadley Nolan+1 (676) 397-9595Dolor sit aut aperiXena Yang+1 (292) 267-7798Nobis pariatur Nescwobenuciq@mailinator.comSed qui quo error im",
+                                                                  "Gemma Solis+1 (405) 823-6711Eu est voluptas venFulton Wong+1 (275) 914-6171Nihil ad consequuntubepizajezi@mailinator.comEnim minus ad dolore",
+                                                                  "Alexandra Richards+1 (919) 739-2094Reprehenderit eiusmoZeus Crane+1 (325) 651-5919Dolor deserunt reprewemegycidy@mailinator.comSimilique quia reici",
+                                                                  "Lydia Savage+1 (481) 435-1373Dolorem blanditiis dLila Christian+1 (215) 366-9398Eveniet sed obcaecasamazito@mailinator.comBeatae laboriosam e",
+                                                                  "Asher Chase+1 (424) 232-1279Expedita excepturi qFlavia Sykes+1 (809) 636-2838Placeat qui teneturqokic@mailinator.comDignissimos ut ducim",
+                                                                  "N\u00266",
+                                                                  "),E",
+                                                                  "infimum"
+                                                              ],
+                                           "stats":  {
+                                                         "printable_strings_count":  13,
+                                                         "emails_count":  8,
+                                                         "dates_count":  0,
+                                                         "ibd_size":  81920
+                                                     }
+                                       },
+                   "student_wallet":  {
+                                          "table_name":  "student_wallet",
+                                          "frm_exists":  true,
+                                          "ibd_exists":  true,
+                                          "columns":  [
+                                                          "tx",
+                                                          "student_id",
+                                                          "id",
+                                                          "balance",
+                                                          "created_at",
+                                                          "updated_at",
+                                                          "iduuid"
+                                                      ],
+                                          "row_candidates":  [
+                                                                 "infimum",
+                                                                 "supremum"
+                                                             ],
+                                          "stats":  {
+                                                        "printable_strings_count":  2,
+                                                        "emails_count":  0,
+                                                        "dates_count":  0,
+                                                        "ibd_size":  81920
+                                                    }
+                                      },
+                   "studentattendances":  {
+                                              "table_name":  "studentattendances",
+                                              "frm_exists":  true,
+                                              "ibd_exists":  true,
+                                              "columns":  [
+                                                              "ew",
+                                                              "tx",
+                                                              "kp",
+                                                              "studentattendances_student_id_date",
+                                                              "class_section_id",
+                                                              "id",
+                                                              "student_id",
+                                                              "status",
+                                                              "marked_by",
+                                                              "created_at",
+                                                              "updated_at",
+                                                              "present",
+                                                              "absent",
+                                                              "leave"
+                                                          ],
+                                              "row_candidates":  [
+                                                                     "infimum",
+                                                                     "supremum",
+                                                                     "#^E"
+                                                                 ],
+                                              "stats":  {
+                                                            "printable_strings_count":  3,
+                                                            "emails_count":  0,
+                                                            "dates_count":  0,
+                                                            "ibd_size":  114688
+                                                        }
+                                          },
+                   "students":  {
+                                    "table_name":  "students",
+                                    "frm_exists":  true,
+                                    "ibd_exists":  true,
+                                    "columns":  [
+                                                    "tp",
+                                                    "tx",
+                                                    "aadhar_no",
+                                                    "user_id",
+                                                    "class_section_id",
+                                                    "id",
+                                                    "roll_number",
+                                                    "dob",
+                                                    "gender",
+                                                    "address",
+                                                    "admission_date",
+                                                    "phone_no",
+                                                    "previous_school_name",
+                                                    "tc",
+                                                    "marksheet",
+                                                    "image",
+                                                    "aadhar_card",
+                                                    "sign",
+                                                    "male",
+                                                    "female",
+                                                    "other"
+                                                ],
+                                    "row_candidates":  [
+                                                           "\u0026infimum",
+                                                           "supremum)))))",
+                                                           "Aperiam temporibus r",
+                                                           "+1 (867) 181-8297Kessie BeachAute nulla dicta1775047839860-1758783101761-landing-1.png1775047839880-1758783101761-landing-1.png1775047839891-1758783101761-landing-1.png1775047839910-1758783101761-landing-1.png1775047839916-1758783101761-landing-1.png",
+                                                           "+1 (849) 579-8224Quinn RollinsEnim ipsum volup DiazVoluptatem et ul",
+                                                           "258",
+                                                           "Atque do minus minim",
+                                                           "+1 (399) 341-5774Erica MaddoxCulpa natus quis",
+                                                           "603",
+                                                           "+1 (823) 503-4615Tamekah LevineDistinctio Sunt ",
+                                                           "+1 (192) 996-4559Cherokee DelacruzDolore occaecat ",
+                                                           "+1 (591) 481-5466Mary PerezOmnis aut ea nos",
+                                                           "+1 (365) 536-7235Lael BrittDolor non dolore?",
+                                                           "5LE",
+                                                           "infimum",
+                                                           "supremum",
+                                                           "6Aute nulla dicta",
+                                                           "lEnim ipsum volup",
+                                                           "Culpa natus quis",
+                                                           "QDistinctio Sunt ",
+                                                           "Dolore occaecat ",
+                                                           "jOmnis aut ea nos",
+                                                           "Dolor non dolore",
+                                                           "5lE",
+                                                           "}infimum"
+                                                       ],
+                                    "stats":  {
+                                                  "printable_strings_count":  25,
+                                                  "emails_count":  0,
+                                                  "dates_count":  0,
+                                                  "ibd_size":  114688
+                                              }
+                                },
+                   "subject_resources":  {
+                                             "table_name":  "subject_resources",
+                                             "frm_exists":  true,
+                                             "ibd_exists":  true,
+                                             "columns":  [
+                                                             "tx",
+                                                             "ka",
+                                                             "class_section_id",
+                                                             "subject_id",
+                                                             "teacher_id",
+                                                             "id",
+                                                             "title",
+                                                             "description",
+                                                             "file_url",
+                                                             "resource_type",
+                                                             "due_date",
+                                                             "created_at",
+                                                             "updated_at",
+                                                             "notes",
+                                                             "assignment",
+                                                             "worksheet",
+                                                             "question_paper",
+                                                             "other"
+                                                         ],
+                                             "row_candidates":  [
+                                                                    "{1zt",
+                                                                    "infimum",
+                                                                    "supremum",
+                                                                    "G$c"
+                                                                ],
+                                             "stats":  {
+                                                           "printable_strings_count":  4,
+                                                           "emails_count":  0,
+                                                           "dates_count":  0,
+                                                           "ibd_size":  114688
+                                                       }
+                                         },
+                   "subjects":  {
+                                    "table_name":  "subjects",
+                                    "frm_exists":  true,
+                                    "ibd_exists":  true,
+                                    "columns":  [
+                                                    "tx",
+                                                    "subject_code",
+                                                    "class_section_id",
+                                                    "teacher_id",
+                                                    "id",
+                                                    "subject_name",
+                                                    "created_at",
+                                                    "updated_at"
+                                                ],
+                                    "row_candidates":  [
+                                                           "NkS",
+                                                           "infimum",
+                                                           "supremum",
+                                                           "Fredericka SheppardNatus modi dolor qua",
+                                                           "hindihindi01",
+                                                           "englishenglish01",
+                                                           "sciencescience01",
+                                                           "j9!",
+                                                           "Minfimum",
+                                                           "ENatus modi dolor qua",
+                                                           "hindi01",
+                                                           "english01",
+                                                           "science01",
+                                                           "cj9!",
+                                                           ")infimum"
+                                                       ],
+                                    "stats":  {
+                                                  "printable_strings_count":  15,
+                                                  "emails_count":  0,
+                                                  "dates_count":  0,
+                                                  "ibd_size":  114688
+                                              }
+                                },
+                   "teachers":  {
+                                    "table_name":  "teachers",
+                                    "frm_exists":  true,
+                                    "ibd_exists":  true,
+                                    "columns":  [
+                                                    "tx",
+                                                    "user_id",
+                                                    "id",
+                                                    "qualification",
+                                                    "dob",
+                                                    "mobile_no",
+                                                    "permanent_address",
+                                                    "role",
+                                                    "gender",
+                                                    "salary",
+                                                    "joining_date",
+                                                    "current_address",
+                                                    "image",
+                                                    "createdat",
+                                                    "updatedat",
+                                                    "teacher",
+                                                    "staff",
+                                                    "librarian",
+                                                    "accontant"
+                                                ],
+                                    "row_candidates":  [
+                                                           "infimum",
+                                                           "supremum",
+                                                           "dcd",
+                                                           "Male",
+                                                           "cdcd1775130021568-1758783101761-landing-1.png",
+                                                           "Dolor voluptates rep",
+                                                           "8Eiusmod odit irure p",
+                                                           "jSoluta occaecat vel",
+                                                           "At aperiam hic et na",
+                                                           "{9879879877Obcaecati aut ea rec",
+                                                           "OVoluptas commodi quo",
+                                                           "b.tech",
+                                                           "+917073873731dcd",
+                                                           "N/A1775130021568-1758783101761-landing-1.png",
+                                                           "(}E"
+                                                       ],
+                                    "stats":  {
+                                                  "printable_strings_count":  15,
+                                                  "emails_count":  0,
+                                                  "dates_count":  0,
+                                                  "ibd_size":  81920
+                                              }
+                                },
+                   "users":  {
+                                 "table_name":  "users",
+                                 "frm_exists":  true,
+                                 "ibd_exists":  true,
+                                 "columns":  [
+                                                 "tx",
+                                                 "kr",
+                                                 "email",
+                                                 "id",
+                                                 "name",
+                                                 "password",
+                                                 "role",
+                                                 "status",
+                                                 "created_at",
+                                                 "updated_at",
+                                                 "admin",
+                                                 "teacher",
+                                                 "student",
+                                                 "accountant",
+                                                 "staff",
+                                                 "active",
+                                                 "inactive"
+                                             ],
+                                 "row_candidates":  [
+                                                        "Rr`",
+                                                        "i]E",
+                                                        "Linfimum",
+                                                        "supremum",
+                                                        "Adminadmin@gmail.comadmin123",
+                                                        "himanshu1student@gmail.comStudent@123",
+                                                        "Yasir Vegatyvys@mailinator.comPa$$w0rd!",
+                                                        "Carolyn Blairgixojacom@mailinator.comPa$$w0rd!",
+                                                        "Zelda Mcdanielzahy@mailinator.comPa$$w0rd!",
+                                                        "himanshu teacherteacher@gmail.comTeacher@123",
+                                                        "Louis Fowlerfuwusibod@mailinator.comPa$$w0rd!",
+                                                        "Adminadmin@gmail.comAdmin@123",
+                                                        "Isaiah Donovansixisy@mailinator.comPa$$w0rd!",
+                                                        "Mira Walshkehikekoh@mailinator.comOccaecat tempore ci",
+                                                        "Kasper Wagnervybu@mailinator.comMinim sunt aut unde ",
+                                                        "Cynthia Knowlesjozaran@mailinator.comQui velit totam veni",
+                                                        "Admin Useradmin.demo@erp.localAdmin@123",
+                                                        "Teacher Userteacher.demo@erp.localTeacher@123",
+                                                        "Student Userstudent.demo@erp.localStudent@123",
+                                                        "Accountant Useraccountant.demo@erp.localAccountant@123",
+                                                        "HR Staffhr.demo@erp.localHr@12345",
+                                                        "Librarian Stafflibrarian.demo@erp.localLibrary@123",
+                                                        "Admission Staffadmission.demo@erp.localAdmission@123",
+                                                        "Transport Stafftransport.demo@erp.localTransport@123",
+                                                        "Hostel Staffhostel.demo@erp.localHostel@123",
+                                                        "Non Teaching Staffstaff.demo@erp.localStaff@123",
+                                                        "i]}:",
+                                                        "FjE",
+                                                        "infimum",
+                                                        "admin@erp.local",
+                                                        "admin.demo@erp.local",
+                                                        "tyvys@mailinator.com",
+                                                        "gixojacom@mailinator.com",
+                                                        "vzahy@mailinator.com",
+                                                        "student@gmail.com",
+                                                        ".com",
+                                                        "fuwusibod@mailinator.com",
+                                                        "Radmin@gmail.com",
+                                                        "sixisy@mailinator.com",
+                                                        "kehikekoh@mailinator.com",
+                                                        "Dvybu@mailinator.com",
+                                                        "jozaran@mailinator.com",
+                                                        "teacher@gmail.com",
+                                                        "teacher.demo@erp.local",
+                                                        "student.demo@erp.local",
+                                                        "Iaccountant.demo@erp.local",
+                                                        "bhr.demo@erp.local",
+                                                        "librarian.demo@erp.local",
+                                                        "admission.demo@erp.local",
+                                                        "transport.demo@erp.local",
+                                                        "hostel.demo@erp.local",
+                                                        "staff.demo@erp.local",
+                                                        "c}:"
+                                                    ],
+                                 "stats":  {
+                                               "printable_strings_count":  53,
+                                               "emails_count":  43,
+                                               "dates_count":  0,
+                                               "ibd_size":  81920
+                                           }
+                             },
+                   "academic_years":  {
+                                          "table_name":  "academic_years",
+                                          "frm_exists":  true,
+                                          "ibd_exists":  true,
+                                          "columns":  [
+                                                          "tx",
+                                                          "name",
+                                                          "uq_academic_year_single_current",
+                                                          "id",
+                                                          "start_date",
+                                                          "end_date",
+                                                          "is_current",
+                                                          "created_at",
+                                                          "updated_at",
+                                                          "current_flag",
+                                                          "iduuid",
+                                                          "current_flagcase",
+                                                          "when",
+                                                          "then",
+                                                          "else",
+                                                          "end"
+                                                      ],
+                                          "row_candidates":  [
+                                                                 "p[Xs",
+                                                                 "infimum",
+                                                                 "supremum",
+                                                                 "n(E",
+                                                                 "p[E"
+                                                             ],
+                                          "stats":  {
+                                                        "printable_strings_count":  5,
+                                                        "emails_count":  0,
+                                                        "dates_count":  0,
+                                                        "ibd_size":  98304
+                                                    }
+                                      },
+                   "admissionenquiries":  {
+                                              "table_name":  "admissionenquiries",
+                                              "frm_exists":  true,
+                                              "ibd_exists":  true,
+                                              "columns":  [
+                                                              "tx",
+                                                              "kx",
+                                                              "id",
+                                                              "name",
+                                                              "phone",
+                                                              "email",
+                                                              "enquiry_date",
+                                                              "classname",
+                                                              "address",
+                                                              "parentname",
+                                                              "oldschool",
+                                                              "description",
+                                                              "status",
+                                                              "createdat",
+                                                              "updatedat",
+                                                              "source",
+                                                              "active",
+                                                              "admitted",
+                                                              "inactive"
+                                                          ],
+                                              "row_candidates":  [
+                                                                     "L=b",
+                                                                     "Di`",
+                                                                     "L=~",
+                                                                     "infimum",
+                                                                     "supremum",
+                                                                     "himanshu garg7073873735himanshugarg8503@gmail.comClass 4104/95,kumbha marg,Jaipur.Orla HoweDolor adipisicing sakmk",
+                                                                     "himanshu garg7073873735himanshugarg8503@gmail.comClass 7104/95,kumbha marg,Jaipur.Lillian Baldwinmkmk",
+                                                                     "himanshu garg07073873731himanshugarg3731@gmail.comUKGNear the barah khambha hanumanji sarmathuraOrla Howekmksx",
+                                                                     "himanshu garg434342443234himanshugarg8503@gmail.comClass 10104/95,kumbha marg,Jaipur.Orla Howecdc",
+                                                                     "y:other",
+                                                                     "himanshu garg434342443234himanshugarg8503@gmail.com",
+                                                                     "Class 10104/95,kumbha marg,Jaipur.Orla Howekmkmcdc",
+                                                                     "other",
+                                                                     "himanshu garg7073873735himanshugarg8503@gmail.com",
+                                                                     "Nursery104/95,kumbha marg,Jaipur.Orla HoweRem pariatur Magni mkm",
+                                                                     "referral"
+                                                                 ],
+                                              "stats":  {
+                                                            "printable_strings_count":  16,
+                                                            "emails_count":  5,
+                                                            "dates_count":  0,
+                                                            "ibd_size":  65536
+                                                        }
+                                          },
+                   "class_resources":  {
+                                           "table_name":  "class_resources",
+                                           "frm_exists":  true,
+                                           "ibd_exists":  true,
+                                           "columns":  [
+                                                           "tx",
+                                                           "ko",
+                                                           "class_section_id",
+                                                           "teacher_id",
+                                                           "id",
+                                                           "title",
+                                                           "description",
+                                                           "file_url",
+                                                           "resource_type",
+                                                           "created_at",
+                                                           "updated_at",
+                                                           "syllabus",
+                                                           "circular",
+                                                           "homework",
+                                                           "other"
+                                                       ],
+                                           "row_candidates":  [
+                                                                  "F{o",
+                                                                  "infimum",
+                                                                  "supremum"
+                                                              ],
+                                           "stats":  {
+                                                         "printable_strings_count":  3,
+                                                         "emails_count":  0,
+                                                         "dates_count":  0,
+                                                         "ibd_size":  98304
+                                                     }
+                                       },
+                   "class_sections":  {
+                                          "table_name":  "class_sections",
+                                          "frm_exists":  true,
+                                          "ibd_exists":  true,
+                                          "columns":  [
+                                                          "tx",
+                                                          "teacher_id",
+                                                          "id",
+                                                          "class_name",
+                                                          "section_name",
+                                                          "room_no",
+                                                          "capacity"
+                                                      ],
+                                          "row_candidates":  [
+                                                                 "infimum",
+                                                                 "supremum",
+                                                                 "5thA",
+                                                                 "7thA",
+                                                                 "8thA",
+                                                                 "9thA",
+                                                                 "1stA2222"
+                                                             ],
+                                          "stats":  {
+                                                        "printable_strings_count":  7,
+                                                        "emails_count":  0,
+                                                        "dates_count":  0,
+                                                        "ibd_size":  81920
+                                                    }
+                                      },
+                   "class_time_slots":  {
+                                            "table_name":  "class_time_slots",
+                                            "frm_exists":  true,
+                                            "ibd_exists":  true,
+                                            "columns":  [
+                                                            "vur",
+                                                            "tx",
+                                                            "uq_class_slot_number",
+                                                            "idx_class_time_slots_class",
+                                                            "id",
+                                                            "class_section_id",
+                                                            "slot_number",
+                                                            "slot_label",
+                                                            "start_time",
+                                                            "end_time",
+                                                            "is_break",
+                                                            "created_at",
+                                                            "updated_at"
+                                                        ],
+                                            "row_candidates":  [
+                                                                   "hinfimum",
+                                                                   "supremum",
+                                                                   "Period 1",
+                                                                   "Period 2",
+                                                                   "Period 3",
+                                                                   "Period 4",
+                                                                   "Break",
+                                                                   "Period 5",
+                                                                   "supremum ",
+                                                                   "F]g",
+                                                                   "infimum"
+                                                               ],
+                                            "stats":  {
+                                                          "printable_strings_count":  11,
+                                                          "emails_count":  0,
+                                                          "dates_count":  0,
+                                                          "ibd_size":  98304
+                                                      }
+                                        },
+                   "class_timetable_entries":  {
+                                                   "table_name":  "class_timetable_entries",
+                                                   "frm_exists":  true,
+                                                   "ibd_exists":  true,
+                                                   "columns":  [
+                                                                   "b1",
+                                                                   "tx",
+                                                                   "uq_class_day_slot",
+                                                                   "time_slot_id",
+                                                                   "subject_id",
+                                                                   "idx_timetable_entries_teacher_day",
+                                                                   "id",
+                                                                   "class_section_id",
+                                                                   "day_of_week",
+                                                                   "teacher_id",
+                                                                   "notes",
+                                                                   "is_break",
+                                                                   "created_at",
+                                                                   "updated_at",
+                                                                   "monday",
+                                                                   "tuesday",
+                                                                   "wednesday",
+                                                                   "thursday",
+                                                                   "friday",
+                                                                   "saturday"
+                                                               ],
+                                                   "row_candidates":  [
+                                                                          "3g[7",
+                                                                          "g[7",
+                                                                          "infimum",
+                                                                          "supremum",
+                                                                          "(infimum",
+                                                                          "~+a%",
+                                                                          "c+a%",
+                                                                          "OOj]",
+                                                                          "cOj]"
+                                                                      ],
+                                                   "stats":  {
+                                                                 "printable_strings_count":  9,
+                                                                 "emails_count":  0,
+                                                                 "dates_count":  0,
+                                                                 "ibd_size":  147456
+                                                             }
+                                               },
+                   "class_timetable_settings":  {
+                                                    "table_name":  "class_timetable_settings",
+                                                    "frm_exists":  true,
+                                                    "ibd_exists":  true,
+                                                    "columns":  [
+                                                                    "vc",
+                                                                    "tx",
+                                                                    "ky",
+                                                                    "class_section_id",
+                                                                    "id",
+                                                                    "start_time",
+                                                                    "end_time",
+                                                                    "period_duration_minutes",
+                                                                    "break_duration_minutes",
+                                                                    "break_after_period",
+                                                                    "working_days",
+                                                                    "created_at",
+                                                                    "updated_at",
+                                                                    "working_daysjson_valid"
+                                                                ],
+                                                    "row_candidates":  [
+                                                                           "\u0027hC",
+                                                                           "infimum",
+                                                                           "supremum?",
+                                                                           "[\"Wednesday\",\"Thursday\",\"Friday\",\"Saturday\",\"Monday\",\"Tuesday\"]",
+                                                                           "V9?",
+                                                                           "\u0027infimum",
+                                                                           "supremum"
+                                                                       ],
+                                                    "stats":  {
+                                                                  "printable_strings_count":  7,
+                                                                  "emails_count":  0,
+                                                                  "dates_count":  0,
+                                                                  "ibd_size":  81920
+                                                              }
+                                                },
+                   "concessions":  {
+                                       "table_name":  "concessions",
+                                       "frm_exists":  true,
+                                       "ibd_exists":  true,
+                                       "columns":  [
+                                                       "tx",
+                                                       "kb",
+                                                       "id",
+                                                       "name",
+                                                       "type",
+                                                       "value",
+                                                       "applies_to",
+                                                       "requires_approval",
+                                                       "valid_from",
+                                                       "valid_until",
+                                                       "is_active",
+                                                       "created_at",
+                                                       "updated_at",
+                                                       "percentage",
+                                                       "flat_amount",
+                                                       "full_waiver",
+                                                       "all_heads",
+                                                       "specific_head",
+                                                       "total_invoice",
+                                                       "iduuid"
+                                                   ],
+                                       "row_candidates":  [
+                                                              "infimum",
+                                                              "supremum"
+                                                          ],
+                                       "stats":  {
+                                                     "printable_strings_count":  2,
+                                                     "emails_count":  0,
+                                                     "dates_count":  0,
+                                                     "ibd_size":  65536
+                                                 }
+                                   },
+                   "exam_marks":  {
+                                      "table_name":  "exam_marks",
+                                      "frm_exists":  true,
+                                      "ibd_exists":  true,
+                                      "columns":  [
+                                                      "tx",
+                                                      "k8",
+                                                      "exam_schedule_id",
+                                                      "student_id",
+                                                      "subject_id",
+                                                      "id",
+                                                      "marks_obtained",
+                                                      "created_at",
+                                                      "updated_at"
+                                                  ],
+                                      "row_candidates":  [
+                                                             "0}ku",
+                                                             "infimum",
+                                                             "supremum",
+                                                             "c0}ku",
+                                                             "XZn",
+                                                             "cX*"
+                                                         ],
+                                      "stats":  {
+                                                    "printable_strings_count":  6,
+                                                    "emails_count":  0,
+                                                    "dates_count":  0,
+                                                    "ibd_size":  114688
+                                                }
+                                  },
+                   "exam_schedules":  {
+                                          "table_name":  "exam_schedules",
+                                          "frm_exists":  true,
+                                          "ibd_exists":  true,
+                                          "columns":  [
+                                                          "tx",
+                                                          "kx",
+                                                          "exam_id",
+                                                          "class_section_id",
+                                                          "id",
+                                                          "total_marks",
+                                                          "passing_marks",
+                                                          "remarks",
+                                                          "created_at",
+                                                          "updated_at"
+                                                      ],
+                                          "row_candidates":  [
+                                                                 "infimum",
+                                                                 "supremum"
+                                                             ],
+                                          "stats":  {
+                                                        "printable_strings_count":  2,
+                                                        "emails_count":  0,
+                                                        "dates_count":  0,
+                                                        "ibd_size":  98304
+                                                    }
+                                      },
+                   "exam_terms":  {
+                                      "table_name":  "exam_terms",
+                                      "frm_exists":  true,
+                                      "ibd_exists":  true,
+                                      "columns":  [
+                                                      "tx",
+                                                      "id",
+                                                      "term_name",
+                                                      "academic_year",
+                                                      "created_at",
+                                                      "updated_at"
+                                                  ],
+                                      "row_candidates":  [
+                                                             "\\q\u0026",
+                                                             "\\qE",
+                                                             "infimum",
+                                                             "supremum"
+                                                         ],
+                                      "stats":  {
+                                                    "printable_strings_count":  4,
+                                                    "emails_count":  0,
+                                                    "dates_count":  0,
+                                                    "ibd_size":  65536
+                                                }
+                                  },
+                   "exam_timetables":  {
+                                           "table_name":  "exam_timetables",
+                                           "frm_exists":  true,
+                                           "ibd_exists":  true,
+                                           "columns":  [
+                                                           "tx",
+                                                           "exam_schedule_id",
+                                                           "subject_id",
+                                                           "invigilator_teacher_id",
+                                                           "id",
+                                                           "exam_date",
+                                                           "start_time",
+                                                           "end_time",
+                                                           "max_marks",
+                                                           "passing_marks",
+                                                           "room_no",
+                                                           "created_at",
+                                                           "updated_at"
+                                                       ],
+                                           "row_candidates":  [
+                                                                  "infimum",
+                                                                  "supremum",
+                                                                  "c\u0027=",
+                                                                  "c#!"
+                                                              ],
+                                           "stats":  {
+                                                         "printable_strings_count":  4,
+                                                         "emails_count":  0,
+                                                         "dates_count":  0,
+                                                         "ibd_size":  114688
+                                                     }
+                                       },
+                   "exams":  {
+                                 "table_name":  "exams",
+                                 "frm_exists":  true,
+                                 "ibd_exists":  true,
+                                 "columns":  [
+                                                 "zpt",
+                                                 "tx",
+                                                 "term_id",
+                                                 "id",
+                                                 "exam_name",
+                                                 "description",
+                                                 "start_date",
+                                                 "end_date",
+                                                 "status",
+                                                 "created_at",
+                                                 "updated_at",
+                                                 "scheduled",
+                                                 "ongoing",
+                                                 "completed"
+                                             ],
+                                 "row_candidates":  [
+                                                        "infimum",
+                                                        "supremum"
+                                                    ],
+                                 "stats":  {
+                                               "printable_strings_count":  2,
+                                               "emails_count":  0,
+                                               "dates_count":  0,
+                                               "ibd_size":  81920
+                                           }
+                             },
+                   "fee_gateway_orders":  {
+                                              "table_name":  "fee_gateway_orders",
+                                              "frm_exists":  true,
+                                              "ibd_exists":  true,
+                                              "columns":  [
+                                                              "tx",
+                                                              "kv",
+                                                              "gateway_order_id",
+                                                              "invoice_id",
+                                                              "student_id",
+                                                              "razorpay",
+                                                              "id",
+                                                              "gateway",
+                                                              "amount",
+                                                              "expires_at",
+                                                              "status",
+                                                              "created_at",
+                                                              "updated_at",
+                                                              "active",
+                                                              "paid",
+                                                              "expired",
+                                                              "failed",
+                                                              "iduuid"
+                                                          ],
+                                              "row_candidates":  [
+                                                                     "infimum",
+                                                                     "supremum",
+                                                                     "LBG\"",
+                                                                     "cLBG\"",
+                                                                     ",#G",
+                                                                     "c,#G"
+                                                                 ],
+                                              "stats":  {
+                                                            "printable_strings_count":  6,
+                                                            "emails_count":  0,
+                                                            "dates_count":  0,
+                                                            "ibd_size":  114688
+                                                        }
+                                          },
+                   "fee_heads":  {
+                                     "table_name":  "fee_heads",
+                                     "frm_exists":  true,
+                                     "ibd_exists":  true,
+                                     "columns":  [
+                                                     "tx",
+                                                     "name",
+                                                     "id",
+                                                     "category",
+                                                     "description",
+                                                     "is_optional",
+                                                     "is_refundable",
+                                                     "ledger_code",
+                                                     "is_active",
+                                                     "created_at",
+                                                     "updated_at",
+                                                     "academic",
+                                                     "facility",
+                                                     "transport",
+                                                     "hostel",
+                                                     "exam",
+                                                     "other",
+                                                     "iduuid"
+                                                 ],
+                                     "row_candidates":  [
+                                                            "R$E",
+                                                            "infimum",
+                                                            "supremum",
+                                                            "3ff2c2d4-6deb-4858-998e-b19bb6cfec00",
+                                                            "Tuition Fee",
+                                                            "Core tuition component",
+                                                            "LED-101",
+                                                            "supremum$",
+                                                            "Tuition Fee3ff2c2d4-6deb-4858-998e-b19bb6cfec00"
+                                                        ],
+                                     "stats":  {
+                                                   "printable_strings_count":  9,
+                                                   "emails_count":  0,
+                                                   "dates_count":  0,
+                                                   "ibd_size":  81920
+                                               }
+                                 }
+               }
+}

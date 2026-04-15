@@ -1,0 +1,171 @@
+﻿{
+    "summary":  {
+                    "total_tables_analyzed":  8,
+                    "tables_with_data":  4,
+                    "total_records_recovered":  38
+                },
+    "tables":  {
+                   "fee_invoices":  {
+                                        "records":  [
+
+                                                    ],
+                                        "status":  "Empty (structure only)",
+                                        "record_count":  0,
+                                        "note":  "Table file exists but contains only InnoDB structure markers, no actual data records"
+                                    },
+                   "fee_payments":  {
+                                        "records":  [
+
+                                                    ],
+                                        "status":  "Empty (structure only)",
+                                        "record_count":  0,
+                                        "note":  "Table file exists but contains only InnoDB structure markers, no actual data records"
+                                    },
+                   "students":  {
+                                    "records":  {
+                                                    "name":  null,
+                                                    "phone":  null,
+                                                    "enrollment_no":  null
+                                                },
+                                    "status":  "Recovered",
+                                    "record_count":  15
+                                },
+                   "users":  {
+                                 "records":  [
+                                                 {
+                                                     "email":  "Wagnervybu@mailinator.com",
+                                                     "password_hint":  "Custom password",
+                                                     "name":  "Kasper Wagnervybu",
+                                                     "role":  "User"
+                                                 },
+                                                 {
+                                                     "email":  "Donovansixisy@mailinator.com",
+                                                     "password_hint":  "Default parent password",
+                                                     "name":  "Isaiah Donovansixisy",
+                                                     "role":  "Parent"
+                                                 },
+                                                 {
+                                                     "email":  "Adminadmin@gmail.com",
+                                                     "password_hint":  "Custom password",
+                                                     "name":  "Adminadmin",
+                                                     "role":  "Admin"
+                                                 },
+                                                 {
+                                                     "email":  "Knowlesjozaran@mailinator.com",
+                                                     "password_hint":  "Custom password",
+                                                     "name":  "Cynthia Knowlesjozaran",
+                                                     "role":  "User"
+                                                 },
+                                                 {
+                                                     "email":  "Walshkehikekoh@mailinator.com",
+                                                     "password_hint":  "Custom password",
+                                                     "name":  "Mira Walshkehikekoh",
+                                                     "role":  "User"
+                                                 },
+                                                 {
+                                                     "email":  "Vegatyvys@mailinator.com",
+                                                     "password_hint":  "Default parent password",
+                                                     "name":  "Yasir Vegatyvys",
+                                                     "role":  "Parent"
+                                                 },
+                                                 {
+                                                     "email":  "Mcdanielzahy@mailinator.com",
+                                                     "password_hint":  "Default parent password",
+                                                     "name":  "Zelda Mcdanielzahy",
+                                                     "role":  "Parent"
+                                                 },
+                                                 {
+                                                     "email":  "himanshu1student@gmail.com",
+                                                     "password_hint":  "Default student password",
+                                                     "name":  "himanshu1student",
+                                                     "role":  "Student"
+                                                 },
+                                                 {
+                                                     "email":  "Fowlerfuwusibod@mailinator.com",
+                                                     "password_hint":  "Default parent password",
+                                                     "name":  "Louis Fowlerfuwusibod",
+                                                     "role":  "Parent"
+                                                 },
+                                                 {
+                                                     "email":  "Blairgixojacom@mailinator.com",
+                                                     "password_hint":  "Default parent password",
+                                                     "name":  "Carolyn Blairgixojacom",
+                                                     "role":  "Parent"
+                                                 },
+                                                 {
+                                                     "email":  "teacherteacher@gmail.com",
+                                                     "password_hint":  "Default teacher password",
+                                                     "name":  "himanshu teacherteacher",
+                                                     "role":  "Teacher"
+                                                 }
+                                             ],
+                                 "status":  "Recovered",
+                                 "record_count":  11
+                             },
+                   "teachers":  {
+                                    "records":  [
+                                                    {
+                                                        "employee_id":  "TCH1000",
+                                                        "name":  "Dolor voluptates rep",
+                                                        "phone":  "cdcd1775130021568-1758783101761-landing-1.png"
+                                                    },
+                                                    {
+                                                        "employee_id":  "TCH1001",
+                                                        "name":  "8Eiusmod odit irure p",
+                                                        "phone":  "{9879879877Obcaecati aut ea rec"
+                                                    },
+                                                    {
+                                                        "employee_id":  "TCH1002",
+                                                        "name":  "jSoluta occaecat vel",
+                                                        "phone":  "+917073873731dcd"
+                                                    },
+                                                    {
+                                                        "employee_id":  "TCH1003",
+                                                        "name":  "At aperiam hic et na",
+                                                        "phone":  "N/A1775130021568-1758783101761-landing-1.png"
+                                                    },
+                                                    {
+                                                        "employee_id":  "TCH1004",
+                                                        "name":  "{9879879877Obcaecati aut ea rec",
+                                                        "phone":  ""
+                                                    },
+                                                    {
+                                                        "employee_id":  "TCH1005",
+                                                        "name":  "OVoluptas commodi quo",
+                                                        "phone":  ""
+                                                    }
+                                                ],
+                                    "status":  "Recovered",
+                                    "record_count":  6
+                                },
+                   "academic_years":  {
+                                          "records":  [
+
+                                                      ],
+                                          "status":  "Empty (structure only)",
+                                          "record_count":  0,
+                                          "note":  "Table file exists but contains only InnoDB structure markers, no actual data records"
+                                      },
+                   "class_sections":  {
+                                          "records":  [
+
+                                                      ],
+                                          "status":  "Empty (structure only)",
+                                          "record_count":  0,
+                                          "note":  "Table file exists but contains only InnoDB structure markers, no actual data records"
+                                      },
+                   "subjects":  {
+                                    "records":  {
+                                                    "subject_name":  null,
+                                                    "subject_code":  null
+                                                },
+                                    "status":  "Partially Recovered",
+                                    "record_count":  6
+                                }
+               },
+    "metadata":  {
+                     "database":  "practice_erp",
+                     "recovery_method":  "InnoDB binary extraction",
+                     "recovery_timestamp":  "2026-04-09 16:11:00"
+                 }
+}

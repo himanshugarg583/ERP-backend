@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 
-const ClassTimetable = sequelize.define('class_timetables', {
+const ClassTimetable = sequelize.define('ClassTimetable', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -16,14 +16,27 @@ const ClassTimetable = sequelize.define('class_timetables', {
         },
         onDelete: 'CASCADE'
     },
+    day_of_week: {
+        type: DataTypes.ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+        allowNull: false
+    },
+    time_slot_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'class_time_slots',
+            key: 'id'
+        },
+        onDelete: 'CASCADE'
+    },
     subject_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
             model: 'subjects',
             key: 'id'
         },
-        onDelete: 'SET NULL'
+        onDelete: 'RESTRICT'
     },
     teacher_id: {
         type: DataTypes.INTEGER,
@@ -34,25 +47,14 @@ const ClassTimetable = sequelize.define('class_timetables', {
         },
         onDelete: 'SET NULL'
     },
-    day_of_week: {
-        type: DataTypes.ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
-        allowNull: false
-    },
-    period_name: {
-        type: DataTypes.STRING(50),
-        allowNull: false
-    },
-    start_time: {
-        type: DataTypes.TIME,
-        allowNull: false
-    },
-    end_time: {
-        type: DataTypes.TIME,
-        allowNull: false
+    notes: {
+        type: DataTypes.STRING(255),
+        allowNull: true
     },
     is_break: {
         type: DataTypes.BOOLEAN,
-        defaultValue: 0
+        allowNull: false,
+        defaultValue: false
     },
     created_at: {
         type: DataTypes.DATE,
@@ -63,8 +65,16 @@ const ClassTimetable = sequelize.define('class_timetables', {
         defaultValue: DataTypes.NOW
     }
 }, {
+    tableName: 'class_timetable_entries',
     timestamps: false,
-    underscored: true
+    underscored: true,
+    indexes: [
+        {
+            unique: true,
+            fields: ['class_section_id', 'day_of_week', 'time_slot_id'],
+            name: 'uq_class_day_slot'
+        }
+    ]
 });
 
 module.exports = { ClassTimetable };

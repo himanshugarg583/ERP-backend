@@ -1,4 +1,4 @@
-const { Student, studentsAttendances, ClassSection, SubjectResource, ExamMark, ExamSchedule, Exam, Subject, ClassTimetable, Teacher, User, Notice, NoticeTarget } = require('../../../models');
+const { Student, studentsAttendances, ClassSection, SubjectResource, ExamMark, ExamSchedule, Exam, Subject, ClassTimetable, ClassTimeSlot, Teacher, User, Notice, NoticeTarget } = require('../../../models');
 const { Op } = require('sequelize');
 const sequelize = require('../../../config/db');
 
@@ -243,17 +243,26 @@ const getTodayClasses = async (req, res) => {
     // Get current time for filtering upcoming classes
     const currentTime = today.toTimeString().split(' ')[0]; // HH:MM:SS format
 
-    // Fetch today's timetable for student's class
+    // Fetch today's timetable for student's class using slot-based entries.
     const classes = await ClassTimetable.findAll({
       where: {
         class_section_id: student.class_section_id,
         day_of_week: dayName,
-        is_break: false,
-        start_time: {
-          [Op.gte]: currentTime // Only upcoming classes
-        }
+        is_break: false
       },
       include: [
+        {
+          model: ClassTimeSlot,
+          as: 'timeSlot',
+          required: true,
+          attributes: ['slot_label', 'start_time', 'end_time', 'is_break'],
+          where: {
+            is_break: false,
+            start_time: {
+              [Op.gte]: currentTime
+            }
+          }
+        },
         {
           model: Subject,
           as: 'subject',
@@ -271,7 +280,7 @@ const getTodayClasses = async (req, res) => {
           ]
         }
       ],
-      order: [['start_time', 'ASC']],
+      order: [[{ model: ClassTimeSlot, as: 'timeSlot' }, 'start_time', 'ASC']],
       limit: 10
     });
 
@@ -289,10 +298,10 @@ const getTodayClasses = async (req, res) => {
       return {
         subject: classItem.subject?.subject_name || 'N/A',
         teacher: classItem.teacher?.User?.name || 'TBA',
-        room: classItem.period_name || 'Room',
-        time: formatTime(classItem.start_time),
-        start_time: classItem.start_time,
-        end_time: classItem.end_time
+        room: classItem.timeSlot?.slot_label || 'Room',
+        time: classItem.timeSlot?.start_time ? formatTime(classItem.timeSlot.start_time) : null,
+        start_time: classItem.timeSlot?.start_time || null,
+        end_time: classItem.timeSlot?.end_time || null
       };
     });
 
