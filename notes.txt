@@ -3,3 +3,82 @@ fees module in admin
 furture scope-:
 we can remove slot table in timetable module and add direct 
 class period 
+
+1. Monthly Class Report (Grid View)
+Endpoint: GET /classattendance/getMonthlyClassReport?class_section_id=1&month=4&year=2026
+Purpose: Provides a full grid of attendance status for every student for every day of the month.
+
+Sample Response:
+{
+  "success": true,
+  "data": {
+    "class_info": { "class_name": "10th", "section_name": "A" },
+    "students": [
+      {
+        "student_id": 1,
+        "name": "John Doe",
+        "attendance": {
+          "2026-04-01": "present",
+          "2026-04-02": "absent"
+        },
+        "summary": { "present": 20, "absent": 2, "leave": 1 }
+      }
+    ]
+  }
+}
+
+UI Implementation:
+
+Render a table where Rows = Students and Columns = Days (1-31).
+Use colored icons/dots: P (Green), A (Red), L (Yellow).
+Add a "Summary" column at the end to show total percentages.
+2. Custom Date Range Report (Analytics)
+Endpoint: GET /classattendance/getCustomDateRangeReport?class_section_id=1&start_date=2026-01-01&end_date=2026-03-31
+Purpose: Generates summary statistics and percentages for a specific period (Quarterly/Term).
+
+Sample Response:
+
+{
+  "success": true,
+  "data": {
+    "range": { "start_date": "2026-01-01", "end_date": "2026-03-31" },
+    "students": [
+      {
+        "student_id": 1,
+        "name": "John Doe",
+        "summary": {
+          "present": 55,
+          "absent": 5,
+          "percentage": "91.67"
+        }
+      }
+    ]
+  }
+}
+UI Implementation:
+
+Show a list of students with a Progress Bar representing their attendance percentage.
+Highlight students in red if their percentage is below the school's threshold (e.g., < 75%).
+3. Individual Student History (Teacher View)
+Endpoint: GET /classattendance/getStudentHistory/:student_id
+Purpose: Allows a teacher to see the specific history of one student to investigate patterns (e.g., student always absent on Mondays).
+{
+  "success": true,
+  "data": {
+    "student_info": { "name": "John Doe", "roll_number": "101" },
+    "history": [
+      { "date": "2026-04-15", "status": "present" },
+      { "date": "2026-04-14", "status": "absent" }
+    ]
+  }
+}
+UI Implementation:
+
+Display in a Calendar View or a Vertical Timeline so the teacher can scroll through the student's entire year.
+4. Today's Marking Status (Dashboard Alert)
+Endpoint: GET /classattendance/checkMarkingStatus
+Purpose: Crucial for the Teacher Dashboard. It tells the teacher which of their assigned classes they have forgotten to mark attendance for today.
+4. Today's Marking Status (Dashboard Alert)
+Endpoint: GET /classattendance/checkMarkingStatus
+Purpose: Crucial for the Teacher Dashboard. It tells the teacher which of their assigned classes 
+i want admin endpoint of these apis 

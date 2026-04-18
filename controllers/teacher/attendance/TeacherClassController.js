@@ -199,6 +199,15 @@ const markClassAttendance = async (req, res) => {
       });
     }
 
+    // Verify teacher is assigned to this class
+    if (classSection.teacher_id !== teacher.id) {
+      return res.status(403).json({
+        success: false,
+        statusCode: 403,
+        message: "You are not authorized to mark attendance for this class"
+      });
+    }
+
     const holiday = await Holiday.findOne({ where: { holiday_date: date } });
     if (holiday) {
       return res.status(400).json({
@@ -208,8 +217,17 @@ const markClassAttendance = async (req, res) => {
       });
     }
 
+    // Weekend (Sunday) Detection
+    const dayOfWeek = attendanceDate.getUTCDay();
+    if (dayOfWeek === 0) { // 0 is Sunday
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "Cannot mark attendance on Sunday"
+      });
+    }
+
     // Validate date format
-    const attendanceDate = new Date(date);
     if (isNaN(attendanceDate.getTime())) {
       return res.status(400).json({
         success: false,
@@ -363,6 +381,28 @@ const getClassAttendanceByDate = async (req, res) => {
       });
     }
 
+    // Resolve teacher from authenticated user
+    const teacher = await Teacher.findOne({
+      where: { user_id: req.user.id }
+    });
+
+    if (!teacher) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Teacher not found for this user ID"
+      });
+    }
+
+    // Verify teacher is assigned to this class
+    if (classSection.teacher_id !== teacher.id) {
+      return res.status(403).json({
+        success: false,
+        statusCode: 403,
+        message: "You are not authorized to view attendance for this class"
+      });
+    }
+
     // Validate date format
     const attendanceDate = new Date(date);
     if (isNaN(attendanceDate.getTime())) {
@@ -492,6 +532,15 @@ const updateClassAttendance = async (req, res) => {
       });
     }
 
+    // Verify teacher is assigned to this class
+    if (classSection.teacher_id !== teacher.id) {
+      return res.status(403).json({
+        success: false,
+        statusCode: 403,
+        message: "You are not authorized to update attendance for this class"
+      });
+    }
+
     const attendanceDate = new Date(date);
     if (isNaN(attendanceDate.getTime())) {
       return res.status(400).json({
@@ -569,22 +618,32 @@ const updateClassAttendance = async (req, res) => {
       const attendanceRecord = await studentsAttendances.findOne({
         where: {
           student_id: student.id,
-          class_section_id: class_section_id,
           date: date
         }
       });
 
       if (!attendanceRecord) {
-        errors.push({
-          student_id,
-          error: "Attendance record not found for this student on current date"
+        await studentsAttendances.create({
+          student_id: student.id,
+          class_section_id: class_section_id,
+          date: date,
+          status: effectiveStatus,
+          marked_by: teacher.id
+        });
+
+        results.push({
+          student_id: student.id,
+          status: effectiveStatus,
+          leave_auto_applied: !!approvedLeave,
+          action: 'created'
         });
         continue;
       }
 
       await attendanceRecord.update({
         status: effectiveStatus,
-        marked_by: teacher.id
+        marked_by: teacher.id,
+        class_section_id: class_section_id
       });
 
       results.push({
@@ -619,11 +678,254 @@ const updateClassAttendance = async (req, res) => {
   }
 };
 
+// Get monthly class attendance report (Grid View)
+const getMonthlyClassReport = async (req, res) => {
+  try {
+    const { class_section_id, month, year } = req.query;
+
+    if (!class_section_id || !month || !year) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "class_section_id, month, and year are required"
+      });
+    }
+
+    const teacher = await Teacher.findOne({ where: { user_id: req.user.id } });
+    const classSection = await ClassSection.findByPk(class_section_id);
+
+    if (!classSection || classSection.teacher_id !== teacher.id) {
+      return res.status(403).json({
+        success: false,
+        statusCode: 403,
+        message: "Unauthorized access to this class report"
+      });
+    }
+
+    const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+    const endDate = new Date(year, month, 0).toISOString().split('T')[0];
+
+    const { studentsAttendances } = require('../../../models');
+    
+    // Get all students in class
+    const students = await Student.findAll({
+      where: { class_section_id },
+      include: [{ model: User, attributes: ['name'] }],
+      order: [['roll_number', 'ASC']]
+    });
+
+    // Get all attendance for the month
+    const attendanceRecords = await studentsAttendances.findAll({
+      where: {
+        class_section_id,
+        date: { [Op.between]: [startDate, endDate] }
+      }
+    });
+
+    // Format for Grid UI: { student_id: { "2026-04-01": "present" } }
+    const attendanceMap = {};
+    attendanceRecords.forEach(rec => {
+      if (!attendanceMap[rec.student_id]) attendanceMap[rec.student_id] = {};
+      attendanceMap[rec.student_id][rec.date] = rec.status;
+    });
+
+    const report = students.map(s => {
+      const studentAttendance = attendanceMap[s.id] || {};
+      const statusCounts = Object.values(studentAttendance).reduce((acc, status) => {
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, { present: 0, absent: 0, leave: 0 });
+
+      return {
+        student_id: s.id,
+        roll_number: s.roll_number,
+        name: s.User?.name,
+        attendance: studentAttendance,
+        summary: statusCounts
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: {
+        class_info: { class_name: classSection.class_name, section_name: classSection.section_name },
+        month,
+        year,
+        students: report
+      }
+    });
+  } catch (error) {
+    console.error("Monthly Report Error:", error);
+    res.status(500).json({ success: false, statusCode: 500, message: "Internal Server Error" });
+  }
+};
+
+// Get custom date range report
+const getCustomDateRangeReport = async (req, res) => {
+  try {
+    const { class_section_id, start_date, end_date } = req.query;
+
+    if (!class_section_id || !start_date || !end_date) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: "class_section_id, start_date, and end_date are required"
+      });
+    }
+
+    const teacher = await Teacher.findOne({ where: { user_id: req.user.id } });
+    const classSection = await ClassSection.findByPk(class_section_id);
+
+    if (!classSection || classSection.teacher_id !== teacher.id) {
+      return res.status(403).json({
+        success: false,
+        statusCode: 403,
+        message: "Unauthorized access to this class report"
+      });
+    }
+
+    const { studentsAttendances } = require('../../../models');
+    const students = await Student.findAll({
+      where: { class_section_id },
+      include: [{ model: User, attributes: ['name'] }],
+      order: [['roll_number', 'ASC']]
+    });
+
+    const attendanceRecords = await studentsAttendances.findAll({
+      where: {
+        class_section_id,
+        date: { [Op.between]: [start_date, end_date] }
+      }
+    });
+
+    const attendanceMap = {};
+    attendanceRecords.forEach(rec => {
+      if (!attendanceMap[rec.student_id]) attendanceMap[rec.student_id] = {};
+      attendanceMap[rec.student_id][rec.date] = rec.status;
+    });
+
+    const report = students.map(s => {
+      const studentAttendance = attendanceMap[s.id] || {};
+      const statusCounts = Object.values(studentAttendance).reduce((acc, status) => {
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, { present: 0, absent: 0, leave: 0 });
+
+      const totalDays = Object.keys(studentAttendance).length;
+      const percentage = totalDays > 0 ? ((statusCounts.present / totalDays) * 100).toFixed(2) : 0;
+
+      return {
+        student_id: s.id,
+        roll_number: s.roll_number,
+        name: s.User?.name,
+        summary: { ...statusCounts, total_working_days: totalDays, percentage }
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: {
+        class_info: { class_name: classSection.class_name, section_name: classSection.section_name },
+        range: { start_date, end_date },
+        students: report
+      }
+    });
+  } catch (error) {
+    console.error("Custom Range Report Error:", error);
+    res.status(500).json({ success: false, statusCode: 500, message: "Internal Server Error" });
+  }
+};
+
+// Get Individual Student History (Teacher View)
+const getStudentHistory = async (req, res) => {
+  try {
+    const { student_id } = req.params;
+    const teacher = await Teacher.findOne({ where: { user_id: req.user.id } });
+
+    const student = await Student.findByPk(student_id, {
+      include: [
+        { model: User, attributes: ['name'] },
+        { model: ClassSection, attributes: ['id', 'teacher_id'] }
+      ]
+    });
+
+    if (!student) {
+      return res.status(404).json({ success: false, statusCode: 404, message: "Student not found" });
+    }
+
+    if (student.ClassSection?.teacher_id !== teacher.id) {
+      return res.status(403).json({ success: false, statusCode: 403, message: "Unauthorized: This student is not in your assigned class" });
+    }
+
+    const { studentsAttendances } = require('../../../models');
+    const history = await studentsAttendances.findAll({
+      where: { student_id },
+      order: [['date', 'DESC']]
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: {
+        student_info: { name: student.User?.name, roll_number: student.roll_number },
+        total_records: history.length,
+        history: history.map(h => ({ date: h.date, status: h.status }))
+      }
+    });
+  } catch (error) {
+    console.error("Student History Error:", error);
+    res.status(500).json({ success: false, statusCode: 500, message: "Internal Server Error" });
+  }
+};
+
+// Check Attendance Marking Status for Dashboard
+const checkMarkingStatus = async (req, res) => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const teacher = await Teacher.findOne({ where: { user_id: req.user.id } });
+
+    const assignedClasses = await ClassSection.findAll({
+      where: { teacher_id: teacher.id },
+      attributes: ['id', 'class_name', 'section_name']
+    });
+
+    const { studentsAttendances } = require('../../../models');
+    
+    const statusReport = await Promise.all(assignedClasses.map(async (cls) => {
+      const record = await studentsAttendances.findOne({
+        where: { class_section_id: cls.id, date: today }
+      });
+
+      return {
+        class_section_id: cls.id,
+        display_name: `${cls.class_name} ${cls.section_name}`,
+        is_marked: !!record,
+        date: today
+      };
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: statusReport
+    });
+  } catch (error) {
+    console.error("Check Marking Status Error:", error);
+    res.status(500).json({ success: false, statusCode: 500, message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getTeacherClasses,
   getClassStudentList,
   getStudentsByClass,
   markClassAttendance,
   getClassAttendanceByDate,
-  updateClassAttendance
+  updateClassAttendance,
+  getMonthlyClassReport,
+  getCustomDateRangeReport,
+  getStudentHistory,
+  checkMarkingStatus
 };

@@ -46,7 +46,13 @@ const {
   listResults,
   recomputeResults,
   publishResults,
-  listMarksEntries
+  listMarksEntries,
+  listPublishedResultsByExamTypes,
+  listPublishedResultsByExamEventAndStudents,
+  listFailedStudentsByExamEvent,
+  listClassWisePublishedReport,
+  listSubjectWisePublishedReport,
+  getStudentAllExamHistoryForReports
 } = require('../../../controllers/admin/examV2/resultController');
 
 const {
@@ -105,6 +111,13 @@ router.put('/marks/registers', validate(schemas.marksRegisterUpdate), updateBulk
 router.delete('/marks/registers', validate(schemas.marksRegisterDelete), deleteBulkMarksRegister);
 
 router.get('/results', validate(schemas.listByEventQuery, 'query'), listResults);
+router.get('/results/published/by-exam-types', validate(schemas.publishedResultsByExamTypesQuery, 'query'), listPublishedResultsByExamTypes);
+router.get('/results/published/by-event-students', validate(schemas.publishedResultsByEventStudentsQuery, 'query'), listPublishedResultsByExamEventAndStudents);
+router.get('/results/published/failed-students', validate(schemas.failedResultsByEventQuery, 'query'), listFailedStudentsByExamEvent);
+router.get('/results/published/class-wise', validate(schemas.classWisePublishedReportQuery, 'query'), listClassWisePublishedReport);
+router.get('/results/published/subject-wise', validate(schemas.subjectWisePublishedReportQuery, 'query'), listSubjectWisePublishedReport);
+
+router.get('/reports/students/history', validate(schemas.studentAllExamHistoryQuery, 'query'), getStudentAllExamHistoryForReports);
 router.post('/results/recompute', validate(schemas.resultRecompute), recomputeResults);
 router.post('/results/publish', validate(schemas.resultPublish), publishResults);
 

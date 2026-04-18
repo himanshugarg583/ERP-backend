@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Attendance report fetched successfully",
+  "data": {
+    "class_info": {
+      "class_name": "C0628",
+      "section_name": "A28",
+      "room_No": "R0628",
+      "date": "2026-04-17"
+    },
+    "summary": {
+      "total_students": 2,
+      "present": 2,
+      "absent": 0,
+      "late": 0,
+      "not_marked": 0
+    },
+    "attendance_records": [
+      {
+        "student_id": 5,
+        "student_name": "Student One 20260417120628",
+        "roll_number": "R10628",
+        "class_name": "C0628",
+        "section_name": "A28",
+        "attendance_status": "present"
+      },
+      {
+        "student_id": 6,
+        "student_name": "Student Two 20260417120628",
+        "roll_number": "R20628",
+        "class_name": "C0628",
+        "section_name": "A28",
+        "attendance_status": "present"
+      }
+    ]
+  }
+}

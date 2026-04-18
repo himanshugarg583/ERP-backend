@@ -1,0 +1,478 @@
+﻿{
+    "generated_at":  "2026-04-17T12:00:36",
+    "base_url":  "http://localhost:5001",
+    "test_suffix":  "20260417120036",
+    "class_section_id":  null,
+    "teacher_id":  null,
+    "student_ids":  [
+                        null,
+                        null
+                    ],
+    "total_steps":  12,
+    "passed_steps":  3,
+    "failed_steps":  9,
+    "failures":  [
+                     {
+                         "step":  "register_admin",
+                         "ok":  false,
+                         "method":  "POST",
+                         "url":  "http://localhost:5001/api/auth/register",
+                         "statusCode":  400,
+                         "note":  "error",
+                         "request":  {
+                                         "email":  "admin.api.20260417120036@erp.local",
+                                         "name":  "API Admin 20260417120036",
+                                         "password":  "Admin@123",
+                                         "role":  "admin"
+                                     },
+                         "response":  ""
+                     },
+                     {
+                         "step":  "admin_token_generated",
+                         "ok":  false,
+                         "method":  "LOCAL",
+                         "url":  "node-jwt",
+                         "statusCode":  0,
+                         "note":  "error",
+                         "request":  {
+                                         "admin_user_id":  null
+                                     },
+                         "response":  {
+                                          "error":  "Admin registration failed; token not generated"
+                                      }
+                     },
+                     {
+                         "step":  "add_teacher",
+                         "ok":  false,
+                         "method":  "POST",
+                         "url":  "http://localhost:5001/api/admin/register/addTeacher",
+                         "statusCode":  0,
+                         "note":  "error",
+                         "request":  {
+                                         "joining_date":  "2026-04-17",
+                                         "name":  "Teacher 20260417120036",
+                                         "gender":  "male",
+                                         "password":  "Teacher@123",
+                                         "role":  "teacher",
+                                         "qualification":  "MSc",
+                                         "email":  "teacher.api.20260417120036@erp.local",
+                                         "mobile":  "9876520260"
+                                     },
+                         "response":  ""
+                     },
+                     {
+                         "step":  "teacher_login",
+                         "ok":  false,
+                         "method":  "POST",
+                         "url":  "http://localhost:5001/api/auth/login",
+                         "statusCode":  404,
+                         "note":  "error",
+                         "request":  {
+                                         "password":  "Teacher@123",
+                                         "email":  "teacher.api.20260417120036@erp.local"
+                                     },
+                         "response":  ""
+                     },
+                     {
+                         "step":  "create_class",
+                         "ok":  false,
+                         "method":  "POST",
+                         "url":  "http://localhost:5001/api/Classsection/createClass",
+                         "statusCode":  200,
+                         "note":  "success",
+                         "request":  {
+                                         "capacity":  40,
+                                         "section_name":  "T20",
+                                         "room_No":  "R2026",
+                                         "class_name":  "99"
+                                     },
+                         "response":  {
+                                          "success":  true,
+                                          "statusCode":  201,
+                                          "message":  "Class section created successfully",
+                                          "data":  {
+                                                       "id":  6,
+                                                       "class_name":  "99",
+                                                       "section_name":  "T20",
+                                                       "room_No":  "R2026",
+                                                       "capacity":  40,
+                                                       "teacher_id":  null
+                                                   }
+                                      }
+                     },
+                     {
+                         "step":  "assign_class_teacher",
+                         "ok":  false,
+                         "method":  "POST",
+                         "url":  "http://localhost:5001/api/Classsection/assignClassTeacher",
+                         "statusCode":  0,
+                         "note":  "error",
+                         "request":  {
+                                         "class_section_id":  null,
+                                         "teacher_id":  null
+                                     },
+                         "response":  {
+                                          "error":  "Missing admin token/classSectionId/teacherId"
+                                      }
+                     },
+                     {
+                         "step":  "add_student_1",
+                         "ok":  false,
+                         "method":  "POST",
+                         "url":  "http://localhost:5001/admin/studentInfo/addStudent",
+                         "statusCode":  0,
+                         "note":  "error",
+                         "request":  {
+                                         "roll_number":  "R12026",
+                                         "mother_name":  "Mother One",
+                                         "father_phone":  "9000000001",
+                                         "father_name":  "Father One",
+                                         "password":  "Student@123",
+                                         "address":  "Test Address 1",
+                                         "parent_email_id":  "parent1.20260417120036@erp.local",
+                                         "name":  "Student One 20260417120036",
+                                         "mother_phone":  "9000000002",
+                                         "class_section_id":  "",
+                                         "gender":  "female",
+                                         "email":  "student1.api.20260417120036@erp.local"
+                                     },
+                         "response":  ""
+                     },
+                     {
+                         "step":  "add_student_2",
+                         "ok":  false,
+                         "method":  "POST",
+                         "url":  "http://localhost:5001/admin/studentInfo/addStudent",
+                         "statusCode":  0,
+                         "note":  "error",
+                         "request":  {
+                                         "roll_number":  "R22026",
+                                         "mother_name":  "Mother Two",
+                                         "father_phone":  "9000000003",
+                                         "father_name":  "Father Two",
+                                         "password":  "Student@123",
+                                         "address":  "Test Address 2",
+                                         "parent_email_id":  "parent2.20260417120036@erp.local",
+                                         "name":  "Student Two 20260417120036",
+                                         "mother_phone":  "9000000004",
+                                         "class_section_id":  "",
+                                         "gender":  "male",
+                                         "email":  "student2.api.20260417120036@erp.local"
+                                     },
+                         "response":  ""
+                     },
+                     {
+                         "step":  "student_login",
+                         "ok":  false,
+                         "method":  "POST",
+                         "url":  "http://localhost:5001/api/auth/login",
+                         "statusCode":  404,
+                         "note":  "error",
+                         "request":  {
+                                         "password":  "Student@123",
+                                         "email":  "student1.api.20260417120036@erp.local"
+                                     },
+                         "response":  ""
+                     }
+                 ],
+    "steps":  [
+                  {
+                      "step":  "health",
+                      "ok":  true,
+                      "method":  "GET",
+                      "url":  "http://localhost:5001/",
+                      "statusCode":  200,
+                      "note":  "success",
+                      "request":  null,
+                      "response":  "API is running..."
+                  },
+                  {
+                      "step":  "register_admin",
+                      "ok":  false,
+                      "method":  "POST",
+                      "url":  "http://localhost:5001/api/auth/register",
+                      "statusCode":  400,
+                      "note":  "error",
+                      "request":  {
+                                      "email":  "admin.api.20260417120036@erp.local",
+                                      "name":  "API Admin 20260417120036",
+                                      "password":  "Admin@123",
+                                      "role":  "admin"
+                                  },
+                      "response":  ""
+                  },
+                  {
+                      "step":  "admin_token_generated",
+                      "ok":  false,
+                      "method":  "LOCAL",
+                      "url":  "node-jwt",
+                      "statusCode":  0,
+                      "note":  "error",
+                      "request":  {
+                                      "admin_user_id":  null
+                                  },
+                      "response":  {
+                                       "error":  "Admin registration failed; token not generated"
+                                   }
+                  },
+                  {
+                      "step":  "add_teacher",
+                      "ok":  false,
+                      "method":  "POST",
+                      "url":  "http://localhost:5001/api/admin/register/addTeacher",
+                      "statusCode":  0,
+                      "note":  "error",
+                      "request":  {
+                                      "joining_date":  "2026-04-17",
+                                      "name":  "Teacher 20260417120036",
+                                      "gender":  "male",
+                                      "password":  "Teacher@123",
+                                      "role":  "teacher",
+                                      "qualification":  "MSc",
+                                      "email":  "teacher.api.20260417120036@erp.local",
+                                      "mobile":  "9876520260"
+                                  },
+                      "response":  ""
+                  },
+                  {
+                      "step":  "teacher_login",
+                      "ok":  false,
+                      "method":  "POST",
+                      "url":  "http://localhost:5001/api/auth/login",
+                      "statusCode":  404,
+                      "note":  "error",
+                      "request":  {
+                                      "password":  "Teacher@123",
+                                      "email":  "teacher.api.20260417120036@erp.local"
+                                  },
+                      "response":  ""
+                  },
+                  {
+                      "step":  "create_class",
+                      "ok":  false,
+                      "method":  "POST",
+                      "url":  "http://localhost:5001/api/Classsection/createClass",
+                      "statusCode":  200,
+                      "note":  "success",
+                      "request":  {
+                                      "capacity":  40,
+                                      "section_name":  "T20",
+                                      "room_No":  "R2026",
+                                      "class_name":  "99"
+                                  },
+                      "response":  {
+                                       "success":  true,
+                                       "statusCode":  201,
+                                       "message":  "Class section created successfully",
+                                       "data":  {
+                                                    "id":  6,
+                                                    "class_name":  "99",
+                                                    "section_name":  "T20",
+                                                    "room_No":  "R2026",
+                                                    "capacity":  40,
+                                                    "teacher_id":  null
+                                                }
+                                   }
+                  },
+                  {
+                      "step":  "assign_class_teacher",
+                      "ok":  false,
+                      "method":  "POST",
+                      "url":  "http://localhost:5001/api/Classsection/assignClassTeacher",
+                      "statusCode":  0,
+                      "note":  "error",
+                      "request":  {
+                                      "class_section_id":  null,
+                                      "teacher_id":  null
+                                  },
+                      "response":  {
+                                       "error":  "Missing admin token/classSectionId/teacherId"
+                                   }
+                  },
+                  {
+                      "step":  "add_student_1",
+                      "ok":  false,
+                      "method":  "POST",
+                      "url":  "http://localhost:5001/admin/studentInfo/addStudent",
+                      "statusCode":  0,
+                      "note":  "error",
+                      "request":  {
+                                      "roll_number":  "R12026",
+                                      "mother_name":  "Mother One",
+                                      "father_phone":  "9000000001",
+                                      "father_name":  "Father One",
+                                      "password":  "Student@123",
+                                      "address":  "Test Address 1",
+                                      "parent_email_id":  "parent1.20260417120036@erp.local",
+                                      "name":  "Student One 20260417120036",
+                                      "mother_phone":  "9000000002",
+                                      "class_section_id":  "",
+                                      "gender":  "female",
+                                      "email":  "student1.api.20260417120036@erp.local"
+                                  },
+                      "response":  ""
+                  },
+                  {
+                      "step":  "add_student_2",
+                      "ok":  false,
+                      "method":  "POST",
+                      "url":  "http://localhost:5001/admin/studentInfo/addStudent",
+                      "statusCode":  0,
+                      "note":  "error",
+                      "request":  {
+                                      "roll_number":  "R22026",
+                                      "mother_name":  "Mother Two",
+                                      "father_phone":  "9000000003",
+                                      "father_name":  "Father Two",
+                                      "password":  "Student@123",
+                                      "address":  "Test Address 2",
+                                      "parent_email_id":  "parent2.20260417120036@erp.local",
+                                      "name":  "Student Two 20260417120036",
+                                      "mother_phone":  "9000000004",
+                                      "class_section_id":  "",
+                                      "gender":  "male",
+                                      "email":  "student2.api.20260417120036@erp.local"
+                                  },
+                      "response":  ""
+                  },
+                  {
+                      "step":  "student_login",
+                      "ok":  false,
+                      "method":  "POST",
+                      "url":  "http://localhost:5001/api/auth/login",
+                      "statusCode":  404,
+                      "note":  "error",
+                      "request":  {
+                                      "password":  "Student@123",
+                                      "email":  "student1.api.20260417120036@erp.local"
+                                  },
+                      "response":  ""
+                  },
+                  {
+                      "step":  "get_all_class_sections",
+                      "ok":  true,
+                      "method":  "GET",
+                      "url":  "http://localhost:5001/api/Classsection/getAllClassSections",
+                      "statusCode":  200,
+                      "note":  "success",
+                      "request":  null,
+                      "response":  {
+                                       "success":  true,
+                                       "statusCode":  200,
+                                       "message":  "Class sections retrieved successfully",
+                                       "data":  [
+                                                    {
+                                                        "id":  1,
+                                                        "class_name":  "10",
+                                                        "section_name":  "A",
+                                                        "room_No":  "R-204",
+                                                        "capacity":  42,
+                                                        "teacher_id":  1,
+                                                        "classTeacher":  {
+                                                                             "id":  1,
+                                                                             "user_id":  3,
+                                                                             "qualification":  "M.Sc, B.Ed",
+                                                                             "dob":  null,
+                                                                             "mobile_no":  "9876501001",
+                                                                             "permanent_address":  null,
+                                                                             "role":  "teacher",
+                                                                             "gender":  "male",
+                                                                             "salary":  "58000.00",
+                                                                             "joining_date":  "2020-06-15",
+                                                                             "current_address":  "Jaipur, Rajasthan",
+                                                                             "image":  null,
+                                                                             "createdAt":  "2026-04-16T12:09:53.000Z",
+                                                                             "updatedAt":  "2026-04-16T12:09:53.000Z",
+                                                                             "User":  {
+                                                                                          "id":  3,
+                                                                                          "name":  "Amit Sharma",
+                                                                                          "email":  "teacher@gmail.com"
+                                                                                      }
+                                                                         }
+                                                    },
+                                                    {
+                                                        "id":  6,
+                                                        "class_name":  "99",
+                                                        "section_name":  "T20",
+                                                        "room_No":  "R2026",
+                                                        "capacity":  40,
+                                                        "teacher_id":  null,
+                                                        "classTeacher":  null
+                                                    },
+                                                    {
+                                                        "id":  2,
+                                                        "class_name":  "Class 10",
+                                                        "section_name":  "A",
+                                                        "room_No":  "101",
+                                                        "capacity":  30,
+                                                        "teacher_id":  null,
+                                                        "classTeacher":  null
+                                                    },
+                                                    {
+                                                        "id":  3,
+                                                        "class_name":  "Test Class 155808119",
+                                                        "section_name":  "A",
+                                                        "room_No":  "101",
+                                                        "capacity":  30,
+                                                        "teacher_id":  null,
+                                                        "classTeacher":  null
+                                                    },
+                                                    {
+                                                        "id":  4,
+                                                        "class_name":  "Test Class 587888430",
+                                                        "section_name":  "A",
+                                                        "room_No":  "101",
+                                                        "capacity":  30,
+                                                        "teacher_id":  null,
+                                                        "classTeacher":  null
+                                                    },
+                                                    {
+                                                        "id":  5,
+                                                        "class_name":  "Test Class 815140889",
+                                                        "section_name":  "A",
+                                                        "room_No":  "101",
+                                                        "capacity":  30,
+                                                        "teacher_id":  null,
+                                                        "classTeacher":  null
+                                                    }
+                                                ]
+                                   }
+                  },
+                  {
+                      "step":  "get_all_students",
+                      "ok":  true,
+                      "method":  "GET",
+                      "url":  "http://localhost:5001/admin/studentInfo/getAllStudents?page=1\u0026limit=20",
+                      "statusCode":  200,
+                      "note":  "success",
+                      "request":  null,
+                      "response":  {
+                                       "success":  true,
+                                       "statusCode":  200,
+                                       "message":  "Students fetched successfully",
+                                       "data":  [
+                                                    {
+                                                        "student_id":  1,
+                                                        "roll_number":  "10A-001",
+                                                        "User":  {
+                                                                     "name":  "Riya Verma"
+                                                                 },
+                                                        "ClassSection":  {
+                                                                             "class_name":  "10",
+                                                                             "section_name":  "A"
+                                                                         },
+                                                        "parentDetails":  {
+                                                                              "father_name":  "Mahesh Verma"
+                                                                          }
+                                                    }
+                                                ],
+                                       "pagination":  {
+                                                          "total":  1,
+                                                          "page":  1,
+                                                          "limit":  20,
+                                                          "totalPages":  1
+                                                      }
+                                   }
+                  }
+              ]
+}

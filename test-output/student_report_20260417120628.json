@@ -1,0 +1,57 @@
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Student report generated successfully for C0628-A28",
+  "data": {
+    "class_info": {
+      "class_id": 10,
+      "class_name": "C0628",
+      "section_name": "A28",
+      "room_no": "R0628",
+      "capacity": 40
+    },
+    "total_students": 2,
+    "students": [
+      {
+        "student_id": 5,
+        "user_id": 18,
+        "name": "Student One 20260417120628",
+        "roll_number": "R10628",
+        "date_of_birth": null,
+        "gender": "female",
+        "address": null,
+        "admission_date": null,
+        "phone_no": null,
+        "aadhar_no": null,
+        "previous_school": null,
+        "documents": {
+          "image": null,
+          "aadhar_card": null,
+          "transfer_certificate": null,
+          "marksheet": null,
+          "signature": null
+        }
+      },
+      {
+        "student_id": 6,
+        "user_id": 19,
+        "name": "Student Two 20260417120628",
+        "roll_number": "R20628",
+        "date_of_birth": null,
+        "gender": "male",
+        "address": null,
+        "admission_date": null,
+        "phone_no": null,
+        "aadhar_no": null,
+        "previous_school": null,
+        "documents": {
+          "image": null,
+          "aadhar_card": null,
+          "transfer_certificate": null,
+          "marksheet": null,
+          "signature": null
+        }
+      }
+    ]
+  }
+}

@@ -16,6 +16,11 @@ const Subject = sequelize.define('Subject', {
     allowNull: true,
     unique: true
   },
+  subject_type: {
+    type: DataTypes.ENUM('theory', 'practical', 'extra_caricualam_activity'),
+    allowNull: false,
+    defaultValue: 'theory'
+  },
   class_section_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

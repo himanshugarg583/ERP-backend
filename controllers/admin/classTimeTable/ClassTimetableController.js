@@ -17,6 +17,14 @@ const {
 
 const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+const formatTimeWithAMPM = (timeString) => {
+  if (!timeString) return null;
+  const [hours, minutes] = String(timeString).split(':').map(Number);
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const hours12 = hours % 12 || 12;
+  return `${hours12}:${String(minutes).padStart(2, '0')} ${ampm}`;
+};
+
 const normalizeStoredWorkingDays = (rawWorkingDays) => {
   if (Array.isArray(rawWorkingDays)) {
     return normalizeWorkingDays(rawWorkingDays);
@@ -1074,8 +1082,8 @@ const getClassTimetable = async (req, res) => {
           slot_id: slot.id,
           slot_number: slot.slot_number,
           slot_label: slot.slot_label,
-          start_time: slot.start_time,
-          end_time: slot.end_time,
+          start_time: formatTimeWithAMPM(slot.start_time),
+          end_time: formatTimeWithAMPM(slot.end_time),
           is_break: slot.is_break,
           timetable_entry_id: found?.id || null,
           subject: found?.subject ? {
@@ -1173,8 +1181,8 @@ const getTimetableByTeacher = async (req, res) => {
           id: row.timeSlot.id,
           slot_number: row.timeSlot.slot_number,
           slot_label: row.timeSlot.slot_label,
-          start_time: row.timeSlot.start_time,
-          end_time: row.timeSlot.end_time
+          start_time: formatTimeWithAMPM(row.timeSlot.start_time),
+          end_time: formatTimeWithAMPM(row.timeSlot.end_time)
         } : null,
         notes: row.notes
       });

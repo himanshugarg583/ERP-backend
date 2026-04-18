@@ -1,0 +1,48 @@
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Monthly attendance report fetched successfully",
+  "data": {
+    "report_info": {
+      "class_name": "C0628",
+      "section_name": "A28",
+      "room_No": "R0628",
+      "month": "April",
+      "year": 2026,
+      "date_range": {
+        "from": "2026-04-01",
+        "to": "2026-04-30"
+      }
+    },
+    "class_summary": {
+      "total_students": 2,
+      "average_attendance_percentage": "100.00"
+    },
+    "student_reports": [
+      {
+        "student_id": 5,
+        "student_name": "Student One 20260417120628",
+        "roll_number": "R10628",
+        "attendance_summary": {
+          "total_days_marked": 1,
+          "present": 1,
+          "absent": 0,
+          "late": 0,
+          "attendance_percentage": "100.00"
+        }
+      },
+      {
+        "student_id": 6,
+        "student_name": "Student Two 20260417120628",
+        "roll_number": "R20628",
+        "attendance_summary": {
+          "total_days_marked": 1,
+          "present": 1,
+          "absent": 0,
+          "late": 0,
+          "attendance_percentage": "100.00"
+        }
+      }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-const {User,Teacher,ClassSection,Student,ExamTerm,Exam,ExamSchedule,Subject,StudentParent} = require('../../models');
+const {User,Teacher,ClassSection,Student,Subject,StudentParent, ExamTypeV2, ExamEventV2, ExamPaperV2, ExamSchedule} = require('../../models');
 
 const getTeacherDropdown = async (req, res) => {
   try {
@@ -166,16 +166,20 @@ const getStudentsByClass = async (req, res) => {
 
 const getExamTermDropdown = async (req, res) => {
   try {
-    const examTerms = await ExamTerm.findAll({
-      attributes: ['id', 'term_name', 'academic_year'],
-      order: [['academic_year', 'DESC'], ['term_name', 'ASC']]
+    const examTerms = await ExamTypeV2.findAll({
+      attributes: ['id', 'name', 'is_active'],
+      order: [['name', 'ASC']]
     });
 
     res.status(200).json({
       success: true,
       statusCode: 200,
-      message: "Exam terms fetched successfully",
-      data: examTerms
+      message: "Exam types fetched successfully",
+      data: examTerms.map(row => ({
+        id: row.id,
+        term_name: row.name,
+        status: row.is_active ? 'active' : 'inactive'
+      }))
     });
 
   } catch (error) {
@@ -194,20 +198,25 @@ const getExamDropdown = async (req, res) => {
 
     const whereCondition = {};
     if (term_id) {
-      whereCondition.term_id = term_id;
+      whereCondition.exam_type_id = term_id;
     }
 
-    const exams = await Exam.findAll({
+    const exams = await ExamEventV2.findAll({
       where: whereCondition,
-      attributes: ['id', 'exam_name'],
-      order: [['exam_name', 'ASC']]
+      attributes: ['id', 'name', 'academic_year', 'status'],
+      order: [['academic_year', 'DESC'], ['name', 'ASC']]
     });
 
     res.status(200).json({
       success: true,
       statusCode: 200,
-      message: "Exams fetched successfully",
-      data: exams
+      message: "Exam events fetched successfully",
+      data: exams.map(row => ({
+        id: row.id,
+        name: row.name,
+        academic_year: row.academic_year,
+        status: row.status
+      }))
     });
 
   } catch (error) {
@@ -224,7 +233,6 @@ const getExamScheduleByExam = async (req, res) => {
   try {
     const { exam_id } = req.query;
 
-    // Validation
     if (!exam_id) {
       return res.status(400).json({
         success: false,
@@ -233,10 +241,10 @@ const getExamScheduleByExam = async (req, res) => {
       });
     }
 
-    // Get exam schedules for the given exam_id
-    const examSchedules = await ExamSchedule.findAll({
+    // In Exam V2, "ExamSchedule" is essentially ExamPaperV2 linked to ExamTimetableV2
+    const examSchedules = await ExamPaperV2.findAll({
       where: {
-        exam_id: exam_id
+        exam_event_id: exam_id
       },
       include: [
         {
@@ -245,14 +253,13 @@ const getExamScheduleByExam = async (req, res) => {
           attributes: ['class_name', 'section_name']
         }
       ],
-      attributes: ['id', 'class_section_id', 'total_marks', 'passing_marks'],
-      order: [['class_section_id', 'ASC']]
+      attributes: ['id', 'class_id', 'max_marks', 'passing_marks'],
+      order: [['class_id', 'ASC']]
     });
 
-    // Format response
     const formattedSchedules = examSchedules.map(schedule => ({
       exam_schedule_id: schedule.id,
-      class_id: schedule.class_section_id,
+      class_id: schedule.class_id,
       name: schedule.classSection ? `${schedule.classSection.class_name}-${schedule.classSection.section_name}` : 'N/A'
     }));
 

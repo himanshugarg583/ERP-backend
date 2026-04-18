@@ -1,6 +1,16 @@
-const { ClassSection, Subject } = require('../../models');
+const { ClassSection, Subject, Teacher, User } = require('../../models');
 const { Student, studentsAttendances } = require('../../models');
 const { Op } = require('sequelize');
+
+const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+const formatTimeWithAMPM = (timeString) => {
+  if (!timeString) return null;
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const hours12 = hours % 12 || 12;
+  return `${hours12}:${String(minutes).padStart(2, '0')} ${ampm}`;
+};
 
 // Get student monthly attendance
 const getStudentMonthlyAttendance = async (req, res) => {
@@ -156,7 +166,22 @@ const getStudentClassAndSubjects = async (req, res) => {
     // Get all subjects for this class
     const subjects = await Subject.findAll({
       where: { class_section_id: student.class_section_id },
-      attributes: ['id', 'subject_name', 'subject_code'],
+      attributes: ['id', 'subject_name', 'subject_code', 'subject_type'],
+      include: [
+        {
+          model: Teacher,
+          as: 'teacher',
+          attributes: ['id', 'mobile_no'],
+          required: false,
+          include: [
+            {
+              model: User,
+              attributes: ['name'],
+              required: false
+            }
+          ]
+        }
+      ],
       order: [['subject_name', 'ASC']]
     });
 
@@ -180,7 +205,10 @@ const getStudentClassAndSubjects = async (req, res) => {
         subjects: subjects.map(subject => ({
           subject_id: subject.id,
           subject_name: subject.subject_name,
-          subject_code: subject.subject_code
+          subject_code: subject.subject_code,
+          subject_type: subject.subject_type,
+          teacher_name: subject.teacher?.User?.name || null,
+          teacher_phone_number: subject.teacher?.mobile_no || null
         })),
         total_subjects: subjects.length
       }
@@ -289,8 +317,8 @@ const getStudentTimetable = async (req, res) => {
           id: entry.timeSlot.id,
           slot_number: entry.timeSlot.slot_number,
           slot_label: entry.timeSlot.slot_label,
-          start_time: entry.timeSlot.start_time,
-          end_time: entry.timeSlot.end_time,
+          start_time: formatTimeWithAMPM(entry.timeSlot.start_time),
+          end_time: formatTimeWithAMPM(entry.timeSlot.end_time),
           is_break: entry.timeSlot.is_break
         } : null,
         subject: entry.subject ? {

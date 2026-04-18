@@ -1,0 +1,57 @@
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Student report generated successfully for C0424-A24",
+  "data": {
+    "class_info": {
+      "class_id": 7,
+      "class_name": "C0424",
+      "section_name": "A24",
+      "room_no": "R0424",
+      "capacity": 40
+    },
+    "total_students": 2,
+    "students": [
+      {
+        "student_id": 2,
+        "user_id": 13,
+        "name": "Student One 20260417120424",
+        "roll_number": "R10424",
+        "date_of_birth": null,
+        "gender": "female",
+        "address": null,
+        "admission_date": null,
+        "phone_no": null,
+        "aadhar_no": null,
+        "previous_school": null,
+        "documents": {
+          "image": null,
+          "aadhar_card": null,
+          "transfer_certificate": null,
+          "marksheet": null,
+          "signature": null
+        }
+      },
+      {
+        "student_id": 3,
+        "user_id": 14,
+        "name": "Student Two 20260417120424",
+        "roll_number": "R20424",
+        "date_of_birth": null,
+        "gender": "male",
+        "address": null,
+        "admission_date": null,
+        "phone_no": null,
+        "aadhar_no": null,
+        "previous_school": null,
+        "documents": {
+          "image": null,
+          "aadhar_card": null,
+          "transfer_certificate": null,
+          "marksheet": null,
+          "signature": null
+        }
+      }
+    ]
+  }
+}

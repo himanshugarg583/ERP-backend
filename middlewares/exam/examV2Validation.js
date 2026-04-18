@@ -224,6 +224,53 @@ const schemas = {
     version_bump: Joi.boolean().optional()
   }),
 
+  publishedResultsByExamTypesQuery: Joi.object({
+    exam_type_ids: Joi.alternatives().try(
+      Joi.array().items(id.required()).min(1),
+      Joi.string().pattern(/^\d+(\s*,\s*\d+)*$/)
+    ).required(),
+    student_id: id.optional(),
+    student_ids: Joi.alternatives().try(
+      Joi.array().items(id.required()).min(1),
+      Joi.string().pattern(/^\d+(\s*,\s*\d+)*$/)
+    ).optional()
+  }),
+
+  publishedResultsByEventStudentsQuery: Joi.object({
+    exam_event_id: id.required(),
+    student_id: id.required()
+  }),
+
+  failedResultsByEventQuery: Joi.object({
+    exam_event_id: id.required()
+  }),
+
+  classWisePublishedReportQuery: Joi.object({
+    exam_event_id: id.required(),
+    class_id: id.required()
+  }),
+
+  subjectWisePublishedReportQuery: Joi.object({
+    exam_event_id: id.required(),
+    class_id: id.required(),
+    subject_id: id.required()
+  }),
+
+  studentsByClassQuery: Joi.object({
+    class_id: id.required()
+  }),
+
+  studentAllExamHistoryQuery: Joi.object({
+    student_id: id.required()
+  }),
+
+  examEventIdsQuery: Joi.object({
+    exam_event_ids: Joi.alternatives().try(
+      Joi.array().items(id.required()).min(1),
+      Joi.string().pattern(/^\d+(\s*,\s*\d+)*$/)
+    ).required()
+  }),
+
   documentTemplateCreate: Joi.object({
     name: Joi.string().min(2).max(100).required(),
     document_type: Joi.string().valid('admit_card', 'report_card', 'marksheet', 'tc', 'timetable_pdf').required(),
