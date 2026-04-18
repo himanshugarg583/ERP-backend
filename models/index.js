@@ -223,14 +223,6 @@ Notice.belongsTo(Teacher, { foreignKey: 'created_by', as: 'createdByTeacher' });
 ClassSection.hasMany(NoticeTarget, { foreignKey: 'class_section_id', as: 'noticeTargets', onDelete: 'CASCADE' });
 NoticeTarget.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
 
-// 4. Student ↔ NoticeTarget (One-to-Many)
-Student.hasMany(NoticeTarget, { foreignKey: 'student_id', as: 'noticeTargets', onDelete: 'CASCADE' });
-NoticeTarget.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
-
-// 5. Teacher ↔ NoticeTarget (One-to-Many)
-Teacher.hasMany(NoticeTarget, { foreignKey: 'teacher_id', as: 'noticeTargets', onDelete: 'CASCADE' });
-NoticeTarget.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
-
 
 module.exports = {
   sequelize,

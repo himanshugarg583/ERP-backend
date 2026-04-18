@@ -1,4 +1,4 @@
-const { Notice, NoticeTarget, Teacher, ClassSection, Student, User } = require('../../../models');
+const { Notice, NoticeTarget, Teacher, ClassSection, User } = require('../../../models');
 const sequelize = require('../../../config/db');
 const { Op } = require('sequelize');
 
@@ -10,7 +10,7 @@ const createNotice = async (req, res) => {
     // Get user_id from token
     const user_id = req.user.id;
 
-    const { title, message, target_type, class_section_ids, student_ids } = req.body;
+    const { title, message, target_type, class_section_ids } = req.body;
 
     // Validate required fields
     if (!title || !message || !target_type) {
@@ -36,14 +36,14 @@ const createNotice = async (req, res) => {
       });
     }
 
-    // Validate target_type (teachers can only send to classes or students)
-    const validTargetTypes = ['all_classes', 'class', 'student'];
+    // Validate target_type (teachers can only send to classes)
+    const validTargetTypes = ['all_classes', 'class'];
     if (!validTargetTypes.includes(target_type)) {
       await transaction.rollback();
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "Invalid target type. Teachers can only send notices to classes or students"
+        message: "Invalid target type. Teachers can only send notices to classes"
       });
     }
 
@@ -79,22 +79,6 @@ const createNotice = async (req, res) => {
         class_section_id: id
       }));
       
-    } else if (target_type === 'student') {
-      // Send to specific students
-      if (!student_ids || !Array.isArray(student_ids) || student_ids.length === 0) {
-        await transaction.rollback();
-        return res.status(400).json({
-          success: false,
-          statusCode: 400,
-          message: "Student IDs are required for student target type"
-        });
-      }
-      
-      targets = student_ids.map(id => ({
-        notice_id: notice.id,
-        target_type: 'student',
-        student_id: id
-      }));
     }
 
     // Bulk create targets
@@ -154,21 +138,12 @@ const getMyNotices = async (req, res) => {
         {
           model: NoticeTarget,
           as: 'targets',
-          attributes: ['id', 'target_type', 'class_section_id', 'student_id'],
+          attributes: ['id', 'target_type', 'class_section_id'],
           include: [
             {
               model: ClassSection,
               as: 'classSection',
               attributes: ['id', 'class_name', 'section_name']
-            },
-            {
-              model: Student,
-              as: 'student',
-              attributes: ['id'],
-              include: [{
-                model: User,
-                attributes: ['name']
-              }]
             }
           ]
         }
@@ -191,9 +166,6 @@ const getMyNotices = async (req, res) => {
         if (target.target_type === 'class' && target.classSection) {
           targetInfo.class = `${target.classSection.class_name} ${target.classSection.section_name}`;
           targetInfo.class_section_id = target.class_section_id;
-        } else if (target.target_type === 'student' && target.student) {
-          targetInfo.student_name = target.student.User?.name;
-          targetInfo.student_id = target.student_id;
         }
         
         return targetInfo;
@@ -228,7 +200,7 @@ const updateNotice = async (req, res) => {
     // Get user_id from token
     const user_id = req.user.id;
     const { notice_id } = req.params;
-    const { title, message, target_type, class_section_ids, student_ids } = req.body;
+    const { title, message, target_type, class_section_ids } = req.body;
 
     // Find teacher by user_id
     const teacher = await Teacher.findOne({
@@ -273,13 +245,13 @@ const updateNotice = async (req, res) => {
     // If target_type is provided, update targets
     if (target_type) {
       // Validate target_type
-      const validTargetTypes = ['all_classes', 'class', 'student'];
+      const validTargetTypes = ['all_classes', 'class'];
       if (!validTargetTypes.includes(target_type)) {
         await transaction.rollback();
         return res.status(400).json({
           success: false,
           statusCode: 400,
-          message: "Invalid target type. Teachers can only send notices to classes or students"
+          message: "Invalid target type. Teachers can only send notices to classes"
         });
       }
 
@@ -296,12 +268,6 @@ const updateNotice = async (req, res) => {
           notice_id: notice.id,
           target_type: 'class',
           class_section_id: id
-        }));
-      } else if (target_type === 'student' && student_ids) {
-        targets = student_ids.map(id => ({
-          notice_id: notice.id,
-          target_type: 'student',
-          student_id: id
         }));
       }
 
@@ -418,11 +384,7 @@ const getNoticesForMe = async (req, res) => {
             [Op.or]: [
               { target_type: 'all' },
               { target_type: 'all_teachers' },
-              { target_type: 'all_staff' },
-              { 
-                target_type: 'teacher',
-                teacher_id: teacher.id
-              }
+              { target_type: 'all_staff' }
             ]
           },
           attributes: ['id', 'target_type'],

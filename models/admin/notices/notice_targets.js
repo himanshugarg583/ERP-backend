@@ -25,9 +25,7 @@ const NoticeTarget = sequelize.define('NoticeTarget',{
         "all_classes",
         "all_teachers",
         "all_staff",
-        "class",
-        "student",
-        "teacher"
+        "class"
       ),
       allowNull: false,
     },
@@ -37,28 +35,6 @@ const NoticeTarget = sequelize.define('NoticeTarget',{
       allowNull: true,
       references: {
         model: "class_sections",
-        key: "id",
-      },
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE",
-    },
-
-    student_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: true,
-      references: {
-        model: "students",
-        key: "id",
-      },
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE",
-    },
-
-    teacher_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: true,
-      references: {
-        model: "teachers",
         key: "id",
       },
       onDelete: "CASCADE",

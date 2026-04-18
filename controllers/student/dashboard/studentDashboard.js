@@ -386,7 +386,6 @@ const getStudentNotices = async (req, res) => {
             [Op.or]: [
               { target_type: 'all' },
               { target_type: 'all_classes' },
-              { target_type: 'student', student_id: student.id },
               { target_type: 'class', class_section_id: student.class_section_id }
             ]
           },
@@ -486,7 +485,6 @@ const getStudentDashboardStats = async (req, res) => {
           [Op.or]: [
             { target_type: 'all' },
             { target_type: 'all_classes' },
-            { target_type: 'student', student_id: student.id },
             { target_type: 'class', class_section_id: student.class_section_id }
           ]
         },

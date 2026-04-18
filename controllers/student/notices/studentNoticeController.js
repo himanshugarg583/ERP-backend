@@ -35,10 +35,6 @@ const getNoticesForMe = async (req, res) => {
               { 
                 target_type: 'class',
                 class_section_id: student.class_section_id
-              },
-              { 
-                target_type: 'student',
-                student_id: student.id
               }
             ]
           },
