@@ -32,12 +32,11 @@ const { DocumentV2 } = require('./admin/exam/DocumentV2');
 const { StudentLeave } = require('./admin/StudentLeave');
 
 // content uploads
-const { SubjectResource } = require('./admin/content uploads/subject_resources');
-const { ClassResource } = require('./admin/content uploads/class_resources');
+const { Resource } = require('./admin/content uploads/resource');
 
 // notices
-const { Notice } = require('./admin/notices/notices');
-const { NoticeTarget } = require('./admin/notices/notice_targets');
+const { Notice } = require('./admin/content uploads/notices');
+const { AudienceTarget } = require('./admin/content uploads/audience_targets');
 
 
 // User ↔ Student
@@ -187,41 +186,29 @@ DocumentV2.belongsTo(User, { foreignKey: 'generated_by', as: 'generatedBy' });
 // CONTENT UPLOADS ASSOCIATIONS
 // =====================================================
 
-// 1. ClassSection ↔ SubjectResource (One-to-Many)
-ClassSection.hasMany(SubjectResource, { foreignKey: 'class_section_id', as: 'subjectResources', onDelete: 'CASCADE' });
-SubjectResource.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
-
-// 2. Subject ↔ SubjectResource (One-to-Many)
-Subject.hasMany(SubjectResource, { foreignKey: 'subject_id', as: 'resources', onDelete: 'CASCADE' });
-SubjectResource.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
-
-// 3. Teacher ↔ SubjectResource (One-to-Many)
-Teacher.hasMany(SubjectResource, { foreignKey: 'teacher_id', as: 'uploadedSubjectResources', onDelete: 'SET NULL' });
-SubjectResource.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
-
-// 4. ClassSection ↔ ClassResource (One-to-Many)
-ClassSection.hasMany(ClassResource, { foreignKey: 'class_section_id', as: 'classResources', onDelete: 'CASCADE' });
-ClassResource.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
-
-// 5. Teacher ↔ ClassResource (One-to-Many)
-Teacher.hasMany(ClassResource, { foreignKey: 'teacher_id', as: 'uploadedClassResources', onDelete: 'SET NULL' });
-ClassResource.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
-
 // =====================================================
 // NOTICES ASSOCIATIONS
 // =====================================================
 
-// 1. Notice ↔ NoticeTarget (One-to-Many)
-Notice.hasMany(NoticeTarget, { foreignKey: 'notice_id', as: 'targets', onDelete: 'CASCADE' });
-NoticeTarget.belongsTo(Notice, { foreignKey: 'notice_id', as: 'notice' });
+// 1. Notice ↔ AudienceTarget (One-to-Many)
+Notice.hasMany(AudienceTarget, { foreignKey: 'notice_id', as: 'targets', onDelete: 'CASCADE' });
+AudienceTarget.belongsTo(Notice, { foreignKey: 'notice_id', as: 'notice' });
+
+// 1b. Resource ↔ AudienceTarget (One-to-Many)
+Resource.hasMany(AudienceTarget, { foreignKey: 'resource_id', as: 'targets', onDelete: 'CASCADE' });
+AudienceTarget.belongsTo(Resource, { foreignKey: 'resource_id', as: 'resource' });
 
 // 2. Teacher ↔ Notice (One-to-Many) - created_by
 Teacher.hasMany(Notice, { foreignKey: 'created_by', as: 'createdNotices', onDelete: 'SET NULL' });
-Notice.belongsTo(Teacher, { foreignKey: 'created_by', as: 'createdByTeacher' });
+Notice.belongsTo(Teacher, { foreignKey: 'created_by', as: 'createdBy' });
 
-// 3. ClassSection ↔ NoticeTarget (One-to-Many)
-ClassSection.hasMany(NoticeTarget, { foreignKey: 'class_section_id', as: 'noticeTargets', onDelete: 'CASCADE' });
-NoticeTarget.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
+// 3. ClassSection ↔ AudienceTarget (One-to-Many)
+ClassSection.hasMany(AudienceTarget, { foreignKey: 'class_section_id', as: 'audienceTargets', onDelete: 'CASCADE' });
+AudienceTarget.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'classSection' });
+
+// 4. Subject ↔ AudienceTarget (One-to-Many)
+Subject.hasMany(AudienceTarget, { foreignKey: 'subject_id', as: 'audienceTargets', onDelete: 'CASCADE' });
+AudienceTarget.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
 
 
 module.exports = {
@@ -258,10 +245,9 @@ module.exports = {
   StudentLeave,
 
   // Content Uploads
-  SubjectResource,
-  ClassResource,
+  Resource,
 
   // Notices
   Notice,
-  NoticeTarget
+  AudienceTarget
 };

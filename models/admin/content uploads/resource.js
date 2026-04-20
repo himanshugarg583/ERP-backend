@@ -1,33 +1,18 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../../config/db");
 
-const SubjectResource = sequelize.define('SubjectResource',{
+const Resource = sequelize.define(
+  "Resource",
+  {
     id: {
       type: DataTypes.INTEGER(11),
       autoIncrement: true,
       primaryKey: true,
     },
 
-    class_section_id: {
-      type: DataTypes.INTEGER(11),
+    resource_scope: {
+      type: DataTypes.ENUM("class", "subject", "staff"),
       allowNull: false,
-      references: {
-        model: "class_sections", // table name
-        key: "id",
-      },
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE",
-    },
-
-    subject_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      references: {
-        model: "subjects", // table name
-        key: "id",
-      },
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE",
     },
 
     title: {
@@ -47,10 +32,16 @@ const SubjectResource = sequelize.define('SubjectResource',{
 
     resource_type: {
       type: DataTypes.ENUM(
+        "syllabus",
+        "circular",
+        "homework",
         "notes",
         "assignment",
         "worksheet",
         "question_paper",
+        "notice",
+        "policy",
+        "meeting_minutes",
         "other"
       ),
       defaultValue: "other",
@@ -61,15 +52,14 @@ const SubjectResource = sequelize.define('SubjectResource',{
       allowNull: true,
     },
 
-    teacher_id: {
+    uploaded_by_type: {
+      type: DataTypes.ENUM("teacher", "admin"),
+      allowNull: false,
+    },
+
+    uploaded_by_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: true,
-      references: {
-        model: "teachers",
-        key: "id",
-      },
-      onDelete: "SET NULL",
-      onUpdate: "CASCADE",
+      allowNull: false,
     },
 
     created_at: {
@@ -83,10 +73,9 @@ const SubjectResource = sequelize.define('SubjectResource',{
     },
   },
   {
-    tableName: "subject_resources",
+    tableName: "resources",
     timestamps: false,
   }
 );
 
-module.exports = { SubjectResource };
-    
+module.exports = { Resource };

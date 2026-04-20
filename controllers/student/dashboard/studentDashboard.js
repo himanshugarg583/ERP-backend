@@ -1,6 +1,6 @@
 const {
   Student,
-  SubjectResource,
+  Resource,
   Subject,
   ClassTimetable,
   ClassTimeSlot,
@@ -8,7 +8,7 @@ const {
   Teacher,
   User,
   Notice,
-  NoticeTarget,
+  AudienceTarget,
 } = require('../../../models');
 const { Op } = require('sequelize');
 
@@ -261,9 +261,9 @@ const getPendingAssignments = async (req, res) => {
     const currentDate = new Date();
 
     // Fetch pending assignments for student's class
-    const assignments = await SubjectResource.findAll({
+    const assignments = await Resource.findAll({
       where: {
-        class_section_id: student.class_section_id,
+        resource_scope: 'subject',
         resource_type: 'assignment',
         due_date: {
           [Op.gte]: currentDate // Only future/today assignments
@@ -271,9 +271,21 @@ const getPendingAssignments = async (req, res) => {
       },
       include: [
         {
-          model: Subject,
-          as: 'subject',
-          attributes: ['subject_name']
+          model: AudienceTarget,
+          as: 'targets',
+          required: true,
+          attributes: ['subject_id'],
+          where: {
+            target_type: 'class',
+            class_section_id: student.class_section_id,
+          },
+          include: [
+            {
+              model: Subject,
+              as: 'subject',
+              attributes: ['subject_name']
+            }
+          ]
         }
       ],
       order: [['due_date', 'ASC']],
@@ -324,7 +336,7 @@ const getPendingAssignments = async (req, res) => {
       return {
         id: assignment.id,
         title: assignment.title,
-        subject: assignment.subject?.subject_name || 'N/A',
+        subject: assignment.targets?.[0]?.subject?.subject_name || 'N/A',
         description: assignment.description,
         due: formatDueDate(assignment.due_date),
         due_date: assignment.due_date
@@ -379,7 +391,7 @@ const getStudentNotices = async (req, res) => {
       attributes: ['id', 'title', 'message', 'attachment', 'created_at'],
       include: [
         {
-          model: NoticeTarget,
+          model: AudienceTarget,
           as: 'targets',
           attributes: ['target_type'],
           where: {
@@ -471,16 +483,29 @@ const getStudentDashboardStats = async (req, res) => {
           is_break: false
         }
       }),
-      SubjectResource.count({
+      Resource.count({
         where: {
-          class_section_id: student.class_section_id,
+          resource_scope: 'subject',
           resource_type: 'assignment',
           due_date: {
             [Op.gte]: todayDate
           }
-        }
+        },
+        include: [
+          {
+            model: AudienceTarget,
+            as: 'targets',
+            required: true,
+            where: {
+              target_type: 'class',
+              class_section_id: student.class_section_id,
+            },
+          },
+        ],
+        distinct: true,
+        col: 'id',
       }),
-      NoticeTarget.count({
+      AudienceTarget.count({
         where: {
           [Op.or]: [
             { target_type: 'all' },

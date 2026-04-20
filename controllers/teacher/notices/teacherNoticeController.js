@@ -1,4 +1,4 @@
-const { Notice, NoticeTarget, Teacher, ClassSection, User } = require('../../../models');
+const { Notice, AudienceTarget, Teacher, ClassSection, User } = require('../../../models');
 const sequelize = require('../../../config/db');
 const { Op } = require('sequelize');
 
@@ -82,7 +82,7 @@ const createNotice = async (req, res) => {
     }
 
     // Bulk create targets
-    await NoticeTarget.bulkCreate(targets, { transaction });
+    await AudienceTarget.bulkCreate(targets, { transaction });
 
     await transaction.commit();
 
@@ -136,7 +136,7 @@ const getMyNotices = async (req, res) => {
       where: { created_by: teacher.id },
       include: [
         {
-          model: NoticeTarget,
+          model: AudienceTarget,
           as: 'targets',
           attributes: ['id', 'target_type', 'class_section_id'],
           include: [
@@ -256,7 +256,7 @@ const updateNotice = async (req, res) => {
       }
 
       // Delete existing targets
-      await NoticeTarget.destroy({ where: { notice_id: notice.id }, transaction });
+      await AudienceTarget.destroy({ where: { notice_id: notice.id }, transaction });
 
       // Create new targets
       let targets = [];
@@ -271,7 +271,7 @@ const updateNotice = async (req, res) => {
         }));
       }
 
-      await NoticeTarget.bulkCreate(targets, { transaction });
+      await AudienceTarget.bulkCreate(targets, { transaction });
     }
 
     await transaction.commit();
@@ -378,13 +378,17 @@ const getNoticesForMe = async (req, res) => {
     const notices = await Notice.findAll({
       include: [
         {
-          model: NoticeTarget,
+          model: AudienceTarget,
           as: 'targets',
           where: {
             [Op.or]: [
               { target_type: 'all' },
               { target_type: 'all_teachers' },
-              { target_type: 'all_staff' }
+              {
+                target_type: 'individual',
+                individual_type: 'teacher',
+                individual_id: teacher.id,
+              }
             ]
           },
           attributes: ['id', 'target_type'],
@@ -392,7 +396,7 @@ const getNoticesForMe = async (req, res) => {
         },
         {
           model: Teacher,
-          as: 'createdByTeacher',
+          as: 'createdBy',
           required: false,
           include: [{
             model: User,
@@ -410,7 +414,7 @@ const getNoticesForMe = async (req, res) => {
       title: notice.title,
       message: notice.message,
       attachment: notice.attachment ? `${process.env.BACKEND_URL}/uploads/notices/${notice.attachment}` : null,
-      created_by: notice.created_by ? (notice.createdByTeacher?.User?.name || 'Teacher') : 'Admin',
+      created_by: notice.created_by ? (notice.createdBy?.User?.name || 'Teacher') : 'Admin',
       created_at: notice.created_at,
       target_type: notice.targets[0]?.target_type || 'N/A'
     }));

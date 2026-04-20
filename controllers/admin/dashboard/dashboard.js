@@ -4,8 +4,7 @@ const { studentsAttendances } = require('../../../models/admin/studentsAttendanc
 const { IncomeExpense } = require('../../../models/admin/accounting/IncomeExpense');
 const { FeePaymentV1, FeeInvoiceV1 } = require('../../../models/admin/fees_v1');
 const { ClassSection } = require('../../../models/admin/Classsection');
-const { Notice } = require('../../../models/admin/notices/notices');
-const { NoticeTarget } = require('../../../models/admin/notices/notice_targets');
+const { Notice, AudienceTarget } = require('../../../models');
 const { Op } = require('sequelize');
 const sequelize = require('../../../config/db');
 
@@ -318,7 +317,7 @@ const getAllNotices = async (req, res) => {
       attributes: ['title', 'message', 'attachment'],
       include: [
         {
-          model: NoticeTarget,
+          model: AudienceTarget,
           as: 'targets',
           attributes: ['target_type']
         }

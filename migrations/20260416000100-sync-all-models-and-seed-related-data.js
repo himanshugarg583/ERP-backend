@@ -26,6 +26,8 @@ module.exports = {
       AdmissionEnquiry,
       Holiday,
       Notice,
+      AudienceTarget,
+      Resource,
       NoticeTarget,
       ClassResource,
       SubjectResource,
@@ -362,43 +364,134 @@ module.exports = {
       }
     );
 
-    await ensureByFindOne(
-      NoticeTarget,
-      { notice_id: notice.id, target_type: 'class', class_section_id: classSection.id },
-      {
-        notice_id: notice.id,
-        target_type: 'class',
-        class_section_id: classSection.id,
-      }
-    );
+    if (NoticeTarget) {
+      await ensureByFindOne(
+        NoticeTarget,
+        { notice_id: notice.id, target_type: 'class', class_section_id: classSection.id },
+        {
+          notice_id: notice.id,
+          target_type: 'class',
+          class_section_id: classSection.id,
+        }
+      );
+    } else if (AudienceTarget) {
+      await ensureByFindOne(
+        AudienceTarget,
+        {
+          notice_id: notice.id,
+          target_type: 'class',
+          class_section_id: classSection.id,
+          resource_id: null,
+        },
+        {
+          notice_id: notice.id,
+          target_type: 'class',
+          class_section_id: classSection.id,
+          resource_id: null,
+        }
+      );
+    }
 
-    await ensureByFindOne(
-      ClassResource,
-      { class_section_id: classSection.id, title: 'April Circular - Exam Preparation' },
-      {
-        class_section_id: classSection.id,
-        title: 'April Circular - Exam Preparation',
-        description: 'Guidelines for revision schedule and exam readiness.',
-        file_url: '/uploads/classResources/april-circular.pdf',
-        resource_type: 'circular',
-        teacher_id: teacher.id,
-      }
-    );
+    if (ClassResource && SubjectResource) {
+      await ensureByFindOne(
+        ClassResource,
+        { class_section_id: classSection.id, title: 'April Circular - Exam Preparation' },
+        {
+          class_section_id: classSection.id,
+          title: 'April Circular - Exam Preparation',
+          description: 'Guidelines for revision schedule and exam readiness.',
+          file_url: '/uploads/classResources/april-circular.pdf',
+          resource_type: 'circular',
+          teacher_id: teacher.id,
+        }
+      );
 
-    await ensureByFindOne(
-      SubjectResource,
-      { class_section_id: classSection.id, subject_id: subject.id, title: 'Algebra Worksheet Set 1' },
-      {
-        class_section_id: classSection.id,
-        subject_id: subject.id,
-        title: 'Algebra Worksheet Set 1',
-        description: 'Practice worksheet on linear equations.',
-        file_url: '/uploads/subjectResources/algebra-worksheet-1.pdf',
-        resource_type: 'worksheet',
-        due_date: '2026-04-25 17:00:00',
-        teacher_id: teacher.id,
-      }
-    );
+      await ensureByFindOne(
+        SubjectResource,
+        { class_section_id: classSection.id, subject_id: subject.id, title: 'Algebra Worksheet Set 1' },
+        {
+          class_section_id: classSection.id,
+          subject_id: subject.id,
+          title: 'Algebra Worksheet Set 1',
+          description: 'Practice worksheet on linear equations.',
+          file_url: '/uploads/subjectResources/algebra-worksheet-1.pdf',
+          resource_type: 'worksheet',
+          due_date: '2026-04-25 17:00:00',
+          teacher_id: teacher.id,
+        }
+      );
+    } else if (Resource && AudienceTarget) {
+      const classResource = await ensureByFindOne(
+        Resource,
+        {
+          resource_scope: 'class',
+          title: 'April Circular - Exam Preparation',
+          uploaded_by_type: 'teacher',
+          uploaded_by_id: teacher.id,
+        },
+        {
+          resource_scope: 'class',
+          title: 'April Circular - Exam Preparation',
+          description: 'Guidelines for revision schedule and exam readiness.',
+          file_url: '/uploads/classResources/april-circular.pdf',
+          resource_type: 'circular',
+          uploaded_by_type: 'teacher',
+          uploaded_by_id: teacher.id,
+        }
+      );
+
+      await ensureByFindOne(
+        AudienceTarget,
+        {
+          resource_id: classResource.id,
+          target_type: 'class',
+          class_section_id: classSection.id,
+          subject_id: null,
+        },
+        {
+          resource_id: classResource.id,
+          target_type: 'class',
+          class_section_id: classSection.id,
+          subject_id: null,
+        }
+      );
+
+      const subjectResource = await ensureByFindOne(
+        Resource,
+        {
+          resource_scope: 'subject',
+          title: 'Algebra Worksheet Set 1',
+          uploaded_by_type: 'teacher',
+          uploaded_by_id: teacher.id,
+        },
+        {
+          resource_scope: 'subject',
+          title: 'Algebra Worksheet Set 1',
+          description: 'Practice worksheet on linear equations.',
+          file_url: '/uploads/subjectResources/algebra-worksheet-1.pdf',
+          resource_type: 'worksheet',
+          due_date: '2026-04-25 17:00:00',
+          uploaded_by_type: 'teacher',
+          uploaded_by_id: teacher.id,
+        }
+      );
+
+      await ensureByFindOne(
+        AudienceTarget,
+        {
+          resource_id: subjectResource.id,
+          target_type: 'class',
+          class_section_id: classSection.id,
+          subject_id: subject.id,
+        },
+        {
+          resource_id: subjectResource.id,
+          target_type: 'class',
+          class_section_id: classSection.id,
+          subject_id: subject.id,
+        }
+      );
+    }
 
     await ensureByFindOne(
       IncomeExpense,
