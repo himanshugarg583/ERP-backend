@@ -3,8 +3,8 @@ const sequelize = require('../../../config/db');
 
 const AcademicYear = sequelize.define('AcademicYear', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true
   },
   name: {

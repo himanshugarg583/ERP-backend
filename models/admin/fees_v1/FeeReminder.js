@@ -3,17 +3,29 @@ const sequelize = require('../../../config/db');
 
 const FeeReminderV1 = sequelize.define('FeeReminderV1', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true
   },
   invoice_id: {
-    type: DataTypes.UUID,
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'fee_invoices',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
   },
   student_id: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: 'students',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
   },
   recipient_number: {
     type: DataTypes.STRING(100),

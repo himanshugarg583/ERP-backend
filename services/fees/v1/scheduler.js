@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 const { generateInvoicesForDate } = require('./invoiceService');
-const { FeeInvoiceV1 } = require('../../../models/admin/fees_v1');
+const { FeeInvoiceV1 } = require('../../../models');
 
 let initialized = false;
 

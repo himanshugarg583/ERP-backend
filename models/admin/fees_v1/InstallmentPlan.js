@@ -3,13 +3,19 @@ const sequelize = require('../../../config/db');
 
 const InstallmentPlanV1 = sequelize.define('InstallmentPlanV1', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true
   },
   fee_structure_id: {
-    type: DataTypes.UUID,
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'fee_structures',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
   },
   name: {
     type: DataTypes.STRING(100),
@@ -23,9 +29,27 @@ const InstallmentPlanV1 = sequelize.define('InstallmentPlanV1', {
     type: DataTypes.DATEONLY,
     allowNull: false
   },
+  start_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
+  },
+  sequence_no: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1
+  },
   percentage: {
     type: DataTypes.DECIMAL(5, 2),
     allowNull: false
+  },
+  allow_partial_payment: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
+  fixed_amount: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true
   },
   late_fine_type: {
     type: DataTypes.ENUM('per_day', 'flat', 'none'),
@@ -37,15 +61,7 @@ const InstallmentPlanV1 = sequelize.define('InstallmentPlanV1', {
     allowNull: false,
     defaultValue: 0
   },
-  max_late_fine: {
-    type: DataTypes.DECIMAL(8, 2),
-    allowNull: true
-  },
-  grace_period_days: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0
-  }
+
 }, {
   tableName: 'installment_plans',
   underscored: true,

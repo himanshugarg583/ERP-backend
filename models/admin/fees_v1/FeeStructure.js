@@ -3,8 +3,8 @@ const sequelize = require('../../../config/db');
 
 const FeeStructureV1 = sequelize.define('FeeStructureV1', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true
   },
   name: {
@@ -12,16 +12,24 @@ const FeeStructureV1 = sequelize.define('FeeStructureV1', {
     allowNull: false
   },
   academic_year_id: {
-    type: DataTypes.UUID,
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'academic_years',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   },
-  applicable_to: {
-    type: DataTypes.STRING(100),
-    allowNull: true
-  },
-  class_ids: {
-    type: DataTypes.JSON,
-    allowNull: true
+  class_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'class_sections',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL'
   },
   description: {
     type: DataTypes.TEXT,
@@ -39,7 +47,13 @@ const FeeStructureV1 = sequelize.define('FeeStructureV1', {
   },
   created_by: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   }
 }, {
   tableName: 'fee_structures',

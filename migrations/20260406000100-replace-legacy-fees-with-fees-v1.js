@@ -27,10 +27,10 @@ module.exports = {
 
     await queryInterface.createTable('academic_years', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       name: {
         type: DataTypes.STRING(50),
@@ -70,10 +70,10 @@ module.exports = {
 
     await queryInterface.createTable('fee_heads', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       name: {
         type: DataTypes.STRING(100),
@@ -121,17 +121,17 @@ module.exports = {
 
     await queryInterface.createTable('fee_structures', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       name: {
         type: DataTypes.STRING(150),
         allowNull: false
       },
       academic_year_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'academic_years',
@@ -189,13 +189,13 @@ module.exports = {
 
     await queryInterface.createTable('fee_structure_items', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       fee_structure_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_structures',
@@ -205,7 +205,7 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       fee_head_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_heads',
@@ -248,13 +248,13 @@ module.exports = {
 
     await queryInterface.createTable('installment_plans', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       fee_structure_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_structures',
@@ -318,10 +318,10 @@ module.exports = {
 
     await queryInterface.createTable('student_fee_assignments', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       student_id: {
         type: DataTypes.INTEGER,
@@ -334,7 +334,7 @@ module.exports = {
         onDelete: 'RESTRICT'
       },
       fee_structure_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_structures',
@@ -344,7 +344,7 @@ module.exports = {
         onDelete: 'RESTRICT'
       },
       academic_year_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'academic_years',
@@ -412,10 +412,10 @@ module.exports = {
 
     await queryInterface.createTable('concessions', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       name: {
         type: DataTypes.STRING(150),
@@ -466,10 +466,10 @@ module.exports = {
 
     await queryInterface.createTable('student_concessions', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       student_id: {
         type: DataTypes.INTEGER,
@@ -482,7 +482,7 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       concession_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'concessions',
@@ -492,7 +492,7 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       fee_head_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: true,
         references: {
           model: 'fee_heads',
@@ -502,7 +502,7 @@ module.exports = {
         onDelete: 'SET NULL'
       },
       academic_year_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'academic_years',
@@ -554,10 +554,10 @@ module.exports = {
 
     await queryInterface.createTable('fee_invoices', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       invoice_number: {
         type: DataTypes.STRING(30),
@@ -575,7 +575,7 @@ module.exports = {
         onDelete: 'RESTRICT'
       },
       assignment_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'student_fee_assignments',
@@ -585,7 +585,7 @@ module.exports = {
         onDelete: 'RESTRICT'
       },
       installment_plan_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'installment_plans',
@@ -595,7 +595,7 @@ module.exports = {
         onDelete: 'RESTRICT'
       },
       academic_year_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'academic_years',
@@ -679,13 +679,13 @@ module.exports = {
 
     await queryInterface.createTable('fee_invoice_items', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       invoice_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_invoices',
@@ -695,7 +695,7 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       fee_head_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_heads',
@@ -731,10 +731,10 @@ module.exports = {
 
     await queryInterface.createTable('fee_payments', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       receipt_number: {
         type: DataTypes.STRING(30),
@@ -742,7 +742,7 @@ module.exports = {
         unique: true
       },
       invoice_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_invoices',
@@ -857,13 +857,13 @@ module.exports = {
 
     await queryInterface.createTable('payment_refunds', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       payment_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_payments',
@@ -945,13 +945,13 @@ module.exports = {
 
     await queryInterface.createTable('fee_reminders', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       invoice_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_invoices',
@@ -1016,13 +1016,13 @@ module.exports = {
     // Supporting tables for reliable online flow and overpayment handling.
     await queryInterface.createTable('fee_gateway_orders', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       invoice_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: 'fee_invoices',
@@ -1078,10 +1078,10 @@ module.exports = {
 
     await queryInterface.createTable('fee_webhook_events', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       gateway: {
         type: DataTypes.STRING(50),
@@ -1133,10 +1133,10 @@ module.exports = {
 
     await queryInterface.createTable('student_wallet', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       student_id: {
         type: DataTypes.INTEGER,
@@ -1168,10 +1168,10 @@ module.exports = {
 
     await queryInterface.createTable('school_fee_settings', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       block_report_card_on_dues: {
         type: DataTypes.BOOLEAN,
@@ -1212,10 +1212,10 @@ module.exports = {
 
     await queryInterface.createTable('fee_number_sequences', {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('(UUID())')
+        autoIncrement: true,
+        primaryKey: true
       },
       key_name: {
         type: DataTypes.STRING(50),
@@ -1241,14 +1241,12 @@ module.exports = {
 
     await queryInterface.bulkInsert('fee_number_sequences', [
       {
-        id: Sequelize.literal('(UUID())'),
         key_name: 'invoice',
         last_value: 0,
         created_at: new Date(),
         updated_at: new Date()
       },
       {
-        id: Sequelize.literal('(UUID())'),
         key_name: 'receipt',
         last_value: 0,
         created_at: new Date(),
@@ -1290,3 +1288,5 @@ module.exports = {
     }
   }
 };
+
+

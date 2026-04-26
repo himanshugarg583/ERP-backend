@@ -1,4 +1,4 @@
-const { FeeReminderV1 } = require('../../../models/admin/fees_v1');
+const { FeeReminderV1 } = require('../../../models');
 const { Student } = require('../../../models/admin/Student');
 const { User } = require('../../../models/admin/user');
 const { sendEmail } = require('./mailerService');

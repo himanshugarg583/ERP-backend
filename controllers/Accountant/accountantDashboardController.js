@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const sequelize = require('../../config/db');
-const { FeePaymentV1, FeeInvoiceV1 } = require('../../models/admin/fees_v1');
+const { FeePaymentV1, FeeInvoiceV1 } = require('../../models');
 const { IncomeExpense } = require('../../models/admin/accounting/IncomeExpense');
 const { Student } = require('../../models/admin/Student');
 const { ClassSection } = require('../../models/admin/Classsection');

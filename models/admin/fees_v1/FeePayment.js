@@ -3,8 +3,8 @@ const sequelize = require('../../../config/db');
 
 const FeePaymentV1 = sequelize.define('FeePaymentV1', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true
   },
   receipt_number: {
@@ -12,17 +12,44 @@ const FeePaymentV1 = sequelize.define('FeePaymentV1', {
     allowNull: false,
     unique: true
   },
+  receipt_no: {
+    type: DataTypes.STRING(30),
+    allowNull: true,
+    unique: true
+  },
   invoice_id: {
-    type: DataTypes.UUID,
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'fee_invoices',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   },
   student_id: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: 'students',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   },
   amount_paid: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false
+  },
+  status: {
+    type: DataTypes.ENUM('pending', 'success', 'failed', 'reversed', 'cancelled'),
+    allowNull: false,
+    defaultValue: 'success'
+  },
+  is_partial: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
   fine_paid: {
     type: DataTypes.DECIMAL(8, 2),
@@ -48,7 +75,13 @@ const FeePaymentV1 = sequelize.define('FeePaymentV1', {
   },
   collected_by: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   },
   paid_at: {
     type: DataTypes.DATE,
@@ -78,7 +111,13 @@ const FeePaymentV1 = sequelize.define('FeePaymentV1', {
   },
   cancelled_by: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: true,
+    references: {
+      model: 'Users',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL'
   },
   cancelled_at: {
     type: DataTypes.DATE,

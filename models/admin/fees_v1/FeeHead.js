@@ -3,8 +3,8 @@ const sequelize = require('../../../config/db');
 
 const FeeHeadV1 = sequelize.define('FeeHeadV1', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true
   },
   name: {
@@ -34,6 +34,12 @@ const FeeHeadV1 = sequelize.define('FeeHeadV1', {
     type: DataTypes.STRING(20),
     allowNull: true
   },
+  display_order: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+
   is_active: {
     type: DataTypes.BOOLEAN,
     allowNull: false,

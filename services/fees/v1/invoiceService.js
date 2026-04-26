@@ -4,11 +4,9 @@ const {
   StudentFeeAssignmentV1,
   InstallmentPlanV1,
   StudentConcessionV1,
-  ConcessionV1,
   FeeInvoiceV1,
-  FeeInvoiceItemV1,
-  StudentWalletV1
-} = require('../../../models/admin/fees_v1');
+  FeeInvoiceItemV1
+} = require('../../../models');
 const { nextInvoiceNumber } = require('./numberSeriesService');
 const { computeConcessionForItem, round2, deriveInvoiceStatus } = require('./feeRulesService');
 
@@ -19,8 +17,10 @@ const buildAssignmentAmountMap = async (assignment, transaction) => {
     transaction
   });
 
-  const customItems = assignment.custom_items || {};
-  const excluded = new Set(Array.isArray(assignment.excluded_heads) ? assignment.excluded_heads : []);
+  const overrideJson = assignment.override_json || {};
+  const customItems = overrideJson.custom_items || assignment.custom_items || {};
+  const excludedHeads = overrideJson.excluded_heads || assignment.excluded_heads || [];
+  const excluded = new Set(Array.isArray(excludedHeads) ? excludedHeads : []);
 
   return items
     .filter((item) => !excluded.has(item.fee_head_id))
@@ -38,7 +38,6 @@ const getApprovedConcessions = async (assignment, transaction) => {
       academic_year_id: assignment.academic_year_id,
       approval_status: 'approved'
     },
-    include: [{ model: ConcessionV1, as: 'concession' }],
     transaction
   });
 
@@ -63,17 +62,15 @@ const createInvoiceForAssignmentInstallment = async ({ assignment, installment, 
   const invoiceLevelConcessions = [];
 
   for (const entry of concessions) {
-    const c = entry.concession;
-    if (!c) continue;
-
-    if (c.applies_to === 'specific_head' && entry.fee_head_id) {
+    // With 14-table core mode, student_concessions are treated as flat approved waivers.
+    if (entry.fee_head_id) {
       const list = byHeadConcessions.get(entry.fee_head_id) || [];
-      list.push(c);
+      list.push({ type: 'flat_amount', value: 0, applies_to: 'specific_head' });
       byHeadConcessions.set(entry.fee_head_id, list);
       continue;
     }
 
-    invoiceLevelConcessions.push(c);
+    invoiceLevelConcessions.push({ type: 'flat_amount', value: 0, applies_to: 'total_invoice' });
   }
 
   const grossItems = amountMap.map((row) => {
@@ -117,24 +114,12 @@ const createInvoiceForAssignmentInstallment = async ({ assignment, installment, 
 
   let netAmount = round2(grossAmount - concessionAmount);
 
-  // Auto-adjust with wallet balance if available.
-  const wallet = await StudentWalletV1.findOne({
-    where: { student_id: assignment.student_id },
-    transaction
-  });
-
-  if (wallet && Number(wallet.balance) > 0) {
-    const useAmount = Math.min(Number(wallet.balance), netAmount);
-    netAmount = round2(netAmount - useAmount);
-    concessionAmount = round2(concessionAmount + useAmount);
-    await wallet.update({ balance: round2(Number(wallet.balance) - useAmount) }, { transaction });
-  }
-
   const invoiceNumber = await nextInvoiceNumber(transaction);
   const status = deriveInvoiceStatus({ balance: netAmount, dueDate: installment.due_date });
 
   const invoice = await FeeInvoiceV1.create({
     invoice_number: invoiceNumber,
+    invoice_no: invoiceNumber,
     student_id: assignment.student_id,
     assignment_id: assignment.id,
     installment_plan_id: installment.id,
@@ -146,6 +131,8 @@ const createInvoiceForAssignmentInstallment = async ({ assignment, installment, 
     paid_amount: 0,
     balance_amount: netAmount,
     status,
+    start_date: installment.start_date || installment.due_date,
+    source_type: 'system',
     due_date: installment.due_date,
     generated_at: new Date()
   }, { transaction });

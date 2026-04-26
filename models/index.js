@@ -14,6 +14,21 @@ const {ClassTimetableSetting} = require('./admin/ClassTimetableSetting');
 const {ClassTimeSlot} = require('./admin/ClassTimeSlot');
 const {AdmissionEnquiry} = require('./admin/AdmissionEnquiry');
 const {Holiday} = require('./admin/Holiday');
+// fees v1
+const { AcademicYear } = require('./admin/fees_v1/AcademicYear');
+const { FeeHeadV1 } = require('./admin/fees_v1/FeeHead');
+const { FeeStructureV1 } = require('./admin/fees_v1/FeeStructure');
+const { FeeStructureItemV1 } = require('./admin/fees_v1/FeeStructureItem');
+const { InstallmentPlanV1 } = require('./admin/fees_v1/InstallmentPlan');
+const { StudentFeeAssignmentV1 } = require('./admin/fees_v1/StudentFeeAssignment');
+const { StudentConcessionV1 } = require('./admin/fees_v1/StudentConcession');
+const { FeeInvoiceV1 } = require('./admin/fees_v1/FeeInvoice');
+const { FeeInvoiceItemV1 } = require('./admin/fees_v1/FeeInvoiceItem');
+const { FeePaymentV1 } = require('./admin/fees_v1/FeePayment');
+const { PaymentRefundV1 } = require('./admin/fees_v1/PaymentRefund');
+const { FeeReminderV1 } = require('./admin/fees_v1/FeeReminder');
+const { IncomeEntryV1 } = require('./admin/fees_v1/IncomeEntry');
+const { ExpenseEntryV1 } = require('./admin/fees_v1/ExpenseEntry');
 
 const { IncomeExpense } = require('./admin/accounting/IncomeExpense');
 
@@ -210,6 +225,120 @@ AudienceTarget.belongsTo(ClassSection, { foreignKey: 'class_section_id', as: 'cl
 Subject.hasMany(AudienceTarget, { foreignKey: 'subject_id', as: 'audienceTargets', onDelete: 'CASCADE' });
 AudienceTarget.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
 
+// =====================================================
+// FEES V1 ASSOCIATIONS
+// =====================================================
+
+// Academic year and structure relations
+AcademicYear.hasMany(FeeStructureV1, { foreignKey: 'academic_year_id', as: 'feeStructures' });
+FeeStructureV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'academicYear' });
+
+AcademicYear.hasMany(StudentFeeAssignmentV1, { foreignKey: 'academic_year_id', as: 'feeAssignments' });
+StudentFeeAssignmentV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'academicYear' });
+
+AcademicYear.hasMany(StudentConcessionV1, { foreignKey: 'academic_year_id', as: 'studentConcessions' });
+StudentConcessionV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'concessionYear' });
+
+AcademicYear.hasMany(FeeInvoiceV1, { foreignKey: 'academic_year_id', as: 'feeInvoices' });
+FeeInvoiceV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'invoiceYear' });
+
+// Structure relations
+FeeStructureV1.hasMany(FeeStructureItemV1, { foreignKey: 'fee_structure_id', as: 'items' });
+FeeStructureItemV1.belongsTo(FeeStructureV1, { foreignKey: 'fee_structure_id', as: 'structure' });
+
+FeeHeadV1.hasMany(FeeStructureItemV1, { foreignKey: 'fee_head_id', as: 'structureItems' });
+FeeStructureItemV1.belongsTo(FeeHeadV1, { foreignKey: 'fee_head_id', as: 'feeHead' });
+
+ClassSection.hasMany(FeeStructureV1, { foreignKey: 'class_id', as: 'feeStructuresV1' });
+FeeStructureV1.belongsTo(ClassSection, { foreignKey: 'class_id', as: 'classSection' });
+
+FeeStructureV1.hasMany(InstallmentPlanV1, { foreignKey: 'fee_structure_id', as: 'installments' });
+InstallmentPlanV1.belongsTo(FeeStructureV1, { foreignKey: 'fee_structure_id', as: 'structure' });
+
+// Assignment relations
+Student.hasMany(StudentFeeAssignmentV1, { foreignKey: 'student_id', as: 'feeAssignmentsV1' });
+StudentFeeAssignmentV1.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+FeeStructureV1.hasMany(StudentFeeAssignmentV1, { foreignKey: 'fee_structure_id', as: 'assignments' });
+StudentFeeAssignmentV1.belongsTo(FeeStructureV1, { foreignKey: 'fee_structure_id', as: 'feeStructure' });
+
+User.hasMany(StudentFeeAssignmentV1, { foreignKey: 'assigned_by', as: 'assignedFeesV1' });
+StudentFeeAssignmentV1.belongsTo(User, { foreignKey: 'assigned_by', as: 'assignedBy' });
+
+Student.hasMany(StudentConcessionV1, { foreignKey: 'student_id', as: 'concessionsV1' });
+StudentConcessionV1.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+FeeHeadV1.hasMany(StudentConcessionV1, { foreignKey: 'fee_head_id', as: 'studentConcessions' });
+StudentConcessionV1.belongsTo(FeeHeadV1, { foreignKey: 'fee_head_id', as: 'feeHead' });
+
+User.hasMany(StudentConcessionV1, { foreignKey: 'approved_by', as: 'approvedConcessionsV1' });
+StudentConcessionV1.belongsTo(User, { foreignKey: 'approved_by', as: 'approvedBy' });
+
+// Invoice relations
+StudentFeeAssignmentV1.hasMany(FeeInvoiceV1, { foreignKey: 'assignment_id', as: 'invoices' });
+FeeInvoiceV1.belongsTo(StudentFeeAssignmentV1, { foreignKey: 'assignment_id', as: 'assignment' });
+
+InstallmentPlanV1.hasMany(FeeInvoiceV1, { foreignKey: 'installment_plan_id', as: 'invoices' });
+FeeInvoiceV1.belongsTo(InstallmentPlanV1, { foreignKey: 'installment_plan_id', as: 'installment' });
+
+Student.hasMany(FeeInvoiceV1, { foreignKey: 'student_id', as: 'invoicesV1' });
+FeeInvoiceV1.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+User.hasMany(FeeInvoiceV1, { foreignKey: 'waived_by', as: 'waivedInvoicesV1' });
+FeeInvoiceV1.belongsTo(User, { foreignKey: 'waived_by', as: 'waivedBy' });
+
+FeeInvoiceV1.hasMany(FeeInvoiceItemV1, { foreignKey: 'invoice_id', as: 'items' });
+FeeInvoiceItemV1.belongsTo(FeeInvoiceV1, { foreignKey: 'invoice_id', as: 'invoice' });
+
+FeeHeadV1.hasMany(FeeInvoiceItemV1, { foreignKey: 'fee_head_id', as: 'invoiceItems' });
+FeeInvoiceItemV1.belongsTo(FeeHeadV1, { foreignKey: 'fee_head_id', as: 'feeHead' });
+
+// Payment relations
+FeeInvoiceV1.hasMany(FeePaymentV1, { foreignKey: 'invoice_id', as: 'payments' });
+FeePaymentV1.belongsTo(FeeInvoiceV1, { foreignKey: 'invoice_id', as: 'invoice' });
+
+Student.hasMany(FeePaymentV1, { foreignKey: 'student_id', as: 'feePaymentsV1' });
+FeePaymentV1.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+User.hasMany(FeePaymentV1, { foreignKey: 'collected_by', as: 'collectedPaymentsV1' });
+FeePaymentV1.belongsTo(User, { foreignKey: 'collected_by', as: 'collector' });
+
+// Refund relations
+FeePaymentV1.hasMany(PaymentRefundV1, { foreignKey: 'payment_id', as: 'refunds' });
+PaymentRefundV1.belongsTo(FeePaymentV1, { foreignKey: 'payment_id', as: 'payment' });
+
+Student.hasMany(PaymentRefundV1, { foreignKey: 'student_id', as: 'refundsV1' });
+PaymentRefundV1.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+User.hasMany(PaymentRefundV1, { foreignKey: 'requested_by', as: 'requestedRefundsV1' });
+PaymentRefundV1.belongsTo(User, { foreignKey: 'requested_by', as: 'requestedBy' });
+
+User.hasMany(PaymentRefundV1, { foreignKey: 'approved_by', as: 'approvedRefundsV1' });
+PaymentRefundV1.belongsTo(User, { foreignKey: 'approved_by', as: 'approvedBy' });
+
+// Reminder relations
+FeeInvoiceV1.hasMany(FeeReminderV1, { foreignKey: 'invoice_id', as: 'reminders' });
+FeeReminderV1.belongsTo(FeeInvoiceV1, { foreignKey: 'invoice_id', as: 'invoice' });
+
+Student.hasMany(FeeReminderV1, { foreignKey: 'student_id', as: 'feeRemindersV1' });
+FeeReminderV1.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
+// Income and expense entry relations
+AcademicYear.hasMany(IncomeEntryV1, { foreignKey: 'academic_year_id', as: 'incomeEntries' });
+IncomeEntryV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'academicYear' });
+
+FeePaymentV1.hasMany(IncomeEntryV1, { foreignKey: 'fee_payment_id', as: 'incomeEntries' });
+IncomeEntryV1.belongsTo(FeePaymentV1, { foreignKey: 'fee_payment_id', as: 'feePayment' });
+
+User.hasMany(IncomeEntryV1, { foreignKey: 'recorded_by', as: 'recordedIncomeEntries' });
+IncomeEntryV1.belongsTo(User, { foreignKey: 'recorded_by', as: 'recordedBy' });
+
+AcademicYear.hasMany(ExpenseEntryV1, { foreignKey: 'academic_year_id', as: 'expenseEntries' });
+ExpenseEntryV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'academicYear' });
+
+User.hasMany(ExpenseEntryV1, { foreignKey: 'recorded_by', as: 'recordedExpenseEntries' });
+ExpenseEntryV1.belongsTo(User, { foreignKey: 'recorded_by', as: 'recordedBy' });
+
 
 module.exports = {
   sequelize,
@@ -226,6 +355,22 @@ module.exports = {
   ClassTimeSlot,
   AdmissionEnquiry,
   Holiday,
+
+  // Fee Models (V1)
+  AcademicYear,
+  FeeHeadV1,
+  FeeStructureV1,
+  FeeStructureItemV1,
+  InstallmentPlanV1,
+  StudentFeeAssignmentV1,
+  StudentConcessionV1,
+  FeeInvoiceV1,
+  FeeInvoiceItemV1,
+  FeePaymentV1,
+  PaymentRefundV1,
+  FeeReminderV1,
+  IncomeEntryV1,
+  ExpenseEntryV1,
   
   // Accounting Models
   IncomeExpense,

@@ -1,0 +1,4065 @@
+{
+  "info": {
+    "_postman_id": "2dfef9f4-f94d-49fc-b169-9bb6e66f8f77",
+    "name": "ERP Fees Rolewise API Collection",
+    "description": "Fees-related API collection for Admin, Accountant, Student and Teacher endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "accountantToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "teacherToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "feeHeadId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "feeStructureId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "installmentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "assignmentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "invoiceId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "paymentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "refundId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "studentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "academicYearId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "classId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "installmentPlanId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "ADMIN Fees APIs",
+      "item": [
+        {
+          "name": "GET /fee-heads",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-heads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-heads"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "academic"
+                },
+                {
+                  "key": "is_active",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /fee-heads",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-heads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-heads"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "academic"
+                },
+                {
+                  "key": "is_active",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tuition Fee\",\n  \"category\": \"academic\",\n  \"description\": \"Monthly tuition charges\",\n  \"is_optional\": false,\n  \"is_refundable\": false,\n  \"ledger_code\": \"FEE-TUI-001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-heads/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-heads/{{feeHeadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-heads",
+                "{{feeHeadId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /fee-heads/:id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-heads/{{feeHeadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-heads",
+                "{{feeHeadId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Tuition Fee\",\n  \"category\": \"academic\",\n  \"description\": \"Updated description\",\n  \"is_optional\": false,\n  \"is_refundable\": false,\n  \"ledger_code\": \"FEE-TUI-001\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /fee-heads/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-heads/{{feeHeadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-heads",
+                "{{feeHeadId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-structures",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-structures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-structures"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                },
+                {
+                  "key": "is_active",
+                  "value": "true"
+                },
+                {
+                  "key": "structure_type",
+                  "value": "recurring"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /fee-structures",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-structures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-structures"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                },
+                {
+                  "key": "is_active",
+                  "value": "true"
+                },
+                {
+                  "key": "structure_type",
+                  "value": "recurring"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Class 10 Annual Fee\",\n  \"academic_year_id\": 1,\n  \"class_id\": 1,\n  \"description\": \"Annual recurring structure\",\n  \"structure_type\": \"recurring\",\n  \"items\": [\n    {\n      \"fee_head_id\": 1,\n      \"amount\": 25000,\n      \"is_mandatory\": true,\n      \"sort_order\": 1\n    },\n    {\n      \"fee_head_id\": 2,\n      \"amount\": 5000,\n      \"is_mandatory\": true,\n      \"sort_order\": 2\n    }\n  ],\n  \"installments\": [\n    {\n      \"name\": \"Term 1\",\n      \"installment_number\": 1,\n      \"sequence_no\": 1,\n      \"start_date\": \"2026-04-01\",\n      \"due_date\": \"2026-06-30\",\n      \"percentage\": 50,\n      \"allow_partial_payment\": true,\n      \"late_fine_type\": \"none\",\n      \"late_fine_value\": 0,\n      \"grace_period_days\": 0\n    },\n    {\n      \"name\": \"Term 2\",\n      \"installment_number\": 2,\n      \"sequence_no\": 2,\n      \"start_date\": \"2026-07-01\",\n      \"due_date\": \"2026-10-31\",\n      \"percentage\": 50,\n      \"allow_partial_payment\": true,\n      \"late_fine_type\": \"none\",\n      \"late_fine_value\": 0,\n      \"grace_period_days\": 0\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-structures/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-structures/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-structures",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /fee-structures/:id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-structures/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-structures",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Class 10 Annual Fee (Updated)\",\n  \"class_id\": 1,\n  \"description\": \"Updated structure details\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /fee-structures/:id/clone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-structures/clone/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-structures",
+                "clone",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Class 10 Annual Fee (Next Year)\",\n  \"academic_year_id\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-structures/:id/preview",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-structures/preview/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-structures",
+                "preview",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-structures/:structureId/installments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-structures/installments/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-structures",
+                "installments",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /fee-structures/:structureId/installments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/fee-structures/installments/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "fee-structures",
+                "installments",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"installments\": [\n    {\n      \"name\": \"Installment 1\",\n      \"installment_number\": 1,\n      \"sequence_no\": 1,\n      \"start_date\": \"2026-04-01\",\n      \"due_date\": \"2026-06-15\",\n      \"percentage\": 50,\n      \"allow_partial_payment\": true,\n      \"fixed_amount\": null,\n      \"late_fine_type\": \"none\",\n      \"late_fine_value\": 0,\n      \"max_late_fine\": null,\n      \"grace_period_days\": 0\n    },\n    {\n      \"name\": \"Installment 2\",\n      \"installment_number\": 2,\n      \"sequence_no\": 2,\n      \"start_date\": \"2026-07-01\",\n      \"due_date\": \"2026-09-15\",\n      \"percentage\": 50,\n      \"allow_partial_payment\": true,\n      \"fixed_amount\": null,\n      \"late_fine_type\": \"none\",\n      \"late_fine_value\": 0,\n      \"max_late_fine\": null,\n      \"grace_period_days\": 0\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /installments/:id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/installments/{{installmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "installments",
+                "{{installmentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Installment 1 (Updated)\",\n  \"sequence_no\": 1,\n  \"due_date\": \"2026-06-20\",\n  \"percentage\": 50,\n  \"allow_partial_payment\": true,\n  \"fixed_amount\": null,\n  \"late_fine_type\": \"none\",\n  \"late_fine_value\": 0,\n  \"max_late_fine\": null,\n  \"grace_period_days\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /installments/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/installments/{{installmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "installments",
+                "{{installmentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /assignments/preview/:structureId",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/assignments/preview/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "assignments",
+                "preview",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"class_id\": 1,\n  \"student_ids\": [\n    1,\n    2,\n    3\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /assignments/student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/assignments/student",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "assignments",
+                "student"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": 1,\n  \"fee_structure_id\": 1,\n  \"academic_year_id\": 1,\n  \"custom_items\": null,\n  \"excluded_heads\": null,\n  \"effective_from\": \"2026-04-01\",\n  \"effective_to\": null,\n  \"override_json\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /assignments/bulk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/assignments/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "assignments",
+                "bulk"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fee_structure_id\": 1,\n  \"class_ids\": [\n    1\n  ],\n  \"student_ids\": [],\n  \"academic_year_id\": 1,\n  \"custom_items\": null,\n  \"excluded_heads\": null,\n  \"effective_from\": \"2026-04-01\",\n  \"effective_to\": null,\n  \"override_json\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /assignments/one-time",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/assignments/one-time",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "assignments",
+                "one-time"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fee_structure_id\": 1,\n  \"class_ids\": [\n    1\n  ],\n  \"student_ids\": [],\n  \"academic_year_id\": 1,\n  \"custom_items\": null,\n  \"excluded_heads\": null,\n  \"effective_from\": \"2026-04-01\",\n  \"effective_to\": null,\n  \"override_json\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /assignments/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/assignments/{{assignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "assignments",
+                "{{assignmentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /students/:studentId/assignment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/students/assignment/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "students",
+                "assignment",
+                "{{studentId}}"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /assignments/:id/cancel",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/assignments/cancel/{{assignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "assignments",
+                "cancel",
+                "{{assignmentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Fee assignment no longer required\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/invoices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "invoices"
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "{{studentId}}"
+                },
+                {
+                  "key": "status",
+                  "value": "active"
+                },
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                },
+                {
+                  "key": "due_date_from",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "due_date_to",
+                  "value": "2026-12-31"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /invoices/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/invoices/{{invoiceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "invoices",
+                "{{invoiceId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /invoices/generate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/invoices/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "invoices",
+                "generate"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_ids\": [\n    1,\n    2\n  ],\n  \"installment_plan_id\": 1,\n  \"academic_year_id\": 1,\n  \"due_date\": \"2026-06-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /students/:studentId/invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/students/invoices/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "students",
+                "invoices",
+                "{{studentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /invoices/:id/waive",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/invoices/waive/{{invoiceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "invoices",
+                "waive",
+                "{{invoiceId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Approved fee waiver\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/collect",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/payments/collect",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "payments",
+                "collect"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoice_id\": 1,\n  \"amount_paid\": 5000,\n  \"payment_mode\": \"cash\",\n  \"transaction_ref\": \"OFFLINE-TRX-001\",\n  \"notes\": \"Collected at school counter\",\n  \"cheque_date\": null,\n  \"cheque_bank\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/initiate-online",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/payments/initiate-online",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "payments",
+                "initiate-online"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoice_id\": 1,\n  \"amount\": 5000,\n  \"gateway\": \"razorpay\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /payments/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/payments/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "payments",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /payments/:id/receipt",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/payments/receipt/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "payments",
+                "receipt",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/:id/send-receipt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/payments/send-receipt/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "payments",
+                "send-receipt",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/:id/cancel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/payments/cancel/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "payments",
+                "cancel",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Payment entered by mistake\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /payments/:id/cheque-status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/payments/cheque-status/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "payments",
+                "cheque-status",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cheque_status\": \"cleared\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /refunds",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/refunds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "refunds"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_id\": 1,\n  \"refund_amount\": 1000,\n  \"reason\": \"Overpayment adjustment\",\n  \"refund_mode\": \"bank_transfer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /refunds/pending",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/refunds/pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "refunds",
+                "pending"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /refunds/:id/approve",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/refunds/approve/{{refundId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "refunds",
+                "approve",
+                "{{refundId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /refunds/:id/reject",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/refunds/reject/{{refundId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "refunds",
+                "reject",
+                "{{refundId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Insufficient approval details\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /reminders/bulk-send",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/reminders/bulk-send",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "reminders",
+                "bulk-send"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academic_year_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/collection-summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/reports/collection-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "reports",
+                "collection-summary"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31"
+                },
+                {
+                  "key": "mode",
+                  "value": "cash"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/dues",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/reports/dues",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "reports",
+                "dues"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                },
+                {
+                  "key": "overdue_only",
+                  "value": "false"
+                },
+                {
+                  "key": "min_amount",
+                  "value": "1000"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/defaulters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/reports/defaulters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "reports",
+                "defaulters"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/head-wise",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/reports/head-wise",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "reports",
+                "head-wise"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/student-ledger/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/reports/student-ledger/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "reports",
+                "student-ledger",
+                "{{studentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /reports/export",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/reports/export",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "reports",
+                "export"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report_type\": \"dues\",\n  \"format\": \"xlsx\",\n  \"filters\": {\n    \"academic_year_id\": 1,\n    \"overdue_only\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/webhook/razorpay",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/fees/payments/webhook/razorpay",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "fees",
+                "payments",
+                "webhook",
+                "razorpay"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for admin role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"payment.captured\",\n  \"payload\": {\n    \"payment\": {\n      \"entity\": {\n        \"id\": \"pay_mock_123\"\n      }\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ACCOUNTANT Fees APIs",
+      "item": [
+        {
+          "name": "GET /fee-heads",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-heads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-heads"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "academic"
+                },
+                {
+                  "key": "is_active",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /fee-heads",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-heads",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-heads"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "academic"
+                },
+                {
+                  "key": "is_active",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tuition Fee\",\n  \"category\": \"academic\",\n  \"description\": \"Monthly tuition charges\",\n  \"is_optional\": false,\n  \"is_refundable\": false,\n  \"ledger_code\": \"FEE-TUI-001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-heads/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-heads/{{feeHeadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-heads",
+                "{{feeHeadId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /fee-heads/:id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-heads/{{feeHeadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-heads",
+                "{{feeHeadId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Tuition Fee\",\n  \"category\": \"academic\",\n  \"description\": \"Updated description\",\n  \"is_optional\": false,\n  \"is_refundable\": false,\n  \"ledger_code\": \"FEE-TUI-001\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /fee-heads/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-heads/{{feeHeadId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-heads",
+                "{{feeHeadId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-structures",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-structures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-structures"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                },
+                {
+                  "key": "is_active",
+                  "value": "true"
+                },
+                {
+                  "key": "structure_type",
+                  "value": "recurring"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /fee-structures",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-structures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-structures"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                },
+                {
+                  "key": "is_active",
+                  "value": "true"
+                },
+                {
+                  "key": "structure_type",
+                  "value": "recurring"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Class 10 Annual Fee\",\n  \"academic_year_id\": 1,\n  \"class_id\": 1,\n  \"description\": \"Annual recurring structure\",\n  \"structure_type\": \"recurring\",\n  \"items\": [\n    {\n      \"fee_head_id\": 1,\n      \"amount\": 25000,\n      \"is_mandatory\": true,\n      \"sort_order\": 1\n    },\n    {\n      \"fee_head_id\": 2,\n      \"amount\": 5000,\n      \"is_mandatory\": true,\n      \"sort_order\": 2\n    }\n  ],\n  \"installments\": [\n    {\n      \"name\": \"Term 1\",\n      \"installment_number\": 1,\n      \"sequence_no\": 1,\n      \"start_date\": \"2026-04-01\",\n      \"due_date\": \"2026-06-30\",\n      \"percentage\": 50,\n      \"allow_partial_payment\": true,\n      \"late_fine_type\": \"none\",\n      \"late_fine_value\": 0,\n      \"grace_period_days\": 0\n    },\n    {\n      \"name\": \"Term 2\",\n      \"installment_number\": 2,\n      \"sequence_no\": 2,\n      \"start_date\": \"2026-07-01\",\n      \"due_date\": \"2026-10-31\",\n      \"percentage\": 50,\n      \"allow_partial_payment\": true,\n      \"late_fine_type\": \"none\",\n      \"late_fine_value\": 0,\n      \"grace_period_days\": 0\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-structures/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-structures/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-structures",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /fee-structures/:id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-structures/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-structures",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Class 10 Annual Fee (Updated)\",\n  \"class_id\": 1,\n  \"description\": \"Updated structure details\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /fee-structures/:id/clone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-structures/clone/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-structures",
+                "clone",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Class 10 Annual Fee (Next Year)\",\n  \"academic_year_id\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-structures/:id/preview",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-structures/preview/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-structures",
+                "preview",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /fee-structures/:structureId/installments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-structures/installments/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-structures",
+                "installments",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /fee-structures/:structureId/installments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/fee-structures/installments/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "fee-structures",
+                "installments",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"installments\": [\n    {\n      \"name\": \"Installment 1\",\n      \"installment_number\": 1,\n      \"sequence_no\": 1,\n      \"start_date\": \"2026-04-01\",\n      \"due_date\": \"2026-06-15\",\n      \"percentage\": 50,\n      \"allow_partial_payment\": true,\n      \"fixed_amount\": null,\n      \"late_fine_type\": \"none\",\n      \"late_fine_value\": 0,\n      \"max_late_fine\": null,\n      \"grace_period_days\": 0\n    },\n    {\n      \"name\": \"Installment 2\",\n      \"installment_number\": 2,\n      \"sequence_no\": 2,\n      \"start_date\": \"2026-07-01\",\n      \"due_date\": \"2026-09-15\",\n      \"percentage\": 50,\n      \"allow_partial_payment\": true,\n      \"fixed_amount\": null,\n      \"late_fine_type\": \"none\",\n      \"late_fine_value\": 0,\n      \"max_late_fine\": null,\n      \"grace_period_days\": 0\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /installments/:id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/installments/{{installmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "installments",
+                "{{installmentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Installment 1 (Updated)\",\n  \"sequence_no\": 1,\n  \"due_date\": \"2026-06-20\",\n  \"percentage\": 50,\n  \"allow_partial_payment\": true,\n  \"fixed_amount\": null,\n  \"late_fine_type\": \"none\",\n  \"late_fine_value\": 0,\n  \"max_late_fine\": null,\n  \"grace_period_days\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /installments/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/installments/{{installmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "installments",
+                "{{installmentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /assignments/preview/:structureId",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/assignments/preview/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "assignments",
+                "preview",
+                "{{feeStructureId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"class_id\": 1,\n  \"student_ids\": [\n    1,\n    2,\n    3\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /assignments/student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/assignments/student",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "assignments",
+                "student"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": 1,\n  \"fee_structure_id\": 1,\n  \"academic_year_id\": 1,\n  \"custom_items\": null,\n  \"excluded_heads\": null,\n  \"effective_from\": \"2026-04-01\",\n  \"effective_to\": null,\n  \"override_json\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /assignments/bulk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/assignments/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "assignments",
+                "bulk"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fee_structure_id\": 1,\n  \"class_ids\": [\n    1\n  ],\n  \"student_ids\": [],\n  \"academic_year_id\": 1,\n  \"custom_items\": null,\n  \"excluded_heads\": null,\n  \"effective_from\": \"2026-04-01\",\n  \"effective_to\": null,\n  \"override_json\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /assignments/one-time",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/assignments/one-time",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "assignments",
+                "one-time"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fee_structure_id\": 1,\n  \"class_ids\": [\n    1\n  ],\n  \"student_ids\": [],\n  \"academic_year_id\": 1,\n  \"custom_items\": null,\n  \"excluded_heads\": null,\n  \"effective_from\": \"2026-04-01\",\n  \"effective_to\": null,\n  \"override_json\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /assignments/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/assignments/{{assignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "assignments",
+                "{{assignmentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /students/:studentId/assignment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/students/assignment/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "students",
+                "assignment",
+                "{{studentId}}"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /assignments/:id/cancel",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/assignments/cancel/{{assignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "assignments",
+                "cancel",
+                "{{assignmentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Fee assignment no longer required\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/invoices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "invoices"
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "{{studentId}}"
+                },
+                {
+                  "key": "status",
+                  "value": "active"
+                },
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                },
+                {
+                  "key": "due_date_from",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "due_date_to",
+                  "value": "2026-12-31"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /invoices/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/invoices/{{invoiceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "invoices",
+                "{{invoiceId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /invoices/generate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/invoices/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "invoices",
+                "generate"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_ids\": [\n    1,\n    2\n  ],\n  \"installment_plan_id\": 1,\n  \"academic_year_id\": 1,\n  \"due_date\": \"2026-06-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /students/:studentId/invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/students/invoices/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "students",
+                "invoices",
+                "{{studentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /invoices/:id/waive",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/invoices/waive/{{invoiceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "invoices",
+                "waive",
+                "{{invoiceId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Approved fee waiver\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/collect",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/payments/collect",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "payments",
+                "collect"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoice_id\": 1,\n  \"amount_paid\": 5000,\n  \"payment_mode\": \"cash\",\n  \"transaction_ref\": \"OFFLINE-TRX-001\",\n  \"notes\": \"Collected at school counter\",\n  \"cheque_date\": null,\n  \"cheque_bank\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/initiate-online",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/payments/initiate-online",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "payments",
+                "initiate-online"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoice_id\": 1,\n  \"amount\": 5000,\n  \"gateway\": \"razorpay\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /payments/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/payments/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "payments",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /payments/:id/receipt",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/payments/receipt/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "payments",
+                "receipt",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/:id/send-receipt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/payments/send-receipt/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "payments",
+                "send-receipt",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/:id/cancel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/payments/cancel/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "payments",
+                "cancel",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Payment entered by mistake\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /payments/:id/cheque-status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/payments/cheque-status/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "payments",
+                "cheque-status",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cheque_status\": \"cleared\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /refunds",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/refunds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "refunds"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_id\": 1,\n  \"refund_amount\": 1000,\n  \"reason\": \"Overpayment adjustment\",\n  \"refund_mode\": \"bank_transfer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /refunds/pending",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/refunds/pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "refunds",
+                "pending"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /refunds/:id/approve",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/refunds/approve/{{refundId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "refunds",
+                "approve",
+                "{{refundId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /refunds/:id/reject",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/refunds/reject/{{refundId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "refunds",
+                "reject",
+                "{{refundId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Insufficient approval details\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /reminders/bulk-send",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/reminders/bulk-send",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "reminders",
+                "bulk-send"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academic_year_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/collection-summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/reports/collection-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "reports",
+                "collection-summary"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31"
+                },
+                {
+                  "key": "mode",
+                  "value": "cash"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/dues",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/reports/dues",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "reports",
+                "dues"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                },
+                {
+                  "key": "overdue_only",
+                  "value": "false"
+                },
+                {
+                  "key": "min_amount",
+                  "value": "1000"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/defaulters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/reports/defaulters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "reports",
+                "defaulters"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/head-wise",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/reports/head-wise",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "reports",
+                "head-wise"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/student-ledger/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/reports/student-ledger/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "reports",
+                "student-ledger",
+                "{{studentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /reports/export",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accountantToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/reports/export",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "reports",
+                "export"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report_type\": \"dues\",\n  \"format\": \"xlsx\",\n  \"filters\": {\n    \"academic_year_id\": 1,\n    \"overdue_only\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/webhook/razorpay",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accountant/fees/payments/webhook/razorpay",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "accountant",
+                "fees",
+                "payments",
+                "webhook",
+                "razorpay"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for accountant role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"payment.captured\",\n  \"payload\": {\n    \"payment\": {\n      \"entity\": {\n        \"id\": \"pay_mock_123\"\n      }\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "STUDENT Fees APIs",
+      "item": [
+        {
+          "name": "GET /students/:studentId/assignment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/student/fees/students/assignment/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "student",
+                "fees",
+                "students",
+                "assignment",
+                "{{studentId}}"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for student role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /invoices/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/student/fees/invoices/{{invoiceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "student",
+                "fees",
+                "invoices",
+                "{{invoiceId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for student role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /students/:studentId/invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/student/fees/students/invoices/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "student",
+                "fees",
+                "students",
+                "invoices",
+                "{{studentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for student role"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /payments/initiate-online",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/student/fees/payments/initiate-online",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "student",
+                "fees",
+                "payments",
+                "initiate-online"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for student role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoice_id\": 1,\n  \"amount\": 5000,\n  \"gateway\": \"razorpay\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /payments/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/student/fees/payments/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "student",
+                "fees",
+                "payments",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for student role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /payments/:id/receipt",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/student/fees/payments/receipt/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "student",
+                "fees",
+                "payments",
+                "receipt",
+                "{{paymentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for student role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/student-ledger/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/student/fees/reports/student-ledger/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "student",
+                "fees",
+                "reports",
+                "student-ledger",
+                "{{studentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for student role"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "TEACHER Fees APIs",
+      "item": [
+        {
+          "name": "GET /students/:studentId/assignment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/teacher/fees/students/assignment/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "teacher",
+                "fees",
+                "students",
+                "assignment",
+                "{{studentId}}"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for teacher role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /invoices/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/teacher/fees/invoices/{{invoiceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "teacher",
+                "fees",
+                "invoices",
+                "{{invoiceId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for teacher role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /students/:studentId/invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/teacher/fees/students/invoices/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "teacher",
+                "fees",
+                "students",
+                "invoices",
+                "{{studentId}}"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for teacher role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/defaulters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/teacher/fees/reports/defaulters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "teacher",
+                "fees",
+                "reports",
+                "defaulters"
+              ],
+              "query": []
+            },
+            "description": "Fees API test endpoint for teacher role"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /reports/dues",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/teacher/fees/reports/dues",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "teacher",
+                "fees",
+                "reports",
+                "dues"
+              ],
+              "query": [
+                {
+                  "key": "academic_year_id",
+                  "value": "{{academicYearId}}"
+                },
+                {
+                  "key": "overdue_only",
+                  "value": "false"
+                },
+                {
+                  "key": "min_amount",
+                  "value": "1000"
+                }
+              ]
+            },
+            "description": "Fees API test endpoint for teacher role"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

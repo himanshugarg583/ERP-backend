@@ -2,10 +2,8 @@ const { calculateLateFine, round2, deriveInvoiceStatus } = require('./feeRulesSe
 const {
   FeeInvoiceV1,
   FeePaymentV1,
-  InstallmentPlanV1,
-  SchoolFeeSettingV1,
-  StudentWalletV1
-} = require('../../../models/admin/fees_v1');
+  InstallmentPlanV1
+} = require('../../../models');
 const { nextReceiptNumber } = require('./numberSeriesService');
 
 const refreshInvoiceFine = async (invoice, paymentDate, transaction) => {
@@ -26,8 +24,7 @@ const refreshInvoiceFine = async (invoice, paymentDate, transaction) => {
 };
 
 const getFineFirstSetting = async (transaction) => {
-  const setting = await SchoolFeeSettingV1.findOne({ transaction });
-  return setting ? Boolean(setting.fine_first) : true;
+  return true;
 };
 
 const applyPaymentToInvoice = async ({
@@ -86,12 +83,17 @@ const applyPaymentToInvoice = async ({
   }, { transaction });
 
   const receiptNumber = await nextReceiptNumber(transaction);
+  const isPartial = Math.max(0, newBalance) > 0;
+  const paymentStatus = paymentMode === 'cheque' ? 'pending' : 'success';
 
   const payment = await FeePaymentV1.create({
     receipt_number: receiptNumber,
+    receipt_no: receiptNumber,
     invoice_id: invoice.id,
     student_id: invoice.student_id,
     amount_paid: principalPaid,
+    status: paymentStatus,
+    is_partial: isPartial,
     fine_paid: finePaid,
     payment_mode: paymentMode,
     transaction_ref: transactionRef || null,
@@ -105,16 +107,6 @@ const applyPaymentToInvoice = async ({
     notes: notes || null,
     is_cancelled: false
   }, { transaction });
-
-  if (overpay > 0) {
-    const [wallet] = await StudentWalletV1.findOrCreate({
-      where: { student_id: invoice.student_id },
-      defaults: { balance: 0 },
-      transaction
-    });
-
-    await wallet.update({ balance: round2(Number(wallet.balance) + overpay) }, { transaction });
-  }
 
   return {
     payment,

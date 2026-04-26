@@ -3,8 +3,8 @@ const sequelize = require('../../../config/db');
 
 const FeeInvoiceV1 = sequelize.define('FeeInvoiceV1', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true
   },
   invoice_number: {
@@ -12,21 +12,50 @@ const FeeInvoiceV1 = sequelize.define('FeeInvoiceV1', {
     allowNull: false,
     unique: true
   },
+  invoice_no: {
+    type: DataTypes.STRING(30),
+    allowNull: true,
+    unique: true
+  },
   student_id: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: 'students',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   },
   assignment_id: {
-    type: DataTypes.UUID,
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'student_fee_assignments',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   },
   installment_plan_id: {
-    type: DataTypes.UUID,
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'installment_plans',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   },
   academic_year_id: {
-    type: DataTypes.UUID,
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'academic_years',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   },
   gross_amount: {
     type: DataTypes.DECIMAL(10, 2),
@@ -64,6 +93,15 @@ const FeeInvoiceV1 = sequelize.define('FeeInvoiceV1', {
     type: DataTypes.DATEONLY,
     allowNull: false
   },
+  start_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
+  },
+  source_type: {
+    type: DataTypes.ENUM('system', 'manual', 'import', 'online'),
+    allowNull: false,
+    defaultValue: 'system'
+  },
   generated_at: {
     type: DataTypes.DATE,
     allowNull: false,
@@ -71,7 +109,13 @@ const FeeInvoiceV1 = sequelize.define('FeeInvoiceV1', {
   },
   waived_by: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: true,
+    references: {
+      model: 'Users',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL'
   },
   waiver_reason: {
     type: DataTypes.TEXT,
