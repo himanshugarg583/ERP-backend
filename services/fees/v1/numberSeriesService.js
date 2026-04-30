@@ -12,12 +12,20 @@ const extractLastSerial = (value) => {
 const nextInvoiceNumber = async (transaction) => {
   const year = new Date().getFullYear();
   const lastInvoice = await FeeInvoiceV1.findOne({
-    order: [['created_at', 'DESC']],
+    order: [['id', 'DESC']],
     transaction,
     lock: transaction.LOCK.UPDATE
   });
-  const num = extractLastSerial(lastInvoice?.invoice_no || lastInvoice?.invoice_number) + 1;
-  return `INV-${year}-${String(num).padStart(6, '0')}`;
+
+  let num = extractLastSerial(lastInvoice?.invoice_no || lastInvoice?.invoice_number) + 1;
+  let candidate = `INV-${year}-${String(num).padStart(6, '0')}`;
+
+  while (await FeeInvoiceV1.findOne({ where: { invoice_number: candidate }, transaction })) {
+    num += 1;
+    candidate = `INV-${year}-${String(num).padStart(6, '0')}`;
+  }
+
+  return candidate;
 };
 
 const nextReceiptNumber = async (transaction) => {

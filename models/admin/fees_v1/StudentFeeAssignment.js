@@ -27,21 +27,6 @@ const StudentFeeAssignmentV1 = sequelize.define('StudentFeeAssignmentV1', {
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT'
   },
-  academic_year_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'academic_years',
-      key: 'id'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT'
-  },
-  assignment_type: {
-    type: DataTypes.ENUM('recurring', 'one_time'),
-    allowNull: false,
-    defaultValue: 'recurring'
-  },
   assigned_by: {
     type: DataTypes.INTEGER,
     allowNull: false,

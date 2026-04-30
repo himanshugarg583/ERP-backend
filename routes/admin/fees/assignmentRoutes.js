@@ -19,6 +19,7 @@ router.post('/assignments/one-time', ...adminOnly, assignmentController.assignOn
 router.get('/assignments', ...financeOnly, assignmentController.listAssignments);
 router.get('/assignments/:id', ...financeOnly, assignmentController.getAssignmentById);
 router.get('/students/assignment/:studentId', ...studentSelfOrFinance, assignmentController.getActiveAssignmentForStudent);
+router.get('/class-dues/:classId', ...financeOnly, assignmentController.getClassDues);
 router.put('/assignments/cancel/:id', ...adminOnly, assignmentController.cancelAssignment);
 
 module.exports = router;

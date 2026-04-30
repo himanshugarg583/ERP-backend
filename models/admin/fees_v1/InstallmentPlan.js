@@ -33,11 +33,6 @@ const InstallmentPlanV1 = sequelize.define('InstallmentPlanV1', {
     type: DataTypes.DATEONLY,
     allowNull: true
   },
-  sequence_no: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 1
-  },
   percentage: {
     type: DataTypes.DECIMAL(5, 2),
     allowNull: false

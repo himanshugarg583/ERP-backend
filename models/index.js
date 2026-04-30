@@ -233,14 +233,8 @@ AudienceTarget.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
 AcademicYear.hasMany(FeeStructureV1, { foreignKey: 'academic_year_id', as: 'feeStructures' });
 FeeStructureV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'academicYear' });
 
-AcademicYear.hasMany(StudentFeeAssignmentV1, { foreignKey: 'academic_year_id', as: 'feeAssignments' });
-StudentFeeAssignmentV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'academicYear' });
-
 AcademicYear.hasMany(StudentConcessionV1, { foreignKey: 'academic_year_id', as: 'studentConcessions' });
 StudentConcessionV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'concessionYear' });
-
-AcademicYear.hasMany(FeeInvoiceV1, { foreignKey: 'academic_year_id', as: 'feeInvoices' });
-FeeInvoiceV1.belongsTo(AcademicYear, { foreignKey: 'academic_year_id', as: 'invoiceYear' });
 
 // Structure relations
 FeeStructureV1.hasMany(FeeStructureItemV1, { foreignKey: 'fee_structure_id', as: 'items' });

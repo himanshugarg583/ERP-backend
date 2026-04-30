@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const sequelize = require('../../config/db');
-const { FeePaymentV1, FeeInvoiceV1 } = require('../../models');
+const { FeePaymentV1, FeeInvoiceV1, StudentFeeAssignmentV1, FeeStructureV1 } = require('../../models');
 const { IncomeExpense } = require('../../models/admin/accounting/IncomeExpense');
 const { Student } = require('../../models/admin/Student');
 const { ClassSection } = require('../../models/admin/Classsection');
@@ -35,7 +35,19 @@ const getRange = (period) => {
 const getInvoiceIdsForAcademicYear = async (academicYearId) => {
   if (!academicYearId) return null;
   const rows = await FeeInvoiceV1.findAll({
-    where: { academic_year_id: academicYearId },
+    include: [{
+      model: StudentFeeAssignmentV1,
+      as: 'assignment',
+      required: true,
+      attributes: [],
+      include: [{
+        model: FeeStructureV1,
+        as: 'feeStructure',
+        required: true,
+        where: { academic_year_id: Number(academicYearId) },
+        attributes: []
+      }]
+    }],
     attributes: ['id'],
     raw: true
   });

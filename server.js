@@ -33,6 +33,8 @@ const noticeRoutes = require('./routes/admin/notices');
 const classResourceRoutes = require('./routes/admin/classResourceRoutes');
 const subjectResourceRoutes = require('./routes/admin/subjectResourceRoutes');
 const dashboardRoutes = require('./routes/admin/dashboardRoutes');
+const adminIncomeRoutes = require('./routes/admin/incomeRoutes');
+const adminExpenseRoutes = require('./routes/admin/expenseRoutes');
 // teacher
 const classattendanceRoutes = require('./routes/teacher/classAttendanceRoutes');
 const teacherTimetableRoutes = require('./routes/teacher/teacherTimetableRoutes');
@@ -164,6 +166,8 @@ app.use('/admin/notice', noticeRoutes);
 app.use('/admin/classResource', classResourceRoutes);
 app.use('/admin/subjectResource', subjectResourceRoutes);
 app.use('/admin/dashboard', dashboardRoutes);
+app.use('/api/admin', adminIncomeRoutes);
+app.use('/api/admin', adminExpenseRoutes);
 
 // TEACHER ROUTES
 app.use('/classattendance', classattendanceRoutes);

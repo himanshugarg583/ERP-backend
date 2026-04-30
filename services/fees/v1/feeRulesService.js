@@ -33,13 +33,95 @@ const sumInstallmentPercentages = (installments = []) => {
   return round2(total);
 };
 
-const validateInstallmentPercentages = (installments = []) => {
+const validateInstallmentPercentages = (installments = [], options = {}) => {
   const total = sumInstallmentPercentages(installments);
-  if (total !== 100) {
-    const err = new Error(`Installment percentages must sum to 100%. Current total: ${total}%`);
+  const tolerance = options.tolerance !== undefined ? Number(options.tolerance) : 0.01;
+  if (Math.abs(total - 100) > tolerance) {
+    const err = new Error('Total installment percentage must be 100%.');
     err.statusCode = 422;
     throw err;
   }
+};
+
+const validateInstallmentAmountsAgainstTotal = ({ installments = [], totalAmount = 0 }) => {
+  const structureTotal = round2(totalAmount);
+  const computedInstallmentTotal = round2(
+    installments.reduce((acc, row) => {
+      const hasFixedAmount = row.fixed_amount !== undefined && row.fixed_amount !== null && row.fixed_amount !== '';
+      if (hasFixedAmount) return acc + Number(row.fixed_amount || 0);
+      return acc + (structureTotal * Number(row.percentage || 0)) / 100;
+    }, 0)
+  );
+
+  if (computedInstallmentTotal !== structureTotal) {
+    const err = new Error('Total installment amount must be equal to total fee amount.');
+    err.statusCode = 422;
+    throw err;
+  }
+};
+
+const hasValue = (value) => value !== undefined && value !== null && value !== '';
+
+const normalizeInstallmentsAgainstTotal = ({ installments = [], totalAmount = 0 }) => {
+  const structureTotal = round2(totalAmount);
+  const hasAnyPercentage = installments.some((row) => hasValue(row.percentage));
+  const hasAnyFixed = installments.some((row) => hasValue(row.fixed_amount));
+  const inputMode = hasAnyPercentage && !hasAnyFixed
+    ? 'percentage'
+    : (!hasAnyPercentage && hasAnyFixed ? 'amount' : 'mixed');
+
+  const normalized = installments.map((row, index) => {
+    const hasFixed = hasValue(row.fixed_amount);
+    const hasPercentage = hasValue(row.percentage);
+
+    if (!hasFixed && !hasPercentage) {
+      const err = new Error('Each installment must include either percentage or fixed_amount.');
+      err.statusCode = 422;
+      throw err;
+    }
+
+    let percentage = hasPercentage ? Number(row.percentage) : null;
+    let fixedAmount = hasFixed ? round2(row.fixed_amount) : null;
+
+    if (structureTotal === 0) {
+      if (fixedAmount !== null && fixedAmount !== 0) {
+        const err = new Error('Installment fixed_amount must be 0 when total amount is 0.');
+        err.statusCode = 422;
+        throw err;
+      }
+
+      fixedAmount = 0;
+      if (percentage === null) percentage = 0;
+    } else if (hasFixed && !hasPercentage) {
+      percentage = round2((fixedAmount / structureTotal) * 100);
+    } else if (!hasFixed && hasPercentage) {
+      fixedAmount = round2((structureTotal * Number(percentage || 0)) / 100);
+    } else {
+      const expectedFixed = round2((structureTotal * Number(percentage || 0)) / 100);
+      if (expectedFixed !== fixedAmount) {
+        const err = new Error(`Installment ${row.name || index + 1} fixed_amount does not match percentage.`);
+        err.statusCode = 422;
+        throw err;
+      }
+    }
+
+    return {
+      ...row,
+      percentage,
+      fixed_amount: fixedAmount
+    };
+  });
+
+  if (inputMode === 'percentage') {
+    validateInstallmentPercentages(normalized);
+  } else if (inputMode === 'amount') {
+    validateInstallmentAmountsAgainstTotal({ installments: normalized, totalAmount: structureTotal });
+  } else {
+    validateInstallmentPercentages(normalized);
+    validateInstallmentAmountsAgainstTotal({ installments: normalized, totalAmount: structureTotal });
+  }
+
+  return normalized;
 };
 
 const computeConcessionForItem = ({ gross, concessions = [] }) => {
@@ -89,6 +171,8 @@ module.exports = {
   calculateLateFine,
   sumInstallmentPercentages,
   validateInstallmentPercentages,
+  validateInstallmentAmountsAgainstTotal,
+  normalizeInstallmentsAgainstTotal,
   computeConcessionForItem,
   deriveInvoiceStatus
 };

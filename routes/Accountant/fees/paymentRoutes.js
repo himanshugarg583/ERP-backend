@@ -7,6 +7,7 @@ const router = express.Router();
 const financeOnly = [authMiddleware, requireRoles('admin', 'accountant')];
 const studentOrFinance = [authMiddleware, requireRoles('admin', 'accountant', 'student')];
 
+router.get('/payments', ...financeOnly, paymentController.listAllPayments);
 router.post('/payments/collect', ...financeOnly, inMemoryRateLimiter({ key: 'collect_fee', max: 40, windowMs: 60 * 1000 }), paymentController.collectPayment);
 router.post('/payments/initiate-online', ...studentOrFinance, inMemoryRateLimiter({ key: 'initiate_online', max: 50, windowMs: 60 * 1000 }), paymentController.initiateOnlinePayment);
 router.get('/payments/:id', ...studentOrFinance, paymentController.getPaymentById);

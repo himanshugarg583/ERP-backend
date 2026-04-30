@@ -5,7 +5,9 @@ const {
   FeePaymentV1,
   FeeInvoiceV1,
   FeeInvoiceItemV1,
-  StudentConcessionV1
+  StudentConcessionV1,
+  StudentFeeAssignmentV1,
+  FeeStructureV1
 } = require('../../../models');
 const { Student } = require('../../../models/admin/Student');
 const { ok, fail } = require('../../../utils/response');
@@ -52,11 +54,32 @@ const getDuesReport = async (req, res) => {
       balance_amount: { [Op.gt]: 0 }
     };
 
-    if (req.query.academic_year_id) where.academic_year_id = req.query.academic_year_id;
+    const assignmentInclude = {
+      model: StudentFeeAssignmentV1,
+      as: 'assignment',
+      required: false,
+      include: [{
+        model: FeeStructureV1,
+        as: 'feeStructure',
+        required: false,
+        attributes: ['id', 'academic_year_id']
+      }],
+      attributes: ['id', 'fee_structure_id']
+    };
+
+    if (req.query.academic_year_id) {
+      assignmentInclude.required = true;
+      assignmentInclude.include[0].required = true;
+      assignmentInclude.include[0].where = { academic_year_id: Number(req.query.academic_year_id) };
+    }
     if (req.query.overdue_only === 'true') where.status = 'overdue';
     if (req.query.min_amount) where.balance_amount = { [Op.gte]: Number(req.query.min_amount) };
 
-    const rows = await FeeInvoiceV1.findAll({ where, order: [['balance_amount', 'DESC']] });
+    const rows = await FeeInvoiceV1.findAll({
+      where,
+      include: [assignmentInclude],
+      order: [['balance_amount', 'DESC']]
+    });
     return ok(res, rows, { total: rows.length });
   } catch (error) {
     return fail(res, { statusCode: 500, code: 'report_failed', message: error.message });
@@ -120,13 +143,9 @@ const getHeadWiseReport = async (req, res) => {
 
 const getStudentLedger = async (req, res) => {
   try {
-    const studentId = Number(req.params.id);
-
-    if (req.user?.role === 'student') {
-      const authenticatedStudentId = await resolveStudentIdForUser(req.user.id);
-      if (!authenticatedStudentId || authenticatedStudentId !== studentId) {
-        return fail(res, { statusCode: 403, code: 'forbidden', message: 'You can only access your own ledger.' });
-      }
+    const studentId = await resolveStudentIdForUser(req.user.id);
+    if (!studentId) {
+      return fail(res, { statusCode: 403, code: 'forbidden', message: 'Student profile not found for this account.' });
     }
 
     const invoices = await FeeInvoiceV1.findAll({

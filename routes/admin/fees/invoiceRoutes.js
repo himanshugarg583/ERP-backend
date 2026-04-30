@@ -17,6 +17,7 @@ router.get('/invoices', ...financeOnly, invoiceController.listInvoices);
 router.get('/invoices/:id', ...studentOrFinance, invoiceController.getInvoiceById);
 router.post('/invoices/generate', ...adminOnly, invoiceController.generateInvoices);
 router.get('/students/invoices/:studentId', ...studentSelfOrFinance, invoiceController.listStudentInvoices);
+router.get('/students/unpaid-invoices/:studentId', ...studentSelfOrFinance, invoiceController.getStudentUnpaidInvoices);
 router.put('/invoices/waive/:id', ...adminOnly, invoiceController.waiveInvoice);
 
 module.exports = router;

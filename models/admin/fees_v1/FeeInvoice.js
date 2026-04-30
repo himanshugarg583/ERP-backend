@@ -47,16 +47,6 @@ const FeeInvoiceV1 = sequelize.define('FeeInvoiceV1', {
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT'
   },
-  academic_year_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'academic_years',
-      key: 'id'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT'
-  },
   gross_amount: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false
