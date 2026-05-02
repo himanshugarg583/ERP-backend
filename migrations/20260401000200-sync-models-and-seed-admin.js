@@ -16,14 +16,14 @@ module.exports = {
     const passwordHash = await bcrypt.hash(adminPassword, 10);
 
     const [existingAdmin] = await queryInterface.sequelize.query(
-      'SELECT id FROM Users WHERE email = :email LIMIT 1',
+      'SELECT id FROM users WHERE email = :email LIMIT 1',
       {
         replacements: { email: adminEmail },
       }
     );
 
     if (!existingAdmin.length) {
-      await queryInterface.bulkInsert('Users', [
+      await queryInterface.bulkInsert('users', [
         {
           name: 'Admin',
           email: adminEmail,
@@ -40,7 +40,7 @@ module.exports = {
   async down(queryInterface) {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@erp.local';
 
-    await queryInterface.bulkDelete('Users', {
+    await queryInterface.bulkDelete('users', {
       email: adminEmail,
       role: 'admin',
     });

@@ -101,7 +101,7 @@ const FeeInvoiceV1 = sequelize.define('FeeInvoiceV1', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     },
     onUpdate: 'CASCADE',

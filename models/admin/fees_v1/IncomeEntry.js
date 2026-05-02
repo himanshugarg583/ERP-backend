@@ -52,7 +52,7 @@ const IncomeEntryV1 = sequelize.define('IncomeEntryV1', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     },
     onUpdate: 'CASCADE',

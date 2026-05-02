@@ -46,7 +46,7 @@ const StudentConcessionV1 = sequelize.define('StudentConcessionV1', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     },
     onUpdate: 'CASCADE',

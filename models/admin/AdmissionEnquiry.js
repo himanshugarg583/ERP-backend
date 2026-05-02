@@ -45,7 +45,7 @@ const AdmissionEnquiry = sequelize.define('AdmissionEnquiry', {
   }
 }, {
   timestamps: true,
-  tableName: 'AdmissionEnquiries' 
+  tableName: 'admission_enquiries' 
 });
 
 

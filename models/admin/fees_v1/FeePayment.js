@@ -77,7 +77,7 @@ const FeePaymentV1 = sequelize.define('FeePaymentV1', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     },
     onUpdate: 'CASCADE',
@@ -113,7 +113,7 @@ const FeePaymentV1 = sequelize.define('FeePaymentV1', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     },
     onUpdate: 'CASCADE',

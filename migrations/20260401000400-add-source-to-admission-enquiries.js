@@ -1,18 +1,20 @@
 'use strict';
 
 async function resolveAdmissionEnquiriesTable(queryInterface) {
-  const candidateNames = ['AdmissionEnquiries', 'admissionenquiries'];
+  const candidateNames = ['admission_enquiries', 'admissionenquiries'];
+  const existingTables = await queryInterface.showAllTables();
+  const tableLookup = new Map(
+    existingTables.map((tableName) => [String(tableName).toLowerCase(), tableName])
+  );
 
-  for (const tableName of candidateNames) {
-    try {
-      await queryInterface.describeTable(tableName);
-      return tableName;
-    } catch (error) {
-      // Try next candidate.
+  for (const candidateName of candidateNames) {
+    const resolvedTableName = tableLookup.get(candidateName);
+    if (resolvedTableName) {
+      return resolvedTableName;
     }
   }
 
-  return 'AdmissionEnquiries';
+  return candidateNames[0];
 }
 
 module.exports = {

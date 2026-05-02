@@ -49,7 +49,7 @@ const FeeStructureV1 = sequelize.define('FeeStructureV1', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     },
     onUpdate: 'CASCADE',
