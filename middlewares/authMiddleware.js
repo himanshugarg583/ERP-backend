@@ -1,7 +1,17 @@
 const jwt = require('jsonwebtoken');
-const {User} = require('../models/admin/user'); 
+const {User} = require('../models/admin/users'); 
 
 
+
+const STAFF_ROLES = new Set([
+  'staff',
+  'accountant',
+  'hr',
+  'librarian',
+  'admission_officer',
+  'transport_manager',
+  'hostel_warden'
+]);
 
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -94,7 +104,7 @@ const isStudent = (req, res, next) => {
   };
 
 const isStaff = (req, res, next) => {
-    if (req.user?.role !== 'staff') {
+    if (!STAFF_ROLES.has(req.user?.role)) {
       return res.status(403).json({
         success:false,
         statusCode:403,

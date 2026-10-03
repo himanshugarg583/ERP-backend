@@ -1,10 +1,9 @@
 const { Op } = require('sequelize');
 const sequelize = require('../../config/db');
 const { FeePaymentV1, FeeInvoiceV1, StudentFeeAssignmentV1, FeeStructureV1 } = require('../../models');
-const { IncomeExpense } = require('../../models/admin/accounting/IncomeExpense');
-const { Student } = require('../../models/admin/Student');
-const { ClassSection } = require('../../models/admin/Classsection');
-const { User } = require('../../models/admin/user');
+const { Student } = require('../../models/admin/students');
+const { ClassSection } = require('../../models/admin/class_sections');
+const { User } = require('../../models/admin/users');
 
 const getRange = (period) => {
   const now = new Date();
@@ -108,19 +107,6 @@ const getDashboardStats = async (req, res) => {
       }
     });
 
-    const monthlyIncome = await IncomeExpense.sum('amount', {
-      where: {
-        entry_type: 'income',
-        entry_date: { [Op.between]: [monthRange.start, monthRange.end] }
-      }
-    }) || 0;
-
-    const monthlyExpense = await IncomeExpense.sum('amount', {
-      where: {
-        entry_type: 'expense',
-        entry_date: { [Op.between]: [monthRange.start, monthRange.end] }
-      }
-    }) || 0;
 
     const todayPaymentsCount = await FeePaymentV1.count({
       where: {
@@ -152,11 +138,6 @@ const getDashboardStats = async (req, res) => {
         pending_fees: {
           total_amount: parseFloat(totalPending).toFixed(2),
           overdue_count: overdueCount
-        },
-        income_expense: {
-          monthly_income: parseFloat(monthlyIncome).toFixed(2),
-          monthly_expense: parseFloat(monthlyExpense).toFixed(2),
-          monthly_net: (parseFloat(monthlyIncome) - parseFloat(monthlyExpense)).toFixed(2)
         },
         payments_count: {
           today: todayPaymentsCount,
@@ -506,71 +487,11 @@ const getClassWiseCollection = async (req, res) => {
   }
 };
 
-/**
- * Get Income vs Expense Chart
- * @route GET /api/accountant/dashboard/income-expense-chart
- */
-const getIncomeExpenseChart = async (req, res) => {
-  try {
-    const { year } = req.query;
-    const currentYear = Number(year || new Date().getFullYear());
-
-    const monthlyData = await IncomeExpense.findAll({
-      attributes: [
-        [sequelize.fn('MONTH', sequelize.col('entry_date')), 'month'],
-        'entry_type',
-        [sequelize.fn('SUM', sequelize.col('amount')), 'total']
-      ],
-      where: {
-        entry_date: {
-          [Op.between]: [
-            new Date(currentYear, 0, 1),
-            new Date(currentYear, 11, 31)
-          ]
-        }
-      },
-      group: [sequelize.fn('MONTH', sequelize.col('entry_date')), 'entry_type'],
-      order: [[sequelize.fn('MONTH', sequelize.col('entry_date')), 'ASC']],
-      raw: true
-    });
-
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const chartData = monthNames.map((name, index) => {
-      const incomeData = monthlyData.find((d) => Number(d.month) === index + 1 && d.entry_type === 'income');
-      const expenseData = monthlyData.find((d) => Number(d.month) === index + 1 && d.entry_type === 'expense');
-
-      return {
-        month: name,
-        income: incomeData ? parseFloat(incomeData.total).toFixed(2) : '0.00',
-        expense: expenseData ? parseFloat(expenseData.total).toFixed(2) : '0.00'
-      };
-    });
-
-    return res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: 'Income vs Expense chart data fetched successfully',
-      data: {
-        year: currentYear,
-        chart_data: chartData
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching income-expense data:', error);
-    return res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: 'Error fetching income vs expense data',
-      error: error.message
-    });
-  }
-};
 
 module.exports = {
   getDashboardStats,
   getMonthlyCollectionChart,
   getPaymentMethodBreakdown,
   getRecentPayments,
-  getClassWiseCollection,
-  getIncomeExpenseChart
+  getClassWiseCollection
 };

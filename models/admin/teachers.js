@@ -32,8 +32,8 @@ const Teacher = sequelize.define('Teacher', {
       allowNull: true,
     },
         role: {
-      type: DataTypes.ENUM("teacher", "staff","librarian","accontant"),
-      defaultValue: "teacher",
+      type: DataTypes.ENUM('teacher'),
+      defaultValue: 'teacher',
     },
     gender: {
     type: DataTypes.STRING
@@ -54,7 +54,9 @@ const Teacher = sequelize.define('Teacher', {
   }
 }, {
   tableName: 'teachers',
-  timestamps: true
+  timestamps: true,
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 });
 
 

@@ -1,53 +1,52 @@
 const sequelize = require('../config/db');
 
 // Import models
-const { User } = require('./admin/user');
-const { ClassSection } = require('./admin/Classsection');
-const { Student } = require('./admin/Student');
-const { Teacher } = require('./admin/Teacher');
-const { Staff } = require('./admin/Staff');
-const {Subject} = require('./admin/subject');
-const {studentsAttendances} = require('./admin/studentsAttendances');
-const {StudentParent} = require('./admin/student_parent');
-const {ClassTimetable} = require('./admin/ClassTimetable');
-const {ClassTimetableSetting} = require('./admin/ClassTimetableSetting');
-const {ClassTimeSlot} = require('./admin/ClassTimeSlot');
-const {AdmissionEnquiry} = require('./admin/AdmissionEnquiry');
-const {Holiday} = require('./admin/Holiday');
+const { User } = require('./admin/users');
+const { ClassSection } = require('./admin/class_sections');
+const { Student } = require('./admin/students');
+const { Teacher } = require('./admin/teachers');
+const { Staff } = require('./admin/staff');
+const {Subject} = require('./admin/subjects');
+const {studentsAttendances} = require('./admin/studentattendances');
+const {StudentParent} = require('./admin/student_parents');
+const {ClassTimetable} = require('./admin/class_timetable_entries');
+const {ClassTimetableSetting} = require('./admin/class_timetable_settings');
+const {ClassTimeSlot} = require('./admin/class_time_slots');
+const {AdmissionEnquiry} = require('./admin/admissionenquiries');
+const {Holiday} = require('./admin/holidays');
 // fees v1
-const { AcademicYear } = require('./admin/fees_v1/AcademicYear');
-const { FeeHeadV1 } = require('./admin/fees_v1/FeeHead');
-const { FeeStructureV1 } = require('./admin/fees_v1/FeeStructure');
-const { FeeStructureItemV1 } = require('./admin/fees_v1/FeeStructureItem');
-const { InstallmentPlanV1 } = require('./admin/fees_v1/InstallmentPlan');
-const { StudentFeeAssignmentV1 } = require('./admin/fees_v1/StudentFeeAssignment');
-const { StudentConcessionV1 } = require('./admin/fees_v1/StudentConcession');
-const { FeeInvoiceV1 } = require('./admin/fees_v1/FeeInvoice');
-const { FeeInvoiceItemV1 } = require('./admin/fees_v1/FeeInvoiceItem');
-const { FeePaymentV1 } = require('./admin/fees_v1/FeePayment');
-const { PaymentRefundV1 } = require('./admin/fees_v1/PaymentRefund');
-const { FeeReminderV1 } = require('./admin/fees_v1/FeeReminder');
-const { IncomeEntryV1 } = require('./admin/fees_v1/IncomeEntry');
-const { ExpenseEntryV1 } = require('./admin/fees_v1/ExpenseEntry');
+const { AcademicYear } = require('./admin/fees_v1/academic_years');
+const { FeeHeadV1 } = require('./admin/fees_v1/fee_heads');
+const { FeeStructureV1 } = require('./admin/fees_v1/fee_structures');
+const { FeeStructureItemV1 } = require('./admin/fees_v1/fee_structure_items');
+const { InstallmentPlanV1 } = require('./admin/fees_v1/installment_plans');
+const { StudentFeeAssignmentV1 } = require('./admin/fees_v1/student_fee_assignments');
+const { StudentConcessionV1 } = require('./admin/fees_v1/student_concessions');
+const { FeeInvoiceV1 } = require('./admin/fees_v1/fee_invoices');
+const { FeeInvoiceItemV1 } = require('./admin/fees_v1/fee_invoice_items');
+const { FeePaymentV1 } = require('./admin/fees_v1/fee_payments');
+const { PaymentRefundV1 } = require('./admin/fees_v1/payment_refunds');
+const { FeeReminderV1 } = require('./admin/fees_v1/fee_reminders');
+const { IncomeEntryV1 } = require('./admin/fees_v1/income_entries');
+const { ExpenseEntryV1 } = require('./admin/fees_v1/expense_entries');
 
-const { IncomeExpense } = require('./admin/accounting/IncomeExpense');
 
 // exam v2
-const { ExamTypeV2 } = require('./admin/exam/ExamTypeV2');
-const { ExamEventV2 } = require('./admin/exam/ExamEventV2');
-const { ExamPaperV2 } = require('./admin/exam/ExamPaperV2');
-const { ExamTimetableV2 } = require('./admin/exam/ExamTimetableV2');
-const { MarksEntryV2 } = require('./admin/exam/MarksEntryV2');
-const { ExamAttendanceV2 } = require('./admin/exam/ExamAttendanceV2');
-const { ResultV2 } = require('./admin/exam/ResultV2');
-const { DocumentTemplateV2 } = require('./admin/exam/DocumentTemplateV2');
-const { DocumentV2 } = require('./admin/exam/DocumentV2');
+const { ExamTypeV2 } = require('./admin/exam/exam_types');
+const { ExamEventV2 } = require('./admin/exam/exam_events');
+const { ExamPaperV2 } = require('./admin/exam/exam_papers');
+const { ExamTimetableV2 } = require('./admin/exam/exam_timetable');
+const { MarksEntryV2 } = require('./admin/exam/marks_entries');
+const { ExamAttendanceV2 } = require('./admin/exam/exam_attendance');
+const { ResultV2 } = require('./admin/exam/results');
+const { DocumentTemplateV2 } = require('./admin/exam/document_templates');
+const { DocumentV2 } = require('./admin/exam/documents');
 
 // student leave
-const { StudentLeave } = require('./admin/StudentLeave');
+const { StudentLeave } = require('./admin/student_leaves');
 
 // content uploads
-const { Resource } = require('./admin/content uploads/resource');
+const { Resource } = require('./admin/content uploads/resources');
 
 // notices
 const { Notice } = require('./admin/content uploads/notices');
@@ -366,8 +365,6 @@ module.exports = {
   IncomeEntryV1,
   ExpenseEntryV1,
   
-  // Accounting Models
-  IncomeExpense,
 
   // Exam Management Models (V2)
   ExamTypeV2,

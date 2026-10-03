@@ -1,9 +1,8 @@
-const { Student } = require('../../../models/admin/Student');
-const { Teacher } = require('../../../models/admin/Teacher');
-const { studentsAttendances } = require('../../../models/admin/studentsAttendances');
-const { IncomeExpense } = require('../../../models/admin/accounting/IncomeExpense');
-const { FeePaymentV1, FeeInvoiceV1, StudentFeeAssignmentV1, FeeStructureV1 } = require('../../../models');
-const { ClassSection } = require('../../../models/admin/Classsection');
+const { Student } = require('../../../models/admin/students');
+const { Teacher } = require('../../../models/admin/teachers');
+const { studentsAttendances } = require('../../../models/admin/studentattendances');
+const { FeePaymentV1, FeeInvoiceV1, StudentFeeAssignmentV1, FeeStructureV1, IncomeEntryV1, ExpenseEntryV1 } = require('../../../models');
+const { ClassSection } = require('../../../models/admin/class_sections');
 const { Notice, AudienceTarget } = require('../../../models');
 const { Op } = require('sequelize');
 const sequelize = require('../../../config/db');
@@ -156,7 +155,7 @@ const getDashboardStats = async (req, res) => {
  * Get Monthly Income and Expense for Graph
  * Returns monthly aggregated data for the current year or specified year
  */
-const getMonthlyIncomeExpense = async (req, res) => {
+const getMonthlyIncomeVsExpense = async (req, res) => {
   try {
     const { year } = req.query;
     const currentYear = year || new Date().getFullYear();
@@ -166,10 +165,9 @@ const getMonthlyIncomeExpense = async (req, res) => {
     const endDate = `${currentYear}-12-31`;
 
     // Fetch all income and expense entries for the year
-    const entries = await IncomeExpense.findAll({
+    const incomeEntries = await IncomeEntryV1.findAll({
       attributes: [
         [sequelize.fn('MONTH', sequelize.col('entry_date')), 'month'],
-        'entry_type',
         [sequelize.fn('SUM', sequelize.col('amount')), 'total']
       ],
       where: {
@@ -177,7 +175,22 @@ const getMonthlyIncomeExpense = async (req, res) => {
           [Op.between]: [startDate, endDate]
         }
       },
-      group: ['month', 'entry_type'],
+      group: ['month'],
+      order: [[sequelize.fn('MONTH', sequelize.col('entry_date')), 'ASC']],
+      raw: true
+    });
+
+    const expenseEntries = await ExpenseEntryV1.findAll({
+      attributes: [
+        [sequelize.fn('MONTH', sequelize.col('entry_date')), 'month'],
+        [sequelize.fn('SUM', sequelize.col('amount')), 'total']
+      ],
+      where: {
+        entry_date: {
+          [Op.between]: [startDate, endDate]
+        }
+      },
+      group: ['month'],
       order: [[sequelize.fn('MONTH', sequelize.col('entry_date')), 'ASC']],
       raw: true
     });
@@ -196,13 +209,18 @@ const getMonthlyIncomeExpense = async (req, res) => {
     }));
 
     // Populate the data
-    entries.forEach(entry => {
-      const monthIndex = parseInt(entry.month) - 1;
-      const amount = parseFloat(entry.total);
-      
-      if (entry.entry_type === 'income') {
+    incomeEntries.forEach((entry) => {
+      const monthIndex = parseInt(entry.month, 10) - 1;
+      const amount = parseFloat(entry.total) || 0;
+      if (monthIndex >= 0 && monthIndex < monthlyData.length) {
         monthlyData[monthIndex].income = amount;
-      } else if (entry.entry_type === 'expense') {
+      }
+    });
+
+    expenseEntries.forEach((entry) => {
+      const monthIndex = parseInt(entry.month, 10) - 1;
+      const amount = parseFloat(entry.total) || 0;
+      if (monthIndex >= 0 && monthIndex < monthlyData.length) {
         monthlyData[monthIndex].expense = amount;
       }
     });
@@ -648,7 +666,7 @@ const getPaymentModeCollection = async (req, res) => {
 
 module.exports = {
   getDashboardStats,
-  getMonthlyIncomeExpense,
+  getMonthlyIncomeVsExpense,
   getClassWiseTodayAttendance,
   getAllNotices,
   getMonthlyFeeCollection,

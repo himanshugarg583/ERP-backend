@@ -1,4 +1,4 @@
-const {AdmissionEnquiry} = require('../../models/admin/AdmissionEnquiry');
+const {AdmissionEnquiry} = require('../../models/admin/admissionenquiries');
 
 // Create new admission enquiry
 const createEnquiry = async (req, res) => {

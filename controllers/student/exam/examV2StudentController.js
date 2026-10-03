@@ -5,7 +5,7 @@ const {
   MarksEntryV2,
   ResultV2
 } = require('../../../models');
-const { Student } = require('../../../models/admin/Student');
+const { Student } = require('../../../models/admin/students');
 
 const findStudentByUser = async (req) => {
   if (req.student) {

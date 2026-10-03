@@ -9,9 +9,9 @@ const {
   IncomeEntryV1,
   StudentFeeAssignmentV1
 } = require('../../../models');
-const { Student } = require('../../../models/admin/Student');
-const { User } = require('../../../models/admin/user');
-const { ClassSection } = require('../../../models/admin/Classsection');
+const { Student } = require('../../../models/admin/students');
+const { User } = require('../../../models/admin/users');
+const { ClassSection } = require('../../../models/admin/class_sections');
 const { ok, fail } = require('../../../utils/response');
 const { applyPaymentToInvoice } = require('../../../services/fees/v1/paymentService');
 const { sendReceiptEmailAndLog } = require('../../../services/fees/v1/notificationService');

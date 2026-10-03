@@ -183,13 +183,21 @@ const buildTimingConfigFromTotalPeriods = (payload) => {
   };
 };
 
-const findTeacherConflict = async ({ teacherId, dayOfWeek, slot, excludeEntryId = null, transaction }) => {
+const findTeacherConflict = async ({
+  teacherId,
+  dayOfWeek,
+  slot,
+  excludeEntryId = null,
+  excludeClassSectionId = null,
+  transaction
+}) => {
   const where = {
     teacher_id: teacherId,
     day_of_week: dayOfWeek
   };
 
   if (excludeEntryId) where.id = { [Op.ne]: excludeEntryId };
+  if (excludeClassSectionId) where.class_section_id = { [Op.ne]: excludeClassSectionId };
 
   const assignedRows = await ClassTimetable.findAll({
     where,
@@ -362,6 +370,15 @@ const bulkScheduleSchoolTimingForClasses = async (req, res) => {
     });
   } catch (error) {
     await transaction.rollback();
+    if (error?.parent?.code === 'ER_NO_SUCH_TABLE') {
+      console.error('Timetable entries table missing during day upsert:', error);
+      return res.status(422).json({
+        success: false,
+        statusCode: 422,
+        message: 'Timetable entries table missing. Run timetable migration first.'
+      });
+    }
+    console.error('Error saving day timetable:', error);
     return res.status(error.statusCode || 500).json({
       success: false,
       statusCode: error.statusCode || 500,
@@ -446,6 +463,18 @@ const listScheduledSchoolTimingForTable = async (req, res) => {
       }
     });
   } catch (error) {
+    if (error?.parent?.code === 'ER_NO_SUCH_TABLE') {
+      console.error('Timetable entries table missing during conflict check:', error);
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        clash: false,
+        class_conflict: false,
+        teacher_conflict: false,
+        message: 'Timetable entries table missing; no conflicts detected.'
+      });
+    }
+    console.error('Error checking timetable conflicts:', error);
     return res.status(error.statusCode || 500).json({
       success: false,
       statusCode: error.statusCode || 500,
@@ -858,6 +887,7 @@ const upsertDayTimetableEntries = async (req, res) => {
         teacherId: Number(entry.teacher_id),
         dayOfWeek: day,
         slot,
+        excludeClassSectionId: classId,
         transaction
       });
 
@@ -1048,19 +1078,31 @@ const getClassTimetable = async (req, res) => {
       order: [['slot_number', 'ASC']]
     });
 
-    const entries = await ClassTimetable.findAll({
-      where: { class_section_id: classId },
-      include: [
-        { model: ClassTimeSlot, as: 'timeSlot' },
-        { model: Subject, as: 'subject', attributes: ['id', 'subject_name', 'subject_code'] },
-        {
-          model: Teacher,
-          as: 'teacher',
-          attributes: ['id'],
-          include: [{ model: User, attributes: ['id', 'name'] }]
-        }
-      ]
-    });
+    let entries = [];
+    try {
+      entries = await ClassTimetable.findAll({
+        where: { class_section_id: classId },
+        include: [
+          { model: ClassTimeSlot, as: 'timeSlot' },
+          { model: Subject, as: 'subject', attributes: ['id', 'subject_name', 'subject_code'] },
+          {
+            model: Teacher,
+            as: 'teacher',
+            attributes: ['id'],
+            include: [{ model: User, attributes: ['id', 'name'] }]
+          }
+        ]
+      });
+    } catch (error) {
+      if (error?.parent?.code === 'ER_NO_SUCH_TABLE') {
+        console.warn('Class timetable entries table missing; returning empty assignments.', {
+          class_section_id: classId
+        });
+        entries = [];
+      } else {
+        throw error;
+      }
+    }
 
     const byDayAndSlot = new Map();
     for (const entry of entries) {
@@ -1119,6 +1161,7 @@ const getClassTimetable = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Error fetching class timetable:', error);
     return res.status(error.statusCode || 500).json({
       success: false,
       statusCode: error.statusCode || 500,

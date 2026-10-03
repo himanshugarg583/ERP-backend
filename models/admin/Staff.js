@@ -21,10 +21,18 @@ const Staff = sequelize.define('Staff', {
     allowNull: true,
     unique: true
   },
-  department: {
-    type: DataTypes.ENUM('hr', 'librarian', 'admission_officer', 'transport_manager', 'hostel_warden', 'non_teaching_staff', 'other'),
+  role: {
+    type: DataTypes.ENUM(
+      'staff',
+      'accountant',
+      'hr',
+      'librarian',
+      'admission_officer',
+      'transport_manager',
+      'hostel_warden'
+    ),
     allowNull: false,
-    defaultValue: 'non_teaching_staff'
+    defaultValue: 'staff'
   },
   designation: {
     type: DataTypes.STRING,
@@ -68,7 +76,9 @@ const Staff = sequelize.define('Staff', {
   }
 }, {
   tableName: 'staff',
-  timestamps: true
+  timestamps: true,
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 });
 
 module.exports = { Staff };

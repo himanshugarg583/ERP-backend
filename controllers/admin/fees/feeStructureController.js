@@ -9,7 +9,7 @@ const {
   FeeHeadV1,
   ClassSection
 } = require('../../../models');
-const { Student } = require('../../../models/admin/Student');
+const { Student } = require('../../../models/admin/students');
 const { ok, fail } = require('../../../utils/response');
 const {
   normalizeInstallmentsAgainstTotal

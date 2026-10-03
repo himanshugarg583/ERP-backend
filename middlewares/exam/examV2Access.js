@@ -1,6 +1,6 @@
 const { fail } = require('../../utils/response');
-const { Teacher } = require('../../models/admin/Teacher');
-const { Student } = require('../../models/admin/Student');
+const { Teacher } = require('../../models/admin/teachers');
+const { Student } = require('../../models/admin/students');
 const { ExamPaperV2 } = require('../../models');
 
 const attachTeacherProfile = async (req, res, next) => {

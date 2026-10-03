@@ -1,7 +1,7 @@
 const { Op } = require('sequelize');
 const { FeeInvoiceV1, FeeReminderV1 } = require('../../../models');
-const { Student } = require('../../../models/admin/Student');
-const { User } = require('../../../models/admin/user');
+const { Student } = require('../../../models/admin/students');
+const { User } = require('../../../models/admin/users');
 const { sendEmail } = require('../../../services/fees/v1/mailerService');
 const { ok, fail } = require('../../../utils/response');
 

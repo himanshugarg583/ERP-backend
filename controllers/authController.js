@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const  {User}  = require('../models/admin/user');  
+const  {User}  = require('../models/admin/users');  
 const { Op } = require("sequelize");
 const { sequelize } = require("../models");
 
@@ -36,6 +36,16 @@ exports.register = async (req, res) => {
       res.status(500).json({ message: 'Server error, please try again later.' });
     }
 };
+
+const STAFF_ROLES = new Set([
+  'staff',
+  'accountant',
+  'hr',
+  'librarian',
+  'admission_officer',
+  'transport_manager',
+  'hostel_warden'
+]);
 
 exports.login = async (req, res) => {
   try {
@@ -72,7 +82,7 @@ exports.login = async (req, res) => {
      else if (user.role === 'accountant') {
       loginMessage = 'Accountant login';
     }
-     else if (user.role === 'staff') {
+     else if (STAFF_ROLES.has(user.role)) {
       loginMessage = 'Staff login';
     }
 

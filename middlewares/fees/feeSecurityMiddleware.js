@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { Student } = require('../../models/admin/Student');
+const { Student } = require('../../models/admin/students');
 
 const validateBody = (schema) => {
   return (req, res, next) => {

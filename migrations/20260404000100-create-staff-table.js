@@ -24,10 +24,18 @@ module.exports = {
         allowNull: true,
         unique: true
       },
-      department: {
-        type: Sequelize.ENUM('hr', 'librarian', 'admission_officer', 'transport_manager', 'hostel_warden', 'non_teaching_staff', 'other'),
+      role: {
+        type: Sequelize.ENUM(
+          'staff',
+          'accountant',
+          'hr',
+          'librarian',
+          'admission_officer',
+          'transport_manager',
+          'hostel_warden'
+        ),
         allowNull: false,
-        defaultValue: 'non_teaching_staff'
+        defaultValue: 'staff'
       },
       designation: {
         type: Sequelize.STRING,

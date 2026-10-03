@@ -31,7 +31,6 @@ module.exports = {
       NoticeTarget,
       ClassResource,
       SubjectResource,
-      IncomeExpense,
       ExamTypeV2,
       ExamEventV2,
       ExamPaperV2,
@@ -161,7 +160,6 @@ module.exports = {
       { email: 'student.seed@erp.local' },
       {
         name: 'Riya Verma',
-        password: passwordHash,
         role: 'student',
         status: 'active',
       }
@@ -184,7 +182,7 @@ module.exports = {
       {
         name: 'Suresh Yadav',
         password: passwordHash,
-        role: 'staff',
+        role: 'hr',
         status: 'active',
       }
     );
@@ -234,7 +232,7 @@ module.exports = {
       { user_id: staffUser.id },
       {
         employee_code: 'STF-SEED-001',
-        department: 'hr',
+        role: 'hr',
         designation: 'HR Coordinator',
         gender: 'male',
         mobile_no: '9876503003',
@@ -492,22 +490,6 @@ module.exports = {
         }
       );
     }
-
-    await ensureByFindOne(
-      IncomeExpense,
-      { entry_type: 'income', category: 'Tuition Fee', entry_date: '2026-04-15' },
-      {
-        entry_type: 'income',
-        category: 'Tuition Fee',
-        sub_category: 'Class 10A',
-        amount: 25000,
-        payment_mode: 'online',
-        transaction_ref: 'TXN-SEED-0001',
-        description: 'Monthly tuition collection batch for class 10A',
-        entry_date: '2026-04-15',
-        recorded_by: 'Neha Gupta',
-      }
-    );
 
     const examType = await ensureByWhere(
       ExamTypeV2,

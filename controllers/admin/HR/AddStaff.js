@@ -1,5 +1,15 @@
 const { User, Staff } = require('../../../models');
 
+const STAFF_ROLES = [
+  'staff',
+  'accountant',
+  'hr',
+  'librarian',
+  'admission_officer',
+  'transport_manager',
+  'hostel_warden'
+];
+
 const addStaff = async (req, res) => {
   try {
     const normalizedMobile = req.body.mobile ?? req.body.mobile_no ?? req.body.phone ?? req.body.phoneNumber;
@@ -16,15 +26,25 @@ const addStaff = async (req, res) => {
       salary,
       joining_date,
       employee_code,
-      department,
+      role,
       designation
     } = req.body;
 
-    if (!name || !email || !password || !department || !joining_date) {
+    const staffRole = role ?? req.body.department;
+
+    if (!name || !email || !password || !staffRole || !joining_date) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
         message: 'Please fill all required fields'
+      });
+    }
+
+    if (!STAFF_ROLES.includes(staffRole)) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'Invalid staff role'
       });
     }
 
@@ -41,14 +61,14 @@ const addStaff = async (req, res) => {
       name,
       email,
       password,
-      role: 'staff',
+      role: staffRole,
       status: 'active'
     });
 
     const staff = await Staff.create({
       user_id: user.id,
       employee_code,
-      department,
+      role: staffRole,
       designation,
       gender,
       dob,
@@ -81,7 +101,7 @@ const getAllStaff = async (req, res) => {
   try {
     const allStaff = await User.findAll({
       where: {
-        role: 'staff',
+        role: STAFF_ROLES,
         status: 'active'
       },
       include: {

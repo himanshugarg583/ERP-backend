@@ -11,8 +11,8 @@ const {
   FeeInvoiceV1,
   FeeInvoiceItemV1
 } = require('../../../models');
-const { Student } = require('../../../models/admin/Student');
-const { User } = require('../../../models/admin/user');
+const { Student } = require('../../../models/admin/students');
+const { User } = require('../../../models/admin/users');
 const { ok, fail } = require('../../../utils/response');
 const { createInvoiceForAssignmentInstallment } = require('../../../services/fees/v1/invoiceService');
 const { calculateLateFine, round2 } = require('../../../services/fees/v1/feeRulesService');

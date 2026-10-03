@@ -24,9 +24,19 @@ const User = sequelize.define('User', {
     
   },
   role: {
-    type: DataTypes.ENUM('admin', 'teacher', 'student', 'accountant', 'staff'),
+    type: DataTypes.ENUM(
+      'admin',
+      'teacher',
+      'student',
+      'accountant',
+      'staff',
+      'hr',
+      'librarian',
+      'admission_officer',
+      'transport_manager',
+      'hostel_warden'
+    ),
     allowNull: false,
-    
   },
   status: {
     type: DataTypes.ENUM("active", "inactive"),

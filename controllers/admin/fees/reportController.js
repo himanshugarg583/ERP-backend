@@ -9,7 +9,7 @@ const {
   StudentFeeAssignmentV1,
   FeeStructureV1
 } = require('../../../models');
-const { Student } = require('../../../models/admin/Student');
+const { Student } = require('../../../models/admin/students');
 const { ok, fail } = require('../../../utils/response');
 
 const resolveStudentIdForUser = async (userId) => {

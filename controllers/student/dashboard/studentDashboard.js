@@ -4,6 +4,7 @@ const {
   Subject,
   ClassTimetable,
   ClassTimeSlot,
+  ClassTimetableSetting,
   studentsAttendances,
   Teacher,
   User,
@@ -11,6 +12,63 @@ const {
   AudienceTarget,
 } = require('../../../models');
 const { Op } = require('sequelize');
+
+const normalizeWorkingDays = (rawWorkingDays) => {
+  const fallback = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  if (Array.isArray(rawWorkingDays)) {
+    return rawWorkingDays.length ? rawWorkingDays : fallback;
+  }
+
+  if (typeof rawWorkingDays === 'string' && rawWorkingDays.trim().length > 0) {
+    let parsed = null;
+    try {
+      parsed = JSON.parse(rawWorkingDays);
+    } catch (error) {
+      parsed = null;
+    }
+
+    if (Array.isArray(parsed)) {
+      return parsed.length ? parsed : fallback;
+    }
+
+    const parsedList = rawWorkingDays
+      .split(',')
+      .map((value) => value.replace(/[\[\]"']/g, '').trim())
+      .filter(Boolean);
+
+    return parsedList.length ? parsedList : fallback;
+  }
+
+  return fallback;
+};
+
+const fetchClassTimetableEntries = async ({ classSectionId, days }) => {
+  try {
+    const where = { class_section_id: classSectionId };
+    if (Array.isArray(days) && days.length > 0) {
+      where.day_of_week = { [Op.in]: days };
+    }
+
+    return await ClassTimetable.findAll({
+      where,
+      include: [
+        { model: Subject, as: 'subject', attributes: ['id', 'subject_name', 'subject_code'] },
+        {
+          model: Teacher,
+          as: 'teacher',
+          attributes: ['id'],
+          include: [{ model: User, attributes: ['name'] }]
+        }
+      ]
+    });
+  } catch (error) {
+    if (error?.parent?.code === 'ER_NO_SUCH_TABLE') {
+      return [];
+    }
+    throw error;
+  }
+};
 
 /**
  * Get Today's Classes
@@ -39,47 +97,52 @@ const getTodayClasses = async (req, res) => {
     const today = new Date();
     const dayName = daysOfWeek[today.getDay()];
 
-    // Fetch today's timetable for student's class using slot-based entries.
-    const classes = await ClassTimetable.findAll({
-      where: {
-        class_section_id: student.class_section_id,
-        day_of_week: dayName,
-        is_break: false
-      },
-      include: [
-        {
-          model: ClassTimeSlot,
-          as: 'timeSlot',
-          required: true,
-          attributes: ['slot_label', 'start_time', 'end_time', 'is_break'],
-          where: {
-            is_break: false
-          }
-        },
-        {
-          model: Subject,
-          as: 'subject',
-          attributes: ['id', 'subject_name', 'subject_code']
-        },
-        {
-          model: Teacher,
-          as: 'teacher',
-          attributes: ['id'],
-          include: [
-            {
-              model: User,
-              attributes: ['name']
-            }
-          ]
-        }
-      ],
-      order: [[{ model: ClassTimeSlot, as: 'timeSlot' }, 'start_time', 'ASC']]
+    const timetableSetting = await ClassTimetableSetting.findOne({
+      where: { class_section_id: student.class_section_id },
+      attributes: ['working_days'],
+      raw: true
     });
 
-    // Format the response
-    const upcomingClasses = classes.map(classItem => {
+    const workingDays = normalizeWorkingDays(timetableSetting?.working_days);
+
+    if (!workingDays.includes(dayName)) {
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "Today's classes fetched successfully",
+        data: {
+          day: dayName,
+          total_classes: 0,
+          classes: []
+        }
+      });
+    }
+
+    const [slots, entries] = await Promise.all([
+      ClassTimeSlot.findAll({
+        where: {
+          class_section_id: student.class_section_id,
+          is_break: false
+        },
+        attributes: ['id', 'slot_label', 'start_time', 'end_time'],
+        order: [['start_time', 'ASC']],
+        raw: true
+      }),
+      fetchClassTimetableEntries({
+        classSectionId: student.class_section_id,
+        days: [dayName]
+      })
+    ]);
+
+    const entriesBySlot = new Map();
+    entries.forEach((entry) => {
+      entriesBySlot.set(entry.time_slot_id, entry);
+    });
+
+    const upcomingClasses = slots.map((slot) => {
       // Format time from HH:MM:SS to 12-hour format
       const formatTime = (timeStr) => {
+        if (!timeStr) return null;
         const [hours, minutes] = timeStr.split(':');
         const hour = parseInt(hours);
         const ampm = hour >= 12 ? 'PM' : 'AM';
@@ -87,13 +150,15 @@ const getTodayClasses = async (req, res) => {
         return `${displayHour}:${minutes} ${ampm}`;
       };
 
+      const entry = entriesBySlot.get(slot.id);
+
       return {
-        subject: classItem.subject?.subject_name || 'N/A',
-        teacher: classItem.teacher?.User?.name || 'TBA',
-        room: classItem.timeSlot?.slot_label || 'Room',
-        time: classItem.timeSlot?.start_time ? formatTime(classItem.timeSlot.start_time) : null,
-        start_time: classItem.timeSlot?.start_time || null,
-        end_time: classItem.timeSlot?.end_time || null
+        subject: entry?.subject?.subject_name || 'N/A',
+        teacher: entry?.teacher?.User?.name || 'TBA',
+        room: slot.slot_label || 'Room',
+        time: slot.start_time ? formatTime(slot.start_time) : null,
+        start_time: slot.start_time || null,
+        end_time: slot.end_time || null
       };
     });
 
@@ -143,42 +208,33 @@ const getWeeklyTimetable = async (req, res) => {
 
     const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    const timetableRows = await ClassTimetable.findAll({
-      where: {
-        class_section_id: student.class_section_id,
-        day_of_week: {
-          [Op.in]: weekDays
+    const timetableSetting = await ClassTimetableSetting.findOne({
+      where: { class_section_id: student.class_section_id },
+      attributes: ['working_days'],
+      raw: true
+    });
+
+    const workingDays = normalizeWorkingDays(timetableSetting?.working_days);
+
+    const [slots, entries] = await Promise.all([
+      ClassTimeSlot.findAll({
+        where: {
+          class_section_id: student.class_section_id,
+          is_break: false
         },
-        is_break: false
-      },
-      include: [
-        {
-          model: ClassTimeSlot,
-          as: 'timeSlot',
-          required: true,
-          attributes: ['slot_label', 'start_time', 'end_time', 'is_break'],
-          where: {
-            is_break: false
-          }
-        },
-        {
-          model: Subject,
-          as: 'subject',
-          attributes: ['id', 'subject_name', 'subject_code']
-        },
-        {
-          model: Teacher,
-          as: 'teacher',
-          attributes: ['id'],
-          include: [
-            {
-              model: User,
-              attributes: ['name']
-            }
-          ]
-        }
-      ],
-      order: [[{ model: ClassTimeSlot, as: 'timeSlot' }, 'start_time', 'ASC']]
+        attributes: ['id', 'slot_label', 'start_time', 'end_time'],
+        order: [['start_time', 'ASC']],
+        raw: true
+      }),
+      fetchClassTimetableEntries({
+        classSectionId: student.class_section_id,
+        days: weekDays
+      })
+    ]);
+
+    const entriesByDaySlot = new Map();
+    entries.forEach((entry) => {
+      entriesByDaySlot.set(`${entry.day_of_week}:${entry.time_slot_id}`, entry);
     });
 
     const formatTime = (timeStr) => {
@@ -190,28 +246,34 @@ const getWeeklyTimetable = async (req, res) => {
       return `${displayHour}:${minutes} ${ampm}`;
     };
 
-    const grouped = weekDays.reduce((acc, day) => {
-      acc[day] = [];
-      return acc;
-    }, {});
+    const weeklyTimetable = weekDays.map((day) => {
+      if (!workingDays.includes(day)) {
+        return {
+          day,
+          total_classes: 0,
+          classes: []
+        };
+      }
 
-    timetableRows.forEach((row) => {
-      grouped[row.day_of_week].push({
-        subject: row.subject?.subject_name || 'N/A',
-        subject_code: row.subject?.subject_code || null,
-        teacher: row.teacher?.User?.name || 'TBA',
-        room: row.timeSlot?.slot_label || 'Room',
-        time: row.timeSlot?.start_time ? formatTime(row.timeSlot.start_time) : null,
-        start_time: row.timeSlot?.start_time || null,
-        end_time: row.timeSlot?.end_time || null
+      const classes = slots.map((slot) => {
+        const entry = entriesByDaySlot.get(`${day}:${slot.id}`);
+        return {
+          subject: entry?.subject?.subject_name || 'N/A',
+          subject_code: entry?.subject?.subject_code || null,
+          teacher: entry?.teacher?.User?.name || 'TBA',
+          room: slot.slot_label || 'Room',
+          time: slot.start_time ? formatTime(slot.start_time) : null,
+          start_time: slot.start_time || null,
+          end_time: slot.end_time || null
+        };
       });
-    });
 
-    const weeklyTimetable = weekDays.map((day) => ({
-      day,
-      total_classes: grouped[day].length,
-      classes: grouped[day]
-    }));
+      return {
+        day,
+        total_classes: classes.length,
+        classes
+      };
+    });
 
     const totalWeekClasses = weeklyTimetable.reduce((sum, dayRow) => sum + dayRow.total_classes, 0);
 
@@ -475,11 +537,15 @@ const getStudentDashboardStats = async (req, res) => {
     const monthStartStr = monthStart.toISOString().split('T')[0];
     const monthEndStr = monthEnd.toISOString().split('T')[0];
 
-    const [todayClasses, pendingAssignments, totalNotices, monthlyAttendance] = await Promise.all([
-      ClassTimetable.count({
+    const [timetableSetting, todaySlotCount, pendingAssignments, totalNotices, monthlyAttendance] = await Promise.all([
+      ClassTimetableSetting.findOne({
+        where: { class_section_id: student.class_section_id },
+        attributes: ['working_days'],
+        raw: true
+      }),
+      ClassTimeSlot.count({
         where: {
           class_section_id: student.class_section_id,
-          day_of_week: dayName,
           is_break: false
         }
       }),
@@ -527,6 +593,9 @@ const getStudentDashboardStats = async (req, res) => {
         raw: true
       })
     ]);
+
+    const workingDays = normalizeWorkingDays(timetableSetting?.working_days);
+    const todayClasses = workingDays.includes(dayName) ? todaySlotCount : 0;
 
     const totalDaysMarked = monthlyAttendance.length;
     const totalPresent = monthlyAttendance.filter((entry) => entry.status === 'present').length;

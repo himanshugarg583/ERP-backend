@@ -1,6 +1,6 @@
 const { FeeReminderV1 } = require('../../../models');
-const { Student } = require('../../../models/admin/Student');
-const { User } = require('../../../models/admin/user');
+const { Student } = require('../../../models/admin/students');
+const { User } = require('../../../models/admin/users');
 const { sendEmail } = require('./mailerService');
 
 const buildReceiptHtml = ({ studentName, receiptNumber, amount, fine, mode, invoiceNumber }) => {

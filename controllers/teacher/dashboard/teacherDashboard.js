@@ -1,11 +1,11 @@
-const { Teacher } = require('../../../models/admin/Teacher');
-const { User } = require('../../../models/admin/user');
-const { ClassSection } = require('../../../models/admin/Classsection');
-const { Subject } = require('../../../models/admin/subject');
-const { ClassTimetable } = require('../../../models/admin/ClassTimetable');
-const { Student } = require('../../../models/admin/Student');
-const { Resource } = require('../../../models/admin/content uploads/resource');
-const { studentsAttendances } = require('../../../models/admin/studentsAttendances');
+const { Teacher } = require('../../../models/admin/teachers');
+const { User } = require('../../../models/admin/users');
+const { ClassSection } = require('../../../models/admin/class_sections');
+const { Subject } = require('../../../models/admin/subjects');
+const { ClassTimetable } = require('../../../models/admin/class_timetable_entries');
+const { Student } = require('../../../models/admin/students');
+const { Resource } = require('../../../models/admin/content uploads/resources');
+const { studentsAttendances } = require('../../../models/admin/studentattendances');
 const { Op } = require('sequelize');
 const { Sequelize } = require('sequelize');
 

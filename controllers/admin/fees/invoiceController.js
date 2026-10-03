@@ -8,7 +8,7 @@ const {
   FeeStructureV1,
   InstallmentPlanV1
 } = require('../../../models');
-const { Student } = require('../../../models/admin/Student');
+const { Student } = require('../../../models/admin/students');
 const { ok, fail } = require('../../../utils/response');
 const { createInvoiceForAssignmentInstallment, generateInvoicesForDate } = require('../../../services/fees/v1/invoiceService');
 const { calculateLateFine, round2, deriveInvoiceStatus } = require('../../../services/fees/v1/feeRulesService');

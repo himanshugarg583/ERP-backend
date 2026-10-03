@@ -6,8 +6,7 @@ const {
   getMonthlyCollectionChart,
   getPaymentMethodBreakdown,
   getRecentPayments,
-  getClassWiseCollection,
-  getIncomeExpenseChart
+  getClassWiseCollection
 } = require('../../controllers/Accountant/accountantDashboardController');
 
 // ============= DASHBOARD STATS =============
@@ -26,11 +25,6 @@ router.get('/monthly-collection', authMiddleware, getMonthlyCollectionChart);
 // @desc    Get payment method breakdown
 // @access  Private (Accountant only)
 router.get('/payment-methods', authMiddleware, getPaymentMethodBreakdown);
-
-// @route   GET /api/accountant/dashboard/income-expense-chart
-// @desc    Get income vs expense chart data
-// @access  Private (Accountant only)
-router.get('/income-expense-chart', authMiddleware, getIncomeExpenseChart);
 
 // @route   GET /api/accountant/dashboard/class-wise-collection
 // @desc    Get class-wise fee collection

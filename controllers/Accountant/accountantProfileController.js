@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
-const { User } = require('../../models/admin/user');
-const { Teacher } = require('../../models/admin/Teacher');
+const { User } = require('../../models/admin/users');
+const { Teacher } = require('../../models/admin/teachers');
+const { Staff } = require('../../models/admin/staff');
 const { successResponse, errorResponse } = require('../../utils/response');
 
 /**
@@ -12,7 +13,65 @@ exports.getProfile = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // First, try to find accountant details in Teacher table
+    // Prefer staff table for accountant details (accountants are stored as staff now)
+    const staffAccountant = await Staff.findOne({
+      where: { user_id: userId, role: 'accountant' },
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'name', 'email', 'role', 'status']
+        }
+      ],
+      attributes: [
+        'id',
+        'designation',
+        'dob',
+        'mobile_no',
+        'permanent_address',
+        'current_address',
+        'role',
+        'gender',
+        'salary',
+        'joining_date',
+        'image'
+      ]
+    });
+
+    if (staffAccountant) {
+      const acc = staffAccountant;
+      const profile = {
+        personal_info: {
+          accountant_id: acc.id,
+          user_id: acc.User?.id,
+          name: acc.User?.name,
+          email: acc.User?.email,
+          mobile_no: acc.mobile_no,
+          gender: acc.gender,
+          dob: acc.dob,
+          image: acc.image ? `${process.env.BACKEND_URL}/uploads/staff/${acc.image}` : null,
+          account_status: acc.User?.status
+        },
+        professional_info: {
+          role: acc.role,
+          qualification: acc.qualification,
+          joining_date: acc.joining_date,
+          salary: acc.salary
+        },
+        address_info: {
+          current_address: acc.current_address,
+          permanent_address: acc.permanent_address
+        }
+      };
+
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "Accountant profile fetched successfully",
+        data: profile
+      });
+    }
+
+    // Fallback: try to find accountant details in Teacher table (legacy)
     const accountant = await Teacher.findOne({
       where: { user_id: userId },
       include: [
@@ -36,7 +95,7 @@ exports.getProfile = async (req, res) => {
       ]
     });
 
-    // If found in Teacher table, return detailed profile
+    // If found in Teacher table (legacy), return detailed profile
     if (accountant) {
       const profile = {
         personal_info: {

@@ -4,7 +4,7 @@ const router = express.Router();
 // Import dashboard controller
 const {
   getDashboardStats,
-  getMonthlyIncomeExpense,
+  getMonthlyIncomeVsExpense,
   getClassWiseTodayAttendance,
   getAllNotices,
   getMonthlyFeeCollection,
@@ -19,7 +19,7 @@ const { authMiddleware, isAdmin } = require('../../middlewares/authMiddleware');
 router.get('/stats', authMiddleware, isAdmin, getDashboardStats);
 
 // Get monthly income and expense for graph
-router.get('/monthly-income-expense', authMiddleware, isAdmin, getMonthlyIncomeExpense);
+router.get('/monthly-income-expense', authMiddleware, isAdmin, getMonthlyIncomeVsExpense);
 
 // Get class-wise today's attendance
 router.get('/class-wise-attendance', authMiddleware, isAdmin, getClassWiseTodayAttendance);

@@ -73,8 +73,8 @@ const teacherInvoiceRoutes = require('./routes/teacher/fees/invoiceRoutes');
 const teacherAssignmentRoutes = require('./routes/teacher/fees/assignmentRoutes');
 const teacherReportRoutes = require('./routes/teacher/fees/reportRoutes');
 const { startFeeSchedulers } = require('./services/fees/v1/scheduler');
-const swaggerUi = require('swagger-ui-express');
-const feesV1SwaggerSpec = require('./docs/feesV1Swagger');
+// const swaggerUi = require('swagger-ui-express');
+// const feesV1SwaggerSpec = require('./docs/feesV1Swagger');
 
 const cors = require('cors');
 const path = require('path');
@@ -97,21 +97,6 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
-
-app.get('/api/docs/fees-v1.json', (req, res) => {
-  res.json(feesV1SwaggerSpec);
-});
-
-app.use(
-  '/api/docs/fees-v1',
-  swaggerUi.serve,
-  swaggerUi.setup(feesV1SwaggerSpec, {
-    explorer: true,
-    swaggerOptions: {
-      persistAuthorization: true
-    }
-  })
-);
 
 
 app.use('/api/auth', authRoutes);
