@@ -3,19 +3,19 @@ const {AdmissionEnquiry} = require('../../models/admin/admissionenquiries');
 // Create new admission enquiry
 const createEnquiry = async (req, res) => {
   try {
-    const {
-      name,
-      phone,
-      email,
-      className,
-      address,
-      parentName,
-      oldSchool,
-      source,
-      description,
-      status,
-      date 
-    } = req.body;
+  const {
+    name,
+    phone,
+    email,
+    className,
+    address,
+    parentName,
+    oldSchool,
+    description,
+    status,
+    date,
+    source
+  } = req.body;
 
     const enquiry = await AdmissionEnquiry.create({
       name,
@@ -28,7 +28,8 @@ const createEnquiry = async (req, res) => {
       source,
       description,
       status, 
-      enquiry_date:date
+      enquiry_date: date,
+      source
     });
 
     res.status(201).json({
@@ -60,8 +61,8 @@ const updateEnquiry = async (req, res) => {
       source,
       description,
       status,
-      date 
-
+      date,
+      source
     } = req.body;
 
     // Find existing enquiry
@@ -91,6 +92,7 @@ const updateEnquiry = async (req, res) => {
     enquiry.description = description ?? enquiry.description;
     enquiry.status = status ?? enquiry.status;
     enquiry.enquiry_date = date ?? enquiry.enquiry_date;
+    enquiry.source = source ?? enquiry.source;
 
     await enquiry.save();
 
