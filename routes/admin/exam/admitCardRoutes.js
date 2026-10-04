@@ -4,7 +4,7 @@ const {
   getStudentAdmitCard,
   getClassAdmitCards,
   getExamStudentList
-} = require('../../../controllers/admin/exam/AdmitCardController');
+} = require('../../../controllers/admin/Exam/AdmitCardController');
 
 // Get student admit card by user ID and exam schedule ID
 router.get('/getStudentAdmitCard', getStudentAdmitCard);

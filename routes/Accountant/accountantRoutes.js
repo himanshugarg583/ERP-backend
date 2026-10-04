@@ -10,7 +10,7 @@ const {
   getExpenseList,
   updateIncomeExpense,
   deleteIncomeExpense
-} = require('../../controllers/accountant/incomeExpenseController');
+} = require('../../controllers/Accountant/incomeExpenseController');
 
 const {
   assignFeeToClass,
@@ -19,13 +19,13 @@ const {
   getStudentFeeDetails,
   getAllFeePayments,
   getFeePaymentByReceipt
-} = require('../../controllers/accountant/feeAssignmentController');
+} = require('../../controllers/Accountant/feeAssignmentController');
 
 const {
   createOrder,
   verifyPayment,
   getPaymentDetails
-} = require('../../controllers/accountant/razorpayController');
+} = require('../../controllers/Accountant/razorpayController');
 
 // Import profile routes
 const accountantProfileRoutes = require('./accountantProfileRoutes');

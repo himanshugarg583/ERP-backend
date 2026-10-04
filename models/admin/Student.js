@@ -11,7 +11,7 @@ const Student = sequelize.define('Student', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'users',
+      model: 'Users',
       key: 'id'
     },
     onDelete: 'CASCADE'

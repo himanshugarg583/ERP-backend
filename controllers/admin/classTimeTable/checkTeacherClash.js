@@ -1,6 +1,6 @@
 // controllers/admin/ClassTimetableController.js
 const { Op } = require('sequelize');
-const { ClassTimetable } = require('../../models/admin/ClassTimetable');
+const { ClassTimetable } = require('../../../models/admin/ClassTimetable');
 
 const checkTeacherClash = async (req, res) => {
     try {

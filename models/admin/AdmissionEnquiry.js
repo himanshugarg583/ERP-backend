@@ -26,7 +26,7 @@ const AdmissionEnquiry = sequelize.define('AdmissionEnquiry', {
     type: DataTypes.TEXT
  },
  source: {
-    type: DataTypes.ENUM('social media', 'mobile', 'referral','visit','friend','parent','other'),
+    type: DataTypes.ENUM('web', 'social media', 'mobile', 'referral', 'visit', 'friend', 'parent', 'other'),
     defaultValue: 'web'
   },
   parentName: { 

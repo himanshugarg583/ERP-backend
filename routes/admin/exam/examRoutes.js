@@ -7,7 +7,7 @@ const {
   getSingleExam,
   updateExam,
   deleteExam
-} = require('../../../controllers/admin/exam/ExamController');
+} = require('../../../controllers/admin/Exam/ExamController');
 
 // Create exam
 router.post('/createExam', authMiddleware, isAdmin, createExam);

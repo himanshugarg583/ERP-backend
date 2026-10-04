@@ -8,7 +8,7 @@ const {
   getRecentPayments,
   getClassWiseCollection,
   getIncomeExpenseChart
-} = require('../../controllers/accountant/accountantDashboardController');
+} = require('../../controllers/Accountant/accountantDashboardController');
 
 // ============= DASHBOARD STATS =============
 // @route   GET /api/accountant/dashboard/stats

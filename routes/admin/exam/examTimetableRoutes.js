@@ -10,7 +10,7 @@ const {
   deleteExamTimetableEntry,
   deleteExamSchedule,
   getClassScheduledExams
-} = require('../../../controllers/admin/exam/ExamTimetableController');
+} = require('../../../controllers/admin/Exam/ExamTimetableController');
 
 // Create exam timetable (creates ExamSchedule + ExamTimetable entries)
 router.post('/createExamTimetable', authMiddleware, isAdmin, createExamTimetable);

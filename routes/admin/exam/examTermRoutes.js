@@ -9,7 +9,7 @@ const {
   updateExamTerm,
   deleteExamTerm,
  
-} = require('../../../controllers/admin/exam/ExamTermController');
+} = require('../../../controllers/admin/Exam/ExamTermController');
 
 // Import middleware
 const { authMiddleware, isAdmin } = require('../../../middlewares/authMiddleware');

@@ -4,7 +4,7 @@ const { authMiddleware } = require('../../middlewares/authMiddleware');
 const { 
   getProfile, 
   changePassword 
-} = require('../../controllers/accountant/accountantProfileController');
+} = require('../../controllers/Accountant/accountantProfileController');
 
 // @route   GET /api/accountant/profile/me
 // @desc    Get accountant profile details

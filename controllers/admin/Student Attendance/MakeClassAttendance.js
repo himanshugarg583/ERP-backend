@@ -1,5 +1,4 @@
 const { studentsAttendances,ClassSection } = require('../../../models');
-// const { ClassSection } = require('../../models/admin/Classsection');
 
 const markClassAttendance = async (req, res) => {
   try {

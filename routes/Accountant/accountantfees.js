@@ -7,18 +7,18 @@ const {
   getFeeHeadById,
   updateFeeHead,
   deleteFeeHead
-} = require('../../controllers/accountant/feeHeadController');
+} = require('../../controllers/Accountant/feeHeadController');
 const {
   addFeeStructure,
   getFeeStructures,
   getFeeStructureById,
   updateFeeStructure,
   deleteFeeStructure
-} = require('../../controllers/accountant/feeStructureController');
+} = require('../../controllers/Accountant/feeStructureController');
 const {
   fillFeePayment,
   getStudentInstallments
-} = require('../../controllers/accountant/feeAssignmentController');
+} = require('../../controllers/Accountant/feeAssignmentController');
 
 // ============= FEE HEAD ROUTES =============
 // @route   POST /api/accountant/fees/fee-head
