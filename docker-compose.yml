@@ -1,0 +1,35 @@
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: erp-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: practice_erp
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: erp-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DB_HOST=mysqldb
+      - DB_PORT=3306
+      - DB_NAME=practice_erp
+      - DB_USER=root
+      - DB_PASS=rootpassword
+      - JWT_SECRET=himanshu
+      - BACKEND_URL=http://localhost:5000
+    depends_on:
+      - mysqldb
+
+volumes:
+  mysql_data:

@@ -9,6 +9,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Environment variables
+.env
+.env.*
 
 
 # OS files
@@ -27,3 +29,4 @@ build/
 *.njsproj
 *.sln
 config.bat
+
