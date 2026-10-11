@@ -78,6 +78,8 @@ const { startFeeSchedulers } = require('./services/fees/v1/scheduler');
 
 const cors = require('cors');
 const path = require('path');
+const notFoundHandler = require('./middlewares/notFoundMiddleware');
+const errorHandler = require('./middlewares/errorMiddleware');
 
 app.use(cors());
 app.use(express.json({
@@ -177,6 +179,20 @@ app.use('/student/resources', studentResourceRoutes);
 app.use('/api/v2/student/exam', studentExamV2Routes);
 app.use('/student/dashboard', studentDashboardRoutes);
 
+// 404 handler for unknown routes
+app.use(notFoundHandler);
+
+// Centralized Error Handling Middleware (must be after all routes)
+app.use(errorHandler);
+
+// Global unhandled rejection and uncaught exception safety handlers
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('⚠️ Unhandled Promise Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('💥 Uncaught Exception:', err);
+});
 
 // Start server only after database connection is established
 const PORT = process.env.PORT || 5001;

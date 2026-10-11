@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { User } = require('../../models/admin/users');
 const { Teacher } = require('../../models/admin/teachers');
-const { Staff } = require('../../models/admin/staff');
+const { Staff } = require('../../models/admin/Staff');
 const { successResponse, errorResponse } = require('../../utils/response');
 
 /**

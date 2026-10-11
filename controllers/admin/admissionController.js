@@ -61,8 +61,7 @@ const updateEnquiry = async (req, res) => {
       source,
       description,
       status,
-      date,
-      source
+      date
     } = req.body;
 
     // Find existing enquiry

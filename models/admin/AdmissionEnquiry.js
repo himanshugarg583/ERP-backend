@@ -49,10 +49,7 @@ const AdmissionEnquiry = sequelize.define('AdmissionEnquiry', {
      type: DataTypes.TEXT 
     },
   status: {
-    type: DataTypes.ENUM('active', 'admitted', 'inactive','emailenquiry','counsling schedule'),
-    defaultValue: 'active'
- 
-    type: DataTypes.ENUM('active', 'admitted', 'inactive','emailenquiry','counsling_schedule'),
+    type: DataTypes.ENUM('active', 'admitted', 'inactive', 'emailenquiry', 'counsling_schedule'),
     defaultValue: 'active'
   }
 }, {
