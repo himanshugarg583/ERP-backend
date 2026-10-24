@@ -1,4 +1,4 @@
-const { Notice, NoticeTarget, Teacher, ClassSection, Student, User } = require('../../../models');
+const { Notice, AudienceTarget, ClassSection } = require('../../../models');
 const sequelize = require('../../../config/db');
 
 // Create notice
@@ -6,7 +6,7 @@ const createNotice = async (req, res) => {
   const transaction = await sequelize.transaction();
   
   try {
-    const { title, message, target_type, class_section_ids, student_ids, teacher_ids } = req.body;
+    const { title, message, target_type, class_section_ids, individual_type, individual_id } = req.body;
 
     // Validate required fields
     if (!title || !message || !target_type) {
@@ -19,7 +19,7 @@ const createNotice = async (req, res) => {
     }
 
     // Validate target_type
-    const validTargetTypes = ['all', 'all_classes', 'all_teachers', 'all_staff', 'class', 'student', 'teacher'];
+    const validTargetTypes = ['all', 'all_classes', 'all_teachers', 'all_staff', 'class', 'individual'];
     if (!validTargetTypes.includes(target_type)) {
       await transaction.rollback();
       return res.status(400).json({
@@ -72,44 +72,27 @@ const createNotice = async (req, res) => {
         target_type: 'class',
         class_section_id: id
       }));
-      
-    } else if (target_type === 'student') {
-      // Send to specific students
-      if (!student_ids || !Array.isArray(student_ids) || student_ids.length === 0) {
+    } else if (target_type === 'individual') {
+      if (!individual_type || !individual_id) {
         await transaction.rollback();
         return res.status(400).json({
           success: false,
           statusCode: 400,
-          message: "Student IDs are required for student target type"
+          message: 'individual_type and individual_id are required for individual target type'
         });
       }
-      
-      targets = student_ids.map(id => ({
+
+      targets.push({
         notice_id: notice.id,
-        target_type: 'student',
-        student_id: id
-      }));
+        target_type: 'individual',
+        individual_type,
+        individual_id,
+      });
       
-    } else if (target_type === 'teacher') {
-      // Send to specific teachers
-      if (!teacher_ids || !Array.isArray(teacher_ids) || teacher_ids.length === 0) {
-        await transaction.rollback();
-        return res.status(400).json({
-          success: false,
-          statusCode: 400,
-          message: "Teacher IDs are required for teacher target type"
-        });
-      }
-      
-      targets = teacher_ids.map(id => ({
-        notice_id: notice.id,
-        target_type: 'teacher',
-        teacher_id: id
-      }));
     }
 
     // Bulk create targets
-    await NoticeTarget.bulkCreate(targets, { transaction });
+    await AudienceTarget.bulkCreate(targets, { transaction });
 
     await transaction.commit();
 
@@ -145,32 +128,14 @@ const getAllNotices = async (req, res) => {
     const notices = await Notice.findAll({
       include: [
         {
-          model: NoticeTarget,
+          model: AudienceTarget,
           as: 'targets',
-          attributes: ['id', 'target_type', 'class_section_id', 'student_id', 'teacher_id'],
+          attributes: ['id', 'target_type', 'class_section_id', 'individual_type', 'individual_id'],
           include: [
             {
               model: ClassSection,
               as: 'classSection',
               attributes: ['id', 'class_name', 'section_name']
-            },
-            {
-              model: Student,
-              as: 'student',
-              attributes: ['id'],
-              include: [{
-                model: User,
-                attributes: ['name']
-              }]
-            },
-            {
-              model: Teacher,
-              as: 'teacher',
-              attributes: ['id'],
-              include: [{
-                model: User,
-                attributes: ['name']
-              }]
             }
           ]
         }
@@ -194,12 +159,11 @@ const getAllNotices = async (req, res) => {
         if (target.target_type === 'class' && target.classSection) {
           targetInfo.class = `${target.classSection.class_name} ${target.classSection.section_name}`;
           targetInfo.class_section_id = target.class_section_id;
-        } else if (target.target_type === 'student' && target.student) {
-          targetInfo.student_name = target.student.User?.name;
-          targetInfo.student_id = target.student_id;
-        } else if (target.target_type === 'teacher' && target.teacher) {
-          targetInfo.teacher_name = target.teacher.User?.name;
-          targetInfo.teacher_id = target.teacher_id;
+        }
+
+        if (target.target_type === 'individual') {
+          targetInfo.individual_type = target.individual_type;
+          targetInfo.individual_id = target.individual_id;
         }
         
         return targetInfo;
@@ -235,32 +199,14 @@ const getNoticeById = async (req, res) => {
       where: { id: notice_id },
       include: [
         {
-          model: NoticeTarget,
+          model: AudienceTarget,
           as: 'targets',
-          attributes: ['id', 'target_type', 'class_section_id', 'student_id', 'teacher_id'],
+          attributes: ['id', 'target_type', 'class_section_id', 'individual_type', 'individual_id'],
           include: [
             {
               model: ClassSection,
               as: 'classSection',
               attributes: ['id', 'class_name', 'section_name']
-            },
-            {
-              model: Student,
-              as: 'student',
-              attributes: ['id'],
-              include: [{
-                model: User,
-                attributes: ['name']
-              }]
-            },
-            {
-              model: Teacher,
-              as: 'teacher',
-              attributes: ['id'],
-              include: [{
-                model: User,
-                attributes: ['name']
-              }]
             }
           ]
         }
@@ -291,12 +237,11 @@ const getNoticeById = async (req, res) => {
         if (target.target_type === 'class' && target.classSection) {
           targetInfo.class = `${target.classSection.class_name} ${target.classSection.section_name}`;
           targetInfo.class_section_id = target.class_section_id;
-        } else if (target.target_type === 'student' && target.student) {
-          targetInfo.student_name = target.student.User?.name;
-          targetInfo.student_id = target.student_id;
-        } else if (target.target_type === 'teacher' && target.teacher) {
-          targetInfo.teacher_name = target.teacher.User?.name;
-          targetInfo.teacher_id = target.teacher_id;
+        }
+
+        if (target.target_type === 'individual') {
+          targetInfo.individual_type = target.individual_type;
+          targetInfo.individual_id = target.individual_id;
         }
         
         return targetInfo;
@@ -326,7 +271,7 @@ const updateNotice = async (req, res) => {
   
   try {
     const { notice_id } = req.params;
-    const { title, message, target_type, class_section_ids, student_ids, teacher_ids } = req.body;
+    const { title, message, target_type, class_section_ids, individual_type, individual_id } = req.body;
 
     // Find notice
     const notice = await Notice.findByPk(notice_id);
@@ -351,8 +296,18 @@ const updateNotice = async (req, res) => {
 
     // If target_type is provided, update targets
     if (target_type) {
+      const validTargetTypes = ['all', 'all_classes', 'all_teachers', 'all_staff', 'class', 'individual'];
+      if (!validTargetTypes.includes(target_type)) {
+        await transaction.rollback();
+        return res.status(400).json({
+          success: false,
+          statusCode: 400,
+          message: 'Invalid target type'
+        });
+      }
+
       // Delete existing targets
-      await NoticeTarget.destroy({ where: { notice_id: notice.id }, transaction });
+      await AudienceTarget.destroy({ where: { notice_id: notice.id }, transaction });
 
       // Create new targets
       let targets = [];
@@ -371,21 +326,25 @@ const updateNotice = async (req, res) => {
           target_type: 'class',
           class_section_id: id
         }));
-      } else if (target_type === 'student' && student_ids) {
-        targets = student_ids.map(id => ({
+      } else if (target_type === 'individual') {
+        if (!individual_type || !individual_id) {
+          await transaction.rollback();
+          return res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: 'individual_type and individual_id are required for individual target type'
+          });
+        }
+
+        targets.push({
           notice_id: notice.id,
-          target_type: 'student',
-          student_id: id
-        }));
-      } else if (target_type === 'teacher' && teacher_ids) {
-        targets = teacher_ids.map(id => ({
-          notice_id: notice.id,
-          target_type: 'teacher',
-          teacher_id: id
-        }));
+          target_type: 'individual',
+          individual_type,
+          individual_id,
+        });
       }
 
-      await NoticeTarget.bulkCreate(targets, { transaction });
+      await AudienceTarget.bulkCreate(targets, { transaction });
     }
 
     await transaction.commit();

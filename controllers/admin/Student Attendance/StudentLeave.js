@@ -424,10 +424,43 @@ const cancelLeave = async (req, res) => {
   }
 };
 
+// Admin delete leave (any status: pending/approved/rejected)
+const deleteLeaveByAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const leave = await StudentLeave.findByPk(id);
+
+    if (!leave) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: 'Leave not found'
+      });
+    }
+
+    await leave.destroy();
+
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Leave deleted successfully by admin'
+    });
+  } catch (error) {
+    console.error('Delete Leave By Admin Error:', error);
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal Server Error'
+    });
+  }
+};
+
 module.exports = {
   applyLeave,
   getAllLeaves,
   getSingleLeave,
   updateLeaveStatus,
-  cancelLeave
+  cancelLeave,
+  deleteLeaveByAdmin
 };

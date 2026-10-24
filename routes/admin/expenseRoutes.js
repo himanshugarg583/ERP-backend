@@ -7,7 +7,8 @@ const {
   getAllExpense,
   getSingleExpense,
   updateExpense,
-  deleteExpense
+  deleteExpense,
+  getExpenseSummary
 } = require('../../controllers/admin/fees/ExpenseController');
 
 // Import middleware
@@ -18,6 +19,9 @@ router.post('/createExpense', authMiddleware, isAdmin, createExpense);
 
 // Get all expense
 router.get('/getAllExpense', authMiddleware, isAdmin, getAllExpense);
+
+// Expense summary for cards
+router.get('/expense-summary', authMiddleware, isAdmin, getExpenseSummary);
 
 // Get single expense
 router.get('/getSingleExpense/:id', authMiddleware, isAdmin, getSingleExpense);

@@ -1,35 +1,52 @@
-const { IncomeExpense, User } = require('../../../models');
+const { AcademicYear, IncomeEntryV1, User } = require('../../../models');
 const { Op } = require('sequelize');
+
+const formatIncomeEntry = (entry) => {
+  const data = entry.get({ plain: true });
+  return {
+    id: data.id,
+    academic_year: data.academicYear ? data.academicYear.name : null,
+    fee_payment_id: data.fee_payment_id || null,
+    category: data.category,
+    source: data.source || null,
+    amount: data.amount,
+    entry_date: data.entry_date,
+    notes: data.notes || null,
+    recorded_by: data.recordedBy ? data.recordedBy.name : null,
+    created_at: data.created_at,
+    updated_at: data.updated_at
+  };
+};
+
+const toISODate = (date) => date.toISOString().slice(0, 10);
+
+const getMonthRange = (date) => {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const start = new Date(year, month, 1);
+  const end = new Date(year, month + 1, 0);
+  return { start: toISODate(start), end: toISODate(end) };
+};
 
 // Create income entry
 const createIncome = async (req, res) => {
   try {
     const {
+      academic_year_id,
+      fee_payment_id,
       category,
-      sub_category,
+      source,
       amount,
-      payment_mode,
-      transaction_ref,
-      description,
       entry_date,
-      recorded_by
+      notes
     } = req.body;
 
     // Validation
-    if (!category || !amount || !payment_mode || !entry_date) {
+    if (!amount || !entry_date) {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: "Category, amount, payment mode, and entry date are required"
-      });
-    }
-
-    // Validate payment_mode
-    if (!['cash', 'online', 'cheque', 'bank_transfer'].includes(payment_mode)) {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: "Payment mode must be 'cash', 'online', 'cheque', or 'bank_transfer'"
+        message: "Amount and entry date are required"
       });
     }
 
@@ -44,23 +61,40 @@ const createIncome = async (req, res) => {
     }
 
     // Create income entry
-    const income = await IncomeExpense.create({
-      entry_type: 'income',
-      category,
-      sub_category: sub_category || null,
+    const income = await IncomeEntryV1.create({
+      academic_year_id: academic_year_id || null,
+      fee_payment_id: fee_payment_id || null,
+      category: category || 'fee_collection',
+      source: source || null,
       amount: entryAmount,
-      payment_mode,
-      transaction_ref: transaction_ref || null,
-      description: description || null,
       entry_date,
-      recorded_by: recorded_by || null
+      notes: notes || null,
+      recorded_by: req.user?.id || null
+    });
+
+    const createdIncome = await IncomeEntryV1.findByPk(income.id, {
+      attributes: [
+        'id',
+        'fee_payment_id',
+        'category',
+        'source',
+        'amount',
+        'entry_date',
+        'notes',
+        'created_at',
+        'updated_at'
+      ],
+      include: [
+        { model: AcademicYear, as: 'academicYear', attributes: ['name'] },
+        { model: User, as: 'recordedBy', attributes: ['name'] }
+      ]
     });
 
     res.status(201).json({
       success: true,
       statusCode: 201,
       message: "Income entry created successfully",
-      data: income
+      data: formatIncomeEntry(createdIncome)
     });
 
   } catch (error) {
@@ -77,8 +111,10 @@ const createIncome = async (req, res) => {
 const getAllIncome = async (req, res) => {
   try {
     const {
+      academic_year_id,
+      fee_payment_id,
       category,
-      payment_mode,
+      source,
       from_date,
       to_date,
       min_amount,
@@ -86,14 +122,22 @@ const getAllIncome = async (req, res) => {
     } = req.query;
 
     // Build where clause
-    const whereClause = { entry_type: 'income' };
+    const whereClause = {};
 
     if (category) {
       whereClause.category = category;
     }
 
-    if (payment_mode) {
-      whereClause.payment_mode = payment_mode;
+    if (source) {
+      whereClause.source = source;
+    }
+
+    if (academic_year_id) {
+      whereClause.academic_year_id = parseInt(academic_year_id, 10);
+    }
+
+    if (fee_payment_id) {
+      whereClause.fee_payment_id = parseInt(fee_payment_id, 10);
     }
 
     // Date range filter
@@ -126,21 +170,23 @@ const getAllIncome = async (req, res) => {
       };
     }
 
-    const incomes = await IncomeExpense.findAll({
+    const incomes = await IncomeEntryV1.findAll({
       where: whereClause,
       order: [['entry_date', 'DESC'], ['created_at', 'DESC']],
       attributes: [
         'id',
-        'entry_type',
+        'fee_payment_id',
         'category',
-        'sub_category',
         'amount',
-        'payment_mode',
-        'transaction_ref',
-        'description',
+        'source',
         'entry_date',
-        'recorded_by',
-        'created_at'
+        'notes',
+        'created_at',
+        'updated_at'
+      ],
+      include: [
+        { model: AcademicYear, as: 'academicYear', attributes: ['name'] },
+        { model: User, as: 'recordedBy', attributes: ['name'] }
       ]
     });
 
@@ -154,7 +200,7 @@ const getAllIncome = async (req, res) => {
       data: {
         total_records: incomes.length,
         total_income: totalIncome.toFixed(2),
-        incomes: incomes
+        incomes: incomes.map(formatIncomeEntry)
       }
     });
 
@@ -173,11 +219,22 @@ const getSingleIncome = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const income = await IncomeExpense.findOne({
-      where: {
-        id: id,
-        entry_type: 'income'
-      }
+    const income = await IncomeEntryV1.findByPk(id, {
+      attributes: [
+        'id',
+        'fee_payment_id',
+        'category',
+        'source',
+        'amount',
+        'entry_date',
+        'notes',
+        'created_at',
+        'updated_at'
+      ],
+      include: [
+        { model: AcademicYear, as: 'academicYear', attributes: ['name'] },
+        { model: User, as: 'recordedBy', attributes: ['name'] }
+      ]
     });
 
     if (!income) {
@@ -192,7 +249,7 @@ const getSingleIncome = async (req, res) => {
       success: true,
       statusCode: 200,
       message: "Income entry retrieved successfully",
-      data: income
+      data: formatIncomeEntry(income)
     });
 
   } catch (error) {
@@ -210,22 +267,16 @@ const updateIncome = async (req, res) => {
   try {
     const { id } = req.params;
     const {
+      academic_year_id,
+      fee_payment_id,
       category,
-      sub_category,
+      source,
       amount,
-      payment_mode,
-      transaction_ref,
-      description,
       entry_date,
-      recorded_by
+      notes
     } = req.body;
 
-    const income = await IncomeExpense.findOne({
-      where: {
-        id: id,
-        entry_type: 'income'
-      }
-    });
+    const income = await IncomeEntryV1.findByPk(id);
 
     if (!income) {
       return res.status(404).json({
@@ -238,7 +289,9 @@ const updateIncome = async (req, res) => {
     // Update fields
     const updateData = {};
     if (category) updateData.category = category;
-    if (sub_category !== undefined) updateData.sub_category = sub_category;
+    if (academic_year_id !== undefined) updateData.academic_year_id = academic_year_id;
+    if (fee_payment_id !== undefined) updateData.fee_payment_id = fee_payment_id;
+    if (source !== undefined) updateData.source = source;
     if (amount) {
       const entryAmount = parseFloat(amount);
       if (entryAmount <= 0) {
@@ -250,28 +303,34 @@ const updateIncome = async (req, res) => {
       }
       updateData.amount = entryAmount;
     }
-    if (payment_mode) {
-      if (!['cash', 'online', 'cheque', 'bank_transfer'].includes(payment_mode)) {
-        return res.status(400).json({
-          success: false,
-          statusCode: 400,
-          message: "Invalid payment mode"
-        });
-      }
-      updateData.payment_mode = payment_mode;
-    }
-    if (transaction_ref !== undefined) updateData.transaction_ref = transaction_ref;
-    if (description !== undefined) updateData.description = description;
+    if (notes !== undefined) updateData.notes = notes;
     if (entry_date) updateData.entry_date = entry_date;
-    if (recorded_by !== undefined) updateData.recorded_by = recorded_by;
 
     await income.update(updateData);
+
+    const updatedIncome = await IncomeEntryV1.findByPk(id, {
+      attributes: [
+        'id',
+        'fee_payment_id',
+        'category',
+        'source',
+        'amount',
+        'entry_date',
+        'notes',
+        'created_at',
+        'updated_at'
+      ],
+      include: [
+        { model: AcademicYear, as: 'academicYear', attributes: ['name'] },
+        { model: User, as: 'recordedBy', attributes: ['name'] }
+      ]
+    });
 
     res.status(200).json({
       success: true,
       statusCode: 200,
       message: "Income entry updated successfully",
-      data: income
+      data: formatIncomeEntry(updatedIncome)
     });
 
   } catch (error) {
@@ -289,12 +348,7 @@ const deleteIncome = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const income = await IncomeExpense.findOne({
-      where: {
-        id: id,
-        entry_type: 'income'
-      }
-    });
+    const income = await IncomeEntryV1.findByPk(id);
 
     if (!income) {
       return res.status(404).json({
@@ -322,10 +376,55 @@ const deleteIncome = async (req, res) => {
   }
 };
 
+// Income summary for dashboard cards
+const getIncomeSummary = async (req, res) => {
+  try {
+    const now = new Date();
+    const { start: thisMonthStart, end: thisMonthEnd } = getMonthRange(now);
+    const { start: lastMonthStart, end: lastMonthEnd } = getMonthRange(new Date(now.getFullYear(), now.getMonth() - 1, 1));
+
+    const [
+      totalCount,
+      totalAmount,
+      thisMonthAmount,
+      lastMonthAmount
+    ] = await Promise.all([
+      IncomeEntryV1.count(),
+      IncomeEntryV1.sum('amount'),
+      IncomeEntryV1.sum('amount', {
+        where: { entry_date: { [Op.between]: [thisMonthStart, thisMonthEnd] } }
+      }),
+      IncomeEntryV1.sum('amount', {
+        where: { entry_date: { [Op.between]: [lastMonthStart, lastMonthEnd] } }
+      })
+    ]);
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: "Income summary fetched successfully",
+      data: {
+        total_count: totalCount,
+        total_amount: (parseFloat(totalAmount) || 0).toFixed(2),
+        this_month: (parseFloat(thisMonthAmount) || 0).toFixed(2),
+        last_month: (parseFloat(lastMonthAmount) || 0).toFixed(2)
+      }
+    });
+  } catch (error) {
+    console.error("Get Income Summary Error:", error);
+    res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
+  }
+};
+
 module.exports = {
   createIncome,
   getAllIncome,
   getSingleIncome,
   updateIncome,
-  deleteIncome
+  deleteIncome,
+  getIncomeSummary
 };

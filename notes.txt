@@ -1,9 +1,3 @@
-# Start backend and MySQL database containers in background
+docker compose up --build
+docker compose logs -f backend
 docker-compose up -d
-
-# Check running containers
-docker-compose ps
-
-# View container logs
-docker-compose logs -f backend
-

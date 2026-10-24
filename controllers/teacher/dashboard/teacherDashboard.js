@@ -1,11 +1,11 @@
-const { Teacher } = require('../../../models/admin/Teacher');
-const { User } = require('../../../models/admin/user');
-const { ClassSection } = require('../../../models/admin/Classsection');
-const { Subject } = require('../../../models/admin/subject');
-const { ClassTimetable } = require('../../../models/admin/ClassTimetable');
-const { Student } = require('../../../models/admin/Student');
-const { SubjectResource } = require('../../../models/admin/content uploads/subject_resources');
-const { studentsAttendances } = require('../../../models/admin/studentsAttendances');
+const { Teacher } = require('../../../models/admin/teachers');
+const { User } = require('../../../models/admin/users');
+const { ClassSection } = require('../../../models/admin/class_sections');
+const { Subject } = require('../../../models/admin/subjects');
+const { ClassTimetable } = require('../../../models/admin/class_timetable_entries');
+const { Student } = require('../../../models/admin/students');
+const { Resource } = require('../../../models/admin/content uploads/resources');
+const { studentsAttendances } = require('../../../models/admin/studentattendances');
 const { Op } = require('sequelize');
 const { Sequelize } = require('sequelize');
 
@@ -74,9 +74,11 @@ const getTeacherDashboardStats = async (req, res) => {
     });
 
     // 4. Get pending assignments to review
-    const pendingAssignments = await SubjectResource.count({
+    const pendingAssignments = await Resource.count({
       where: {
-        teacher_id: teacher.id,
+        resource_scope: 'subject',
+        uploaded_by_type: 'teacher',
+        uploaded_by_id: teacher.id,
         resource_type: 'assignment',
         due_date: {
           [Op.gte]: todayDate
