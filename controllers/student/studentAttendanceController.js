@@ -1,6 +1,16 @@
-const { ClassSection, Subject } = require('../../models');
+const { ClassSection, Subject, Teacher, User } = require('../../models');
 const { Student, studentsAttendances } = require('../../models');
 const { Op } = require('sequelize');
+
+const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+const formatTimeWithAMPM = (timeString) => {
+  if (!timeString) return null;
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const hours12 = hours % 12 || 12;
+  return `${hours12}:${String(minutes).padStart(2, '0')} ${ampm}`;
+};
 
 // Get student monthly attendance
 const getStudentMonthlyAttendance = async (req, res) => {
@@ -156,7 +166,22 @@ const getStudentClassAndSubjects = async (req, res) => {
     // Get all subjects for this class
     const subjects = await Subject.findAll({
       where: { class_section_id: student.class_section_id },
-      attributes: ['id', 'subject_name', 'subject_code'],
+      attributes: ['id', 'subject_name', 'subject_code', 'subject_type'],
+      include: [
+        {
+          model: Teacher,
+          as: 'teacher',
+          attributes: ['id', 'mobile_no'],
+          required: false,
+          include: [
+            {
+              model: User,
+              attributes: ['name'],
+              required: false
+            }
+          ]
+        }
+      ],
       order: [['subject_name', 'ASC']]
     });
 
@@ -180,7 +205,10 @@ const getStudentClassAndSubjects = async (req, res) => {
         subjects: subjects.map(subject => ({
           subject_id: subject.id,
           subject_name: subject.subject_name,
-          subject_code: subject.subject_code
+          subject_code: subject.subject_code,
+          subject_type: subject.subject_type,
+          teacher_name: subject.teacher?.User?.name || null,
+          teacher_phone_number: subject.teacher?.mobile_no || null
         })),
         total_subjects: subjects.length
       }
@@ -202,7 +230,7 @@ const getStudentTimetable = async (req, res) => {
     // Get user_id from auth token
     const user_id = req.user.id;
 
-    const { ClassSection, Subject, ClassTimetable, Teacher, User } = require('../../models');
+    const { ClassSection, Subject, ClassTimetable, Teacher, User, ClassTimeSlot } = require('../../models');
 
     // Find student by user_id
     const student = await Student.findOne({
@@ -234,6 +262,11 @@ const getStudentTimetable = async (req, res) => {
       where: { class_section_id: student.class_section_id },
       include: [
         {
+          model: ClassTimeSlot,
+          as: 'timeSlot',
+          attributes: ['id', 'slot_number', 'slot_label', 'start_time', 'end_time', 'is_break']
+        },
+        {
           model: Subject,
           as: 'subject',
           attributes: ['id', 'subject_name', 'subject_code']
@@ -249,10 +282,6 @@ const getStudentTimetable = async (req, res) => {
             }
           ]
         }
-      ],
-      order: [
-        ['day_of_week', 'ASC'],
-        ['start_time', 'ASC']
       ]
     });
 
@@ -274,13 +303,24 @@ const getStudentTimetable = async (req, res) => {
       Saturday: []
     };
 
-    timetable.forEach(entry => {
+    timetable
+      .sort((a, b) => {
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayDiff = days.indexOf(a.day_of_week) - days.indexOf(b.day_of_week);
+        if (dayDiff !== 0) return dayDiff;
+        return Number(a.timeSlot?.slot_number || 0) - Number(b.timeSlot?.slot_number || 0);
+      })
+      .forEach(entry => {
       const dayData = {
         id: entry.id,
-        period_name: entry.period_name,
-        start_time: entry.start_time,
-        end_time: entry.end_time,
-        is_break: entry.is_break,
+        slot: entry.timeSlot ? {
+          id: entry.timeSlot.id,
+          slot_number: entry.timeSlot.slot_number,
+          slot_label: entry.timeSlot.slot_label,
+          start_time: formatTimeWithAMPM(entry.timeSlot.start_time),
+          end_time: formatTimeWithAMPM(entry.timeSlot.end_time),
+          is_break: entry.timeSlot.is_break
+        } : null,
         subject: entry.subject ? {
           id: entry.subject.id,
           subject_name: entry.subject.subject_name,

@@ -7,7 +7,8 @@ const {
   getAllIncome,
   getSingleIncome,
   updateIncome,
-  deleteIncome
+  deleteIncome,
+  getIncomeSummary
 } = require('../../controllers/admin/fees/IncomeController');
 
 // Import middleware
@@ -18,6 +19,9 @@ router.post('/createIncome', authMiddleware, isAdmin, createIncome);
 
 // Get all income
 router.get('/getAllIncome', authMiddleware, isAdmin, getAllIncome);
+
+// Income summary for cards
+router.get('/income-summary', authMiddleware, isAdmin, getIncomeSummary);
 
 // Get single income
 router.get('/getSingleIncome/:id', authMiddleware, isAdmin, getSingleIncome);

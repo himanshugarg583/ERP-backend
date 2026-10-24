@@ -1,11 +1,10 @@
 node_modules
-npm-debug.log
-.env
-.env.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 .git
 .gitignore
-Dockerfile
 .dockerignore
-docker-compose*.yml
-uploads/*
-!uploads/.gitkeep
+.vscode
+.idea
+*.log

@@ -35,6 +35,11 @@ const Subject = sequelize.define('Subject', {
     },
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL' 
+  },
+  subject_type: {
+    type: DataTypes.ENUM('theory', 'practical', 'extra_caricualam_activity'),
+    allowNull: false,
+    defaultValue: 'theory'
   }
 }, {
   tableName: 'subjects',

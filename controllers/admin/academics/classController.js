@@ -2,7 +2,8 @@ const {ClassSection, Teacher, User} = require("../../../models/index");
 
 const createClass = async (req, res) => {
   try {
-    const { class_name, section_name,room_No,capacity,teacher_id } = req.body;
+    const { class_name, section_name, room_No, room_no, capacity, teacher_id } = req.body;
+    const normalizedRoomNo = room_No ?? room_no ?? null;
 
      if (!class_name || !section_name) {
       return res.status(400).json({
@@ -31,9 +32,9 @@ const createClass = async (req, res) => {
     const newClass = await ClassSection.create({
       class_name,
       section_name,
-      room_No: room_No || null,
-      capacity: capacity || null,
-      teacher_id: teacher_id || null
+      room_No: normalizedRoomNo,
+      capacity: capacity ?? null,
+      teacher_id: teacher_id ?? null
     });
 
     res.status(201).json({
@@ -91,7 +92,8 @@ const getAllClassSections = async (req, res) => {
 const updateClassSection = async (req, res) => {
   try {
     const id = req.params.id;
-    const { class_name, section_name,room_No,capacity,teacher_id } = req.body;
+    const { class_name, section_name, room_No, room_no, capacity, teacher_id } = req.body;
+    const normalizedRoomNo = room_No ?? room_no;
 
     const classSection = await ClassSection.findOne({
       where:{id:id}
@@ -107,9 +109,9 @@ const updateClassSection = async (req, res) => {
 
     classSection.class_name = class_name || classSection.class_name;
     classSection.section_name = section_name || classSection.section_name;
-    classSection.room_No = room_No || classSection.room_No;
-    classSection.capacity = capacity || classSection.capacity;
-    classSection.teacher_id = teacher_id || classSection.teacher_id;
+    if (normalizedRoomNo !== undefined) classSection.room_No = normalizedRoomNo;
+    if (capacity !== undefined) classSection.capacity = capacity;
+    if (teacher_id !== undefined) classSection.teacher_id = teacher_id;
     
     await classSection.save();
 
