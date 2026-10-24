@@ -20,7 +20,6 @@ dist/
 build/
 
 # IDE configs
-.vscode/
 .idea/
 *.suo
 *.ntvs*

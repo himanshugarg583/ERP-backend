@@ -38,5 +38,14 @@ services:
       retries: 10
       start_period: 15s
 
+  adminer:
+    image: adminer:latest
+    container_name: erp-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
 volumes:
   mysql_data:
