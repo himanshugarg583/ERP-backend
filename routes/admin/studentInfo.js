@@ -9,6 +9,8 @@ const { getStudentReportByClass, getParentReportByClass } = require('../../contr
 const {addStudent,getSingleStudent,updateStudent,
   getStudentStats,getClassWiseStudentStats,getAllStudents,deleteStudent}= require('../../controllers/admin/student info/Addstudent')
 
+const validationMiddleware = require('../../middlewares/validationMiddleware');
+const { addStudentValidationSchema, updateStudentValidationSchema } = require('../../middlewares/validations/studentValidation');
 const createUploader = require('../../utils/multerHelper');
 const studentUpload = createUploader('studentsDocument');
 
@@ -22,9 +24,9 @@ router.post('/addStudent', studentUpload.fields([
     { name: 'image', maxCount: 1 },
     { name: 'aadhar_card', maxCount: 1 },
     { name: 'sign', maxCount: 1 }
-  ]),addStudent);
+  ]), validationMiddleware(addStudentValidationSchema), addStudent);
   router.get('/getSingleStudent/:student_id',getSingleStudent);
-  router.patch('/updateStudent/:student_id',updateStudent);
+  router.patch('/updateStudent/:student_id', validationMiddleware(updateStudentValidationSchema), updateStudent);
   router.delete('/deleteStudent/:student_id',deleteStudent);
   router.get('/getStudentStats',getStudentStats);
   router.get('/getClassWiseStudentStats',getClassWiseStudentStats);
