@@ -9,8 +9,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # Environment variables
-.env
-.env.*
 
 
 # OS files
@@ -22,7 +20,6 @@ dist/
 build/
 
 # IDE configs
-.vscode/
 .idea/
 *.suo
 *.ntvs*

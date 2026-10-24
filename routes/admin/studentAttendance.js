@@ -4,7 +4,7 @@ const router = express.Router();
 const { authMiddleware,isAdmin } = require('../../middlewares/authMiddleware');
 const {markClassAttendance } = require('../../controllers/admin/Student Attendance/MakeClassAttendance');
 const { getAllAvailableClasses, getStudentsByClass } = require('../../controllers/admin/Student Attendance/GetAllClasses');
-const { getAttendanceReportByClass, getMonthlyAttendanceReport, getClassWiseAttendanceSummary } = require('../../controllers/admin/Student Attendance/AttendanceReport');
+const { getAttendanceReportByClass, getMonthlyAttendanceReport, getClassWiseAttendanceSummary, getClassAttendanceByDateForAdmin } = require('../../controllers/admin/Student Attendance/AttendanceReport');
 
 
 // Get all available classes
@@ -24,6 +24,9 @@ router.get('/monthlyAttendanceReport', authMiddleware, isAdmin, getMonthlyAttend
 
 // Get class-wise attendance summary for a specific date
 router.get('/classWiseSummary', authMiddleware, isAdmin, getClassWiseAttendanceSummary);
+
+// Get class attendance list by class_section_id and date
+router.get('/getClassAttendanceByDate', authMiddleware, isAdmin, getClassAttendanceByDateForAdmin);
 
 
 

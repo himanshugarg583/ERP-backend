@@ -11,4 +11,5 @@ router.get('/getClassAndSubjects', authMiddleware,isStudent, getStudentClassAndS
 
 // Get student timetable (user_id from token)
 router.get('/getTimetable', authMiddleware,isStudent, getStudentTimetable);
+router.get('/me/timetable', authMiddleware, isStudent, getStudentTimetable);
 module.exports = router;

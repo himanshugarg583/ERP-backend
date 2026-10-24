@@ -1,4 +1,4 @@
-const { Notice, NoticeTarget, Teacher, ClassSection, Student, User } = require('../../../models');
+const { Notice, AudienceTarget, Teacher, ClassSection, Student, User } = require('../../../models');
 const sequelize = require('../../../config/db');
 const { Op } = require('sequelize');
 
@@ -26,7 +26,7 @@ const getNoticesForMe = async (req, res) => {
     const notices = await Notice.findAll({
       include: [
         {
-          model: NoticeTarget,
+          model: AudienceTarget,
           as: 'targets',
           where: {
             [Op.or]: [
@@ -35,10 +35,6 @@ const getNoticesForMe = async (req, res) => {
               { 
                 target_type: 'class',
                 class_section_id: student.class_section_id
-              },
-              { 
-                target_type: 'student',
-                student_id: student.id
               }
             ]
           },
@@ -47,7 +43,7 @@ const getNoticesForMe = async (req, res) => {
         },
         {
           model: Teacher,
-          as: 'createdByTeacher',
+          as: 'createdBy',
           required: false,
           include: [{
             model: User,
@@ -65,7 +61,7 @@ const getNoticesForMe = async (req, res) => {
       title: notice.title,
       message: notice.message,
       attachment: notice.attachment ? `${process.env.BACKEND_URL}/uploads/notices/${notice.attachment}` : null,
-      created_by: notice.created_by ? (notice.createdByTeacher?.User?.name || 'Teacher') : 'Admin',
+      created_by: notice.created_by ? (notice.createdBy?.User?.name || 'Teacher') : 'Admin',
       created_at: notice.created_at,
       target_type: notice.targets[0]?.target_type || 'N/A'
     }));

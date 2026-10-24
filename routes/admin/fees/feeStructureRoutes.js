@@ -1,26 +1,18 @@
 const express = require('express');
+const { authMiddleware } = require('../../../middlewares/authMiddleware');
+const { requireRoles } = require('../../../middlewares/fees/feeSecurityMiddleware');
+const feeStructureController = require('../../../controllers/admin/fees/feeStructureController');
+
 const router = express.Router();
+const financeOnly = [authMiddleware, requireRoles('admin', 'accountant')];
+const adminOnly = [authMiddleware, requireRoles('admin', 'accountant')];
 
-// Import FeeStructure controller
-const {
-  createFeeStructure,
-  getAllFeeStructures,
-  getSingleFeeStructure,
-  updateFeeStructure,
-  deleteFeeStructure
-} = require('../../../controllers/admin/fees/feeStructureController');
-
-// Import middleware (adjust path as needed)
-const { authMiddleware, isAdmin } = require('../../../middlewares/authMiddleware');
-
-router.post('/createFeeStructure', authMiddleware, isAdmin, createFeeStructure);
-
-router.get('/getAllFeeStructures', authMiddleware, isAdmin, getAllFeeStructures);
-
-router.get('/getSingleFeeStructure/:id', authMiddleware, isAdmin, getSingleFeeStructure);
-
-router.put('/updateFeeStructure/:id', authMiddleware, isAdmin, updateFeeStructure);
-
-router.delete('/deleteFeeStructure/:id', authMiddleware, isAdmin, deleteFeeStructure);
+router.get('/dropdown/fee-structures', ...financeOnly, feeStructureController.listFeeStructureDropdown);
+router.get('/fee-structures', ...financeOnly, feeStructureController.listStructures);
+router.post('/fee-structures', ...adminOnly, feeStructureController.createStructure);
+router.get('/fee-structures/:id', ...financeOnly, feeStructureController.getStructureById);
+router.put('/fee-structures/:id', ...adminOnly, feeStructureController.updateStructure);
+router.post('/fee-structures/clone/:id', ...adminOnly, feeStructureController.cloneStructure);
+router.get('/fee-structures/preview/:id', ...financeOnly, feeStructureController.structurePreview);
 
 module.exports = router;

@@ -1,5 +1,100 @@
 const { studentsAttendances, ClassSection, Student, User } = require('../../../models');
 
+// Get class attendance list by class_section_id and date (admin)
+const getClassAttendanceByDateForAdmin = async (req, res) => {
+  try {
+    const { class_section_id, date } = req.query;
+
+    if (!class_section_id || !date) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'class_section_id and date are required'
+      });
+    }
+
+    const classSection = await ClassSection.findByPk(class_section_id);
+    if (!classSection) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: 'Class section not found'
+      });
+    }
+
+    const attendanceDate = new Date(date);
+    if (isNaN(attendanceDate.getTime())) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'Invalid date format'
+      });
+    }
+
+    const records = await studentsAttendances.findAll({
+      where: {
+        class_section_id,
+        date
+      },
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['id', 'roll_number'],
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'name']
+            }
+          ]
+        }
+      ],
+      order: [[{ model: Student, as: 'student' }, 'roll_number', 'ASC']]
+    });
+
+    const attendance = records.map((record) => ({
+      attendance_id: record.id,
+      student_id: record.student?.id,
+      student_name: record.student?.User?.name || 'N/A',
+      roll_number: record.student?.roll_number,
+      status: record.status,
+      marked_by: record.marked_by,
+      marked_at: record.updated_at
+    }));
+
+    const summary = {
+      total: attendance.length,
+      present: attendance.filter((a) => a.status === 'present').length,
+      absent: attendance.filter((a) => a.status === 'absent').length,
+      leave: attendance.filter((a) => a.status === 'leave').length
+    };
+
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Class attendance fetched successfully',
+      data: {
+        class_info: {
+          class_section_id: classSection.id,
+          class_name: classSection.class_name,
+          section_name: classSection.section_name,
+          display_name: `${classSection.class_name} ${classSection.section_name}`
+        },
+        date,
+        summary,
+        attendance
+      }
+    });
+  } catch (error) {
+    console.error('Get Class Attendance By Date For Admin Error:', error);
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal Server Error'
+    });
+  }
+};
+
 // Get attendance report by class
 const getAttendanceReportByClass = async (req, res) => {
   try {
@@ -388,5 +483,6 @@ const getClassWiseAttendanceSummary = async (req, res) => {
 module.exports = {
   getAttendanceReportByClass,
   getMonthlyAttendanceReport,
-  getClassWiseAttendanceSummary
+  getClassWiseAttendanceSummary,
+  getClassAttendanceByDateForAdmin
 };

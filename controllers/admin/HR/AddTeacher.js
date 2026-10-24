@@ -8,13 +8,14 @@ const addTeacher = async (req, res) => {
   try {
 // console.log("first",req.body);
 
+    const normalizedMobile = req.body.mobile ?? req.body.mobile_no ?? req.body.phone ?? req.body.phoneNumber;
+
 
     const {
       name,
       email,
       password,
       gender,
-      mobile,
       dob,
       qualification,
       currentaddress,
@@ -25,7 +26,7 @@ const addTeacher = async (req, res) => {
     } = req.body;
 
      if (
-      !name || !email  || !gender || !mobile ||  !password || !joining_date
+      !name || !email  || !gender || !normalizedMobile ||  !password || !joining_date
     ) {
       return res.status(400).json({
         success: false,
@@ -58,7 +59,7 @@ const addTeacher = async (req, res) => {
     const teacher = await Teacher.create({
       user_id: user.id,
       gender,
-      mobile,
+      mobile_no: normalizedMobile,
       dob,
       qualification,
       current_address:currentaddress,
@@ -95,13 +96,14 @@ const updateTeacher = async (req, res) => {
   try {
     const userId = req.params.userId;
 
+    const normalizedMobile = req.body.mobile ?? req.body.mobile_no ?? req.body.phone ?? req.body.phoneNumber;
+
 
     const {
       name,
       email,
       status,
       gender,
-      mobile,
       dob,
       qualification,
       currentaddress,
@@ -142,7 +144,7 @@ const updateTeacher = async (req, res) => {
 
     // Update Teacher table
     teacher.gender = gender ?? teacher.gender;
-    teacher.mobile = mobile ?? teacher.mobile;
+    teacher.mobile_no = normalizedMobile ?? teacher.mobile_no;
     teacher.dob = dob ?? teacher.dob;
     teacher.qualification = qualification ?? teacher.qualification;
     teacher.current_address = currentaddress ?? teacher.current_address;
@@ -256,11 +258,23 @@ const getAllTeachers = async (req, res) => {
       },
     });
 
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const teachersWithFullImagePath = allTeachers.map((teacher) => {
+      const teacherJson = teacher.toJSON();
+      const imageName = teacherJson.teacherDetails?.image;
+
+      if (imageName) {
+        teacherJson.teacherDetails.image = `${baseUrl}/uploads/teachers/${imageName}`;
+      }
+
+      return teacherJson;
+    });
+
     res.status(200).json({
       success: true,
       statusCode:200,
       message: "Active teachers fetched successfully",
-      data: allTeachers,
+      data: teachersWithFullImagePath,
     });
 
   } catch (error) {
@@ -398,14 +412,15 @@ const getTeacherCredentials = async (req, res) => {
       include: {
         model: Teacher,
         as: "teacherDetails",
-        attributes: ['role']
+        attributes: ['id', 'role']
       },
       attributes: ['id', 'name', 'email', 'password'],
       order: [['name', 'ASC']]
     });
 
     const credentials = teachers.map(teacher => ({
-      teacher_id: teacher.id,
+      teacher_id: teacher.teacherDetails?.id || null,
+      user_id: teacher.id,
       name: teacher.name,
       email: teacher.email,
       password: teacher.password,
@@ -440,14 +455,15 @@ const getTeacherSalary = async (req, res) => {
       include: {
         model: Teacher,
         as: "teacherDetails",
-        attributes: ['role', 'salary']
+        attributes: ['id', 'role', 'salary']
       },
       attributes: ['id', 'name', 'email'],
       order: [['name', 'ASC']]
     });
 
     const salaryData = teachers.map(teacher => ({
-      teacher_id: teacher.id,
+      teacher_id: teacher.teacherDetails?.id || null,
+      user_id: teacher.id,
       name: teacher.name,
       email: teacher.email,
       salary: teacher.teacherDetails?.salary || 0,

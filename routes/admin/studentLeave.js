@@ -17,7 +17,7 @@ const {
   getAllLeaves,
   getSingleLeave,
   updateLeaveStatus,
-  cancelLeave
+  deleteLeaveByAdmin
 } = require('../../controllers/admin/Student Attendance/StudentLeave');
 
 // Apply for leave (admin can add leave on behalf of student)
@@ -31,6 +31,9 @@ router.get('/getLeave/:id', authMiddleware, isAdmin, getSingleLeave);
 
 // Update leave status (approve or reject)
 router.put('/updateLeaveStatus/:id', authMiddleware, isAdmin, updateLeaveStatus);
+
+// Delete leave by admin (allowed for pending/approved/rejected)
+router.delete('/deleteLeave/:id', authMiddleware, isAdmin, deleteLeaveByAdmin);
 
 
 
